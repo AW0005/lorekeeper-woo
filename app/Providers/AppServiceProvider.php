@@ -8,6 +8,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 
+use App\Providers\Socialite\ToyhouseProvider;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -54,5 +56,22 @@ class AppServiceProvider extends ServiceProvider
                 ]
             );
         });
+
+        $this->bootToyhouseSocialite();
+    }
+
+    /**
+     * Boot Toyhouse Socialite provider.
+     */
+    private function bootToyhouseSocialite()
+    {
+        $socialite = $this->app->make('Laravel\Socialite\Contracts\Factory');
+        $socialite->extend(
+            'toyhouse',
+            function ($app) use ($socialite) {
+                $config = $app['config']['services.toyhouse'];
+                return $socialite->buildProvider(ToyhouseProvider::class, $config);
+            }
+        );
     }
 }
