@@ -5,10 +5,9 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Collection;
+use App\Providers\Socialite\ToyhouseProvider;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-
-use App\Providers\Socialite\ToyhouseProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -70,6 +69,7 @@ class AppServiceProvider extends ServiceProvider
             'toyhouse',
             function ($app) use ($socialite) {
                 $config = $app['config']['services.toyhouse'];
+
                 return $socialite->buildProvider(ToyhouseProvider::class, $config);
             }
         );
