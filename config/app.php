@@ -161,6 +161,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Mailjet\LaravelMailjet\MailjetServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -234,7 +235,8 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'Settings' => App\Facades\Settings::class,
         'Notifications' => App\Facades\Notifications::class,
-        'Image' => Intervention\Image\Facades\Image::class
+        'Image' => Intervention\Image\Facades\Image::class,
+        'Mailjet' => Mailjet\LaravelMailjet\Facades\Mailjet::class,
 
     ],
 

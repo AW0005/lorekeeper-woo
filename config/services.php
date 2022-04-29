@@ -24,6 +24,11 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    'mailjet' => [
+        'key' => env('MAILJET_APIKEY'),
+        'secret' => env('MAILJET_APISECRET'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
@@ -57,27 +62,27 @@ return [
     ],
 
     'instagram' => [
-        'client_id' => env('INSTAGRAM_CLIENT_ID'),  
-        'client_secret' => env('INSTAGRAM_CLIENT_SECRET'),  
-        'redirect' => env('INSTAGRAM_REDIRECT_URI', '/auth/callback/instagram') 
+        'client_id' => env('INSTAGRAM_CLIENT_ID'),
+        'client_secret' => env('INSTAGRAM_CLIENT_SECRET'),
+        'redirect' => env('INSTAGRAM_REDIRECT_URI', '/auth/callback/instagram')
     ],
 
     'tumblr' => [
-        'client_id' => env('TUMBLR_CLIENT_ID'),  
-        'client_secret' => env('TUMBLR_CLIENT_SECRET'),  
-        'redirect' => env('TUMBLR_REDIRECT_URI', '/auth/callback/tumblr') 
+        'client_id' => env('TUMBLR_CLIENT_ID'),
+        'client_secret' => env('TUMBLR_CLIENT_SECRET'),
+        'redirect' => env('TUMBLR_REDIRECT_URI', '/auth/callback/tumblr')
     ],
 
     'imgur' => [
-        'client_id' => env('IMGUR_CLIENT_ID'),  
-        'client_secret' => env('IMGUR_CLIENT_SECRET'),  
-        'redirect' => env('IMGUR_REDIRECT_URI', '/auth/callback/imgur') 
+        'client_id' => env('IMGUR_CLIENT_ID'),
+        'client_secret' => env('IMGUR_CLIENT_SECRET'),
+        'redirect' => env('IMGUR_REDIRECT_URI', '/auth/callback/imgur')
     ],
 
-    'twitch' => [    
-        'client_id' => env('TWITCH_CLIENT_ID'),  
-        'client_secret' => env('TWITCH_CLIENT_SECRET'),  
-        'redirect' => env('TWITCH_REDIRECT_URI', '/auth/callback/twitch') 
+    'twitch' => [
+        'client_id' => env('TWITCH_CLIENT_ID'),
+        'client_secret' => env('TWITCH_CLIENT_SECRET'),
+        'redirect' => env('TWITCH_REDIRECT_URI', '/auth/callback/twitch')
     ],
 
 

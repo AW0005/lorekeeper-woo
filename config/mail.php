@@ -16,31 +16,13 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'smtp'),
+    // 'driver' => env('MAIL_DRIVER', 'smtp'),
+    'mailer' => env('MAIL_MAILER', 'mailjet'),
 
     'mailers' => [
         'mailjet' => [
-            'key' => env('MAILJET_APIKEY'),
-            'secret' => env('MAILJET_APISECRET'),
-            'transactional' => [
-                'call' => true,
-                'options' => [
-                    'url' => 'api.mailjet.com',
-                    'version' => 'v3.1',
-                    'call' => true,
-                    'secured' => true
-                ]
-            ],
-            'common' => [
-                'call' => true,
-                'options' => [
-                    'url' => 'api.mailjet.com',
-                    'version' => 'v3',
-                    'call' => true,
-                    'secured' => true
-                ]
-            ]
-        ]
+            'transport' => 'mailjet',
+        ],
     ],
 
     /*
