@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'mailjet'),
+    'driver' => env('MAIL_DRIVER', 'sendmail'),
 
     'mailers' => [
         'mailjet' => [
