@@ -16,8 +16,7 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'mailjet'),
-    'mailer' => env('MAIL_MAILER', 'mailjet'),
+    'driver' => env('MAIL_DRIVER', 'sendmail'),
 
     'mailers' => [
         'mailjet' => [
@@ -63,8 +62,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'noreply@aw0005.com'),
+        'name' => env('MAIL_FROM_NAME', 'AW0005'),
     ],
 
     /*

@@ -161,8 +161,6 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Mailjet\LaravelMailjet\MailjetServiceProvider::class,
-        Mailjet\LaravelMailjet\MailjetMailServiceProvider::class,
 
         /*
          * Package Service Providers...
