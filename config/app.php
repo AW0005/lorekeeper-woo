@@ -179,7 +179,7 @@ return [
         App\Providers\NotificationsProvider::class,
         App\Providers\CommentProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-
+        Mailjet\LaravelMailjet\MailjetServiceProvider::class,
     ],
 
     /*
