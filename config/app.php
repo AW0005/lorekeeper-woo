@@ -179,8 +179,6 @@ return [
         App\Providers\NotificationsProvider::class,
         App\Providers\CommentProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-        Mailjet\LaravelMailjet\MailjetServiceProvider::class,
-        Mailjet\LaravelMailjet\MailjetMailServiceProvider::class,
     ],
 
     /*
@@ -236,7 +234,6 @@ return [
         'Settings' => App\Facades\Settings::class,
         'Notifications' => App\Facades\Notifications::class,
         'Image' => Intervention\Image\Facades\Image::class,
-        'Mailjet' => Mailjet\LaravelMailjet\Facades\Mailjet::class,
 
     ],
 
