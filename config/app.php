@@ -180,6 +180,7 @@ return [
         App\Providers\CommentProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         Mailjet\LaravelMailjet\MailjetServiceProvider::class,
+        Mailjet\LaravelMailjet\MailjetMailServiceProvider::class,
     ],
 
     /*
