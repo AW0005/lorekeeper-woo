@@ -26,8 +26,8 @@ class HomeController extends Controller
     public function getIndex()
     {
         $openTransfersQueue = Settings::get('open_transfers_queue');
-        $galleryRequireApproval = Settings::get('gallery_submissions_require_approval');
-        $galleryCurrencyAwards = Settings::get('gallery_submissions_reward_currency');
+        // Removing Galleries: $galleryRequireApproval = Settings::get('gallery_submissions_require_approval');
+        // Removing Galleries: $galleryCurrencyAwards = Settings::get('gallery_submissions_reward_currency');
         return view('admin.index', [
             'submissionCount' => Submission::where('status', 'Pending')->whereNotNull('prompt_id')->count(),
             'claimCount' => Submission::where('status', 'Pending')->whereNull('prompt_id')->count(),
@@ -38,10 +38,10 @@ class HomeController extends Controller
             'openTransfersQueue' => $openTransfersQueue,
             'transferCount' => $openTransfersQueue ? CharacterTransfer::active()->where('is_approved', 0)->count() : 0,
             'tradeCount' => $openTransfersQueue ? Trade::where('status', 'Pending')->count() : 0,
-            'galleryRequireApproval' => $galleryRequireApproval,
-            'galleryCurrencyAwards' => $galleryCurrencyAwards,
-            'gallerySubmissionCount' => GallerySubmission::collaboratorApproved()->where('status', 'Pending')->count(),
-            'galleryAwardCount' => GallerySubmission::requiresAward()->where('is_valued', 0)->count()
+            'galleryRequireApproval' => false, //Removing Galleries: $galleryRequireApproval,
+            'galleryCurrencyAwards' => false, //Removing Galleries: $galleryCurrencyAwards,
+            // Removing Galleries: 'gallerySubmissionCount' => GallerySubmission::collaboratorApproved()->where('status', 'Pending')->count(),
+            // Removing Galleries: 'galleryAwardCount' => GallerySubmission::requiresAward()->where('is_valued', 0)->count()
         ]);
     }
 }

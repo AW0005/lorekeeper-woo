@@ -24,8 +24,8 @@
     </div>
     <div class="col-md">
         <div class="form-group">
-            {!! Form::label('Prefix (Optional)') !!} {!! add_help('This is used to label submissions associated with this prompt in the gallery.') !!}
-            {!! Form::text('prefix', $prompt->prefix, ['class' => 'form-control']) !!}
+            <!-- Removing Galleries: {!! Form::label('Prefix (Optional)') !!} {!! add_help('This is used to label submissions associated with this prompt in the gallery.') !!}
+            {!! Form::text('prefix', $prompt->prefix, ['class' => 'form-control']) !!} -->
         </div>
     </div>
 </div>
@@ -125,17 +125,17 @@
 @parent
 @include('js._loot_js', ['showLootTables' => true, 'showRaffles' => true])
 <script>
-$( document ).ready(function() {    
+$( document ).ready(function() {
     $('.delete-prompt-button').on('click', function(e) {
         e.preventDefault();
         loadModal("{{ url('admin/data/prompts/delete') }}/{{ $prompt->id }}", 'Delete Prompt');
     });
-    
+
     $( ".datepicker" ).datetimepicker({
         dateFormat: "yy-mm-dd",
         timeFormat: 'HH:mm:ss',
     });
 });
-    
+
 </script>
 @endsection

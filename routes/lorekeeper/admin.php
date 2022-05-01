@@ -77,14 +77,14 @@ Route::group(['prefix' => 'images', 'middleware' => 'power:edit_site_settings'],
 Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:edit_data'], function() {
 
     # GALLERIES
-    Route::get('galleries', 'GalleryController@getIndex');
-    Route::get('galleries/create', 'GalleryController@getCreateGallery');
-    Route::get('galleries/edit/{id}', 'GalleryController@getEditGallery');
-    Route::get('galleries/delete/{id}', 'GalleryController@getDeleteGallery');
-    Route::post('galleries/create', 'GalleryController@postCreateEditGallery');
-    Route::post('galleries/edit/{id?}', 'GalleryController@postCreateEditGallery');
-    Route::post('galleries/delete/{id}', 'GalleryController@postDeleteGallery');
-    Route::post('galleries/sort', 'GalleryController@postSortGallery');
+    // Removing Galleries: Route::get('galleries', 'GalleryController@getIndex');
+    // Removing Galleries: Route::get('galleries/create', 'GalleryController@getCreateGallery');
+    // Removing Galleries: Route::get('galleries/edit/{id}', 'GalleryController@getEditGallery');
+    // Removing Galleries: Route::get('galleries/delete/{id}', 'GalleryController@getDeleteGallery');
+    // Removing Galleries: Route::post('galleries/create', 'GalleryController@postCreateEditGallery');
+    // Removing Galleries: Route::post('galleries/edit/{id?}', 'GalleryController@postCreateEditGallery');
+    // Removing Galleries: Route::post('galleries/delete/{id}', 'GalleryController@postDeleteGallery');
+    // Removing Galleries: Route::post('galleries/sort', 'GalleryController@postSortGallery');
 
     # CURRENCIES
     Route::get('currencies', 'CurrencyController@getIndex');
@@ -414,13 +414,13 @@ Route::group(['prefix' => 'claims', 'middleware' => 'power:manage_submissions'],
 });
 
 # SUBMISSIONS
-Route::group(['prefix' => 'gallery', 'middleware' => 'power:manage_submissions'], function() {
-    Route::get('/submissions', 'GalleryController@getSubmissionIndex');
-    Route::get('/submissions/{status}', 'GalleryController@getSubmissionIndex')->where('status', 'pending|accepted|rejected');
-    Route::get('/currency', 'GalleryController@getCurrencyIndex');
-    Route::get('/currency/{status}', 'GalleryController@getCurrencyIndex')->where('status', 'pending|valued');
-    Route::post('edit/{id}/{action}', 'GalleryController@postEditSubmission')->where('action', 'accept|reject|comment|move|value');
-});
+// Route::group(['prefix' => 'gallery', 'middleware' => 'power:manage_submissions'], function() {
+//     Route::get('/submissions', 'GalleryController@getSubmissionIndex');
+//     Route::get('/submissions/{status}', 'GalleryController@getSubmissionIndex')->where('status', 'pending|accepted|rejected');
+//     Route::get('/currency', 'GalleryController@getCurrencyIndex');
+//     Route::get('/currency/{status}', 'GalleryController@getCurrencyIndex')->where('status', 'pending|valued');
+//     Route::post('edit/{id}/{action}', 'GalleryController@postEditSubmission')->where('action', 'accept|reject|comment|move|value');
+// });
 
 # REPORTS
 Route::group(['prefix' => 'reports', 'middleware' => 'power:manage_reports'], function() {
