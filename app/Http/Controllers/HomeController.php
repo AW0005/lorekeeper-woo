@@ -38,7 +38,7 @@ class HomeController extends Controller
             'about' => SitePage::where('key', 'about')->first()
         ]);
     }
-    
+
     /**
      * Shows the account linking page.
      *
@@ -82,8 +82,10 @@ class HomeController extends Controller
             return redirect()->to(Auth::user()->has_alias ? 'account/aliases' : 'link');
         }
 
-        $result = Socialite::driver($provider)->user();
-        if($service->saveProvider($provider, $result, Auth::user())) {
+        // Toyhouse runs on Laravel Passport for OAuth2 and this has some issues with state exceptions,
+        // admin suggested the easy fix (to use stateless)
+        $result = $provider == 'toyhouse' ? Socialite::driver($provider)->stateless()->user() : Socialite::driver($provider)->user();
+        if ($service->saveProvider($provider, $result, Auth::user())) {
             flash('Account has been linked successfully.')->success();
             Auth::user()->updateCharacters();
             Auth::user()->updateArtDesignCredits();
@@ -117,7 +119,7 @@ class HomeController extends Controller
             return false;
         }
 
-        // I think there's no harm in linking multiple of the same site as people may want their activity separated into an ARPG account. 
+        // I think there's no harm in linking multiple of the same site as people may want their activity separated into an ARPG account.
         // Uncomment the following to restrict to one account per site, however.
         // Check if the user already has a username associated with their account
         //if(DB::table('user_aliases')->where('site', $provider)->where('user_id', $user->id)->exists()) {
@@ -142,7 +144,7 @@ class HomeController extends Controller
 
         // Step 1: display a login birthday
         return view('auth.birthday');
-    }   
+    }
 
     /**
      * Posts the birthdaying page.
@@ -167,7 +169,7 @@ class HomeController extends Controller
             foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
             return redirect()->back();
         }
-    }   
+    }
 
     /**
      * Shows the birthdaying page.
@@ -185,5 +187,5 @@ class HomeController extends Controller
 
         // Step 1: display a login birthday
         return view('auth.blocked');
-    }   
+    }
 }
