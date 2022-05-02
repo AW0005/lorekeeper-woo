@@ -65,7 +65,7 @@ class SubmissionManager extends Service
             // First, check if the characters are accessible to begin with.
             if(isset($data['slug'])) {
                 $characters = Character::myo(0)->visible()->whereIn('slug', $data['slug'])->get();
-                if(count($characters) != count(array_filter($data['slug']))) throw new \Exception("One or more of the selected characters do not exist.");
+                if(count($characters) != count($data['slug'])) throw new \Exception("One or more of the selected characters do not exist.");
             }
             else $characters = [];
 
