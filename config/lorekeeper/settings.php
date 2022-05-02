@@ -20,12 +20,12 @@ return [
     | Version
     |--------------------------------------------------------------------------
     |
-    | This is the current version of Lorekeeper that your site is on. 
+    | This is the current version of Lorekeeper that your site is on.
     | Do not change this value!
     |
     */
     'version' => '2.0.0',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Site Name
@@ -36,7 +36,7 @@ return [
     | site wherever the name needs to be displayed.
     |
     */
-    'site_name' => 'Lorekeeper',
+    'site_name' => 'AW0005',
 
     /*
     |--------------------------------------------------------------------------
@@ -48,7 +48,7 @@ return [
     | It is not, however, displayed on the site itself. This should be kept short and snappy!
     |
     */
-    'site_desc' => 'A Lorekeeper ARPG',
+    'site_desc' => 'A Sci-Fi AI / Android Kemonomimi Closed Species',
 
     /*
     |--------------------------------------------------------------------------
@@ -108,9 +108,9 @@ return [
     */
     'character_codes' => '{category}-{number}',
     'character_number_digits' => 3,
-    'character_pull_number' => 'all',
+    'character_pull_number' => 'category',
 
-    'reset_character_status_on_transfer' => 0,
+    'reset_character_status_on_transfer' => 1,
     'reset_character_profile_on_transfer' => 0,
     'clear_myo_slot_name_on_approval' => 0,
 
