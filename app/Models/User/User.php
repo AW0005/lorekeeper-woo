@@ -25,6 +25,10 @@ use App\Models\Gallery\GalleryCollaborator;
 use App\Models\Gallery\GalleryFavorite;
 use App\Traits\Commenter;
 
+use App\Models\Character\CharacterDesignUpdate;
+use App\Models\Character\CharacterTransfer;
+use App\Models\Trade;
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, Commenter;
@@ -35,7 +39,8 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'name', 'alias', 'rank_id', 'email', 'password', 'is_news_unread', 'is_banned', 'has_alias', 'avatar', 'is_sales_unread', 'birthday'
+        'name', 'alias', 'rank_id', 'email', 'password', 'is_news_unread', 'is_banned', 'has_alias', 'avatar', 'is_sales_unread', 'birthday',
+        'is_deactivated', 'deactivater_id',
     ];
 
     /**
@@ -99,6 +104,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function profile()
     {
         return $this->hasOne('App\Models\User\UserProfile');
+    }
+
+    /**
+     * Gets the account that deactivated this account.
+     */
+    public function deactivater()
+    {
+        return $this->belongsTo('App\Models\User\User', 'deactivater_id');
     }
 
     /**
@@ -180,11 +193,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany('App\Models\Gallery\GalleryFavorite')->where('user_id', $this->id);
     }
-    
+
     /**
      * Get all of the user's character bookmarks.
      */
-    public function bookmarks() 
+    public function bookmarks()
     {
         return $this->hasMany('App\Models\Character\CharacterBookmark')->where('user_id', $this->id);
     }
@@ -203,7 +216,18 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function scopeVisible($query)
     {
-        return $query->where('is_banned', 0);
+        return $query->where('is_banned', 0)->where('is_deactivated', 0);
+    }
+
+    /**
+     * Scope a query to only show deactivated accounts.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDisabled($query)
+    {
+        return $query->where('is_deactivated', 1);
     }
 
     /**********************************************************************************************
@@ -299,7 +323,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getDisplayNameAttribute()
     {
-        return ($this->is_banned ? '<strike>' : '') . '<a href="'.$this->url.'" class="display-user" '.($this->rank->color ? 'style="color: #'.$this->rank->color.';"' : '').'>'.$this->name.'</a>' . ($this->is_banned ? '</strike>' : '');
+        return ($this->is_banned ? '<strike>' : '') . '<a href="'.$this->url.'" class="display-user" style="'.($this->rank->color ? 'color: #'.$this->rank->color.';' : '').($this->is_deactivated ? 'opacity: 0.5;' : '').'">'.$this->name.'</a>' . ($this->is_banned ? '</strike>' : '');
     }
 
         /**
@@ -376,7 +400,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getcheckBirthdayAttribute()
     {
-        $bday = $this->birthday; 
+        $bday = $this->birthday;
         if(!$bday || $bday->diffInYears(carbon::now()) < 13) return false;
         else return true;
     }
@@ -565,4 +589,24 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return CharacterBookmark::where('user_id', $this->id)->where('character_id', $character->id)->first();
     }
+
+
+
+    /**
+     * Check if there are any Admin Notifications
+     *
+     * @return int
+     */
+     public function hasAdminNotification($user)
+     {
+       $submissionCount = $user->hasPower('manage_submissions') ? Submission::where('status', 'Pending')->whereNotNull('prompt_id')->count() : 0;
+       $claimCount = $user->hasPower('manage_submissions') ? Submission::where('status', 'Pending')->whereNull('prompt_id')->count() : 0;
+       $designCount = $user->hasPower('manage_characters') ? CharacterDesignUpdate::characters()->where('status', 'Pending')->count() : 0;
+       $myoCount = $user->hasPower('manage_characters') ? CharacterDesignUpdate::myos()->where('status', 'Pending')->count() : 0;
+       $transferCount =  $user->hasPower('manage_characters') ? CharacterTransfer::active()->where('is_approved', 0)->count() : 0;
+       $tradeCount = $user->hasPower('manage_characters') ? Trade::where('status', 'Pending')->count() : 0;
+       $total = $submissionCount + $claimCount + $designCount + $myoCount + $transferCount + $tradeCount;
+       return $total;
+     }
+
 }

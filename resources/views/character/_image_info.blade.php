@@ -116,7 +116,7 @@
                     <div class="col-lg-4 col-md-6 col-4"><h5>Design</h5></div>
                     <div class="col-lg-8 col-md-6 col-8">
                         @foreach($image->designers as $designer)
-                            <div>{!! $designer->displayLink() !!}</div>
+                            <div>{!! $designer->displayLink() !!} {{ $designer->credit_type ? '(' . $designer->credit_type . ')' : null}}</div>
                         @endforeach
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                     <div class="col-lg-4 col-md-6 col-4"><h5>Art</h5></div>
                     <div class="col-lg-8 col-md-6 col-8">
                         @foreach($image->artists as $artist)
-                            <div>{!! $artist->displayLink() !!}</div>
+                            <div>{!! $artist->displayLink() !!} {{ $artist->credit_type ? '(' . $artist->credit_type . ')' : null}}</div>
                         @endforeach
                     </div>
                 </div>

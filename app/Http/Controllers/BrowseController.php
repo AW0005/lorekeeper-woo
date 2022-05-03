@@ -68,9 +68,42 @@ class BrowseController extends Controller
         }
 
         return view('browse.users', [
-            'users' => $query->paginate(30)->appends($request->query()),
-            'ranks' => [0 => 'Any Rank'] + Rank::orderBy('ranks.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'blacklistLink' => Settings::get('blacklist_link')
+            'users'             => $query->paginate(30)->appends($request->query()),
+            'ranks'             => [0 => 'Any Rank'] + Rank::orderBy('ranks.sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'blacklistLink'     => Settings::get('blacklist_link'),
+            'deactivatedLink'   => Settings::get('deactivated_link'),
+        ]);
+    }
+
+    /**
+     * Shows the user deactivated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getDeactivated(Request $request)
+    {
+        $canView = false;
+        $key = Settings::get('deactivated_key');
+
+        // First, check the display settings for the deactivated...
+        $privacy = Settings::get('deactivated_privacy');
+        if ( $privacy == 3 ||
+            (Auth::check() &&
+            ($privacy == 2 ||
+            ($privacy == 1 && Auth::user()->isStaff) ||
+            ($privacy == 0 && Auth::user()->isAdmin))))
+        {
+            // Next, check if the deactivated requires a key
+            $canView = true;
+            if($key != '0' && ($request->get('key') != $key)) $canView = false;
+
+        }
+        return view('browse.deactivated', [
+            'canView' => $canView,
+            'privacy' => $privacy,
+            'key' => $key,
+            'users' => $canView ? User::where('is_deactivated', 1)->orderBy('users.name')->paginate(30)->appends($request->query()) : null,
         ]);
     }
 
@@ -254,7 +287,7 @@ class BrowseController extends Controller
             'specieses' => [0 => 'Any Species'] + Species::whereNotIn('id', $subSpecies)->orderBy('specieses.sort', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes' => [0 => 'Any Subtype'] + Subtype::orderBy('subtypes.sort', 'DESC')->pluck('name', 'id')->toArray(),
             'rarities' => [0 => 'Any Rarity'] + Rarity::orderBy('rarities.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'features' => Feature::orderBy('features.name')->pluck('name', 'id')->toArray(),
+            'features' => Feature::getFeaturesByCategory(),
             'sublists' => Sublist::orderBy('sort', 'DESC')->get(),
             'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray()
         ]);
@@ -362,7 +395,7 @@ class BrowseController extends Controller
             'slots' => $query->paginate(30)->appends($request->query()),
             'specieses' => [0 => 'Any Species'] + Species::orderBy('specieses.sort', 'DESC')->pluck('name', 'id')->toArray(),
             'rarities' => [0 => 'Any Rarity'] + Rarity::orderBy('rarities.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'features' => Feature::orderBy('features.name')->pluck('name', 'id')->toArray(),
+            'features' => Feature::getFeaturesByCategory(),
             'sublists' => Sublist::orderBy('sort', 'DESC')->get(),
             'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray()
         ]);
