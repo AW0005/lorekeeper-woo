@@ -101,6 +101,7 @@ return [
         'full_name' => 'Discord',
         'display_name' => 'discord',
         'icon' => 'fab fa-discord',
+        'regex' => '/discord\.com\/([A-Za-z0-9_-]+)/',
         'auth' => 1,
         'primary_alias' => 1
     ],
