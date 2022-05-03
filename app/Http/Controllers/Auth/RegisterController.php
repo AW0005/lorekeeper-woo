@@ -77,8 +77,8 @@ class RegisterController extends Controller
                         $date = $value['day']."-".$value['month']."-".$value['year'];
                         $formatDate = carbon::parse($date);
                         $now = Carbon::now();
-                        if($formatDate->diffInYears($now) < 13) {
-                            $fail('You must be 13 or older to access this site.');
+                        if($formatDate->diffInYears($now) < 18) {
+                            $fail('You must be 18 or older to access this site.');
                         }
                     }
                 }
