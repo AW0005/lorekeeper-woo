@@ -48,6 +48,9 @@ return [
     // Group Traits By Category - Uri
     'traits_by_category' => 1,
 
+    // Scroll To Top - Uri
+    'scroll_to_top' => 1, // 1 - On, 0 - off
+
     // Character Reward Expansion - Uri
     'character_reward_expansion' => [
         'expanded' => 1,
