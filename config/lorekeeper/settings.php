@@ -106,7 +106,7 @@ return [
     |       Default: 0/Disabled, 1 to enable.
     |
     */
-    'character_codes' => '{category}-{number}',
+    'character_codes' => '{category}-{year}-{number}',
     'character_number_digits' => 3,
     'character_pull_number' => 'category',
 
@@ -136,10 +136,10 @@ return [
     | 'masterlist_image_background' => 'png',
     |
     */
-    'watermark_masterlist_images' => 0,
-    'masterlist_image_dimension' => 0,
+    'watermark_masterlist_images' => 1,
+    'masterlist_image_dimension' => 600,
     'masterlist_image_format' => null,
-    'masterlist_image_background' => '#ffffff',
+    'masterlist_image_background' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -153,7 +153,7 @@ return [
     | Images above this cap in either dimension will be resized to suit. Enter "0" to disable resizing.
     |
     */
-    'store_masterlist_fullsizes' => 0,
+    'store_masterlist_fullsizes' => 1,
     'masterlist_fullsizes_cap' => 0,
 
     /*
@@ -189,7 +189,7 @@ return [
     | Simply change to "1" to enable, or keep at "0" to disable.
     |
     */
-    'masterlist_image_automation' => 0,
+    'masterlist_image_automation' => 1,
 
     /*
     |--------------------------------------------------------------------------
@@ -208,7 +208,7 @@ return [
     | Shop Purchase Limit
     |--------------------------------------------------------------------------
     |
-    | This is an arbitrary upper limit on how many items a uses can buy in a
+    | This is an arbitrary upper limit on how many items a user can buy in a
     | single shop transaction.
     |
     */
