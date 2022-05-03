@@ -57,4 +57,6 @@ return [
         'default_recipient' => 0, // 0 to default to the character's owner (if a user), 1 to default to the submission user.
     ],
 
+    // Extra Image Credits - Newt
+    'extra_image_credits' => 1,
 ];

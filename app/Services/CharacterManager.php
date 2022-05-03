@@ -298,7 +298,8 @@ class CharacterManager extends Service
                         'character_image_id' => $image->id,
                         'type' => 'Designer',
                         'url' => $data['designer_url'][$key],
-                        'user_id' => $id
+                        'user_id' => $id,
+                        'credit_type' => isset($data['designer_type'][$key]) ? $data['designer_type'][$key] : null
                     ]);
             }
             foreach($data['artist_id'] as $key => $id) {
@@ -307,7 +308,8 @@ class CharacterManager extends Service
                         'character_image_id' => $image->id,
                         'type' => 'Artist',
                         'url' => $data['artist_url'][$key],
-                        'user_id' => $id
+                        'user_id' => $id,
+                        'credit_type' => isset($data['artist_type'][$key]) ? $data['artist_type'][$key] : null
                     ]);
             }
 
@@ -825,7 +827,8 @@ class CharacterManager extends Service
                         'character_image_id' => $image->id,
                         'type' => 'Designer',
                         'url' => $data['designer_url'][$key],
-                        'user_id' => $id
+                        'user_id' => $id,
+                        'credit_type' => isset($data['designer_type'][$key]) ? $data['designer_type'][$key] : null
                     ]);
             }
             foreach($data['artist_id'] as $key => $id) {
@@ -834,7 +837,8 @@ class CharacterManager extends Service
                         'character_image_id' => $image->id,
                         'type' => 'Artist',
                         'url' => $data['artist_url'][$key],
-                        'user_id' => $id
+                        'user_id' => $id,
+                        'credit_type' => isset($data['artist_type'][$key]) ? $data['artist_type'][$key] : null
                     ]);
             }
 
@@ -1884,7 +1888,8 @@ is_object($sender) ? $sender->id : null,
                         'type' => 'Designer',
                         'character_type' => 'Update',
                         'url' => $data['designer_url'][$key],
-                        'user_id' => $id
+                        'user_id' => $id,
+                        'credit_type' => isset($data['designer_type'][$key]) ? $data['designer_type'][$key] : null
                     ]);
             }
             foreach($data['artist_id'] as $key => $id) {
@@ -1894,7 +1899,8 @@ is_object($sender) ? $sender->id : null,
                         'type' => 'Artist',
                         'character_type' => 'Update',
                         'url' => $data['artist_url'][$key],
-                        'user_id' => $id
+                        'user_id' => $id,
+                        'credit_type' => isset($data['artist_type'][$key]) ? $data['artist_type'][$key] : null
                     ]);
             }
 

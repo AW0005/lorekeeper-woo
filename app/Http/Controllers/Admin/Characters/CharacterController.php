@@ -112,8 +112,8 @@ class CharacterController extends Controller
             'description', 'is_visible', 'is_giftable', 'is_tradeable', 'is_sellable',
             'sale_value', 'transferrable_at', 'use_cropper',
             'x0', 'x1', 'y0', 'y1',
-            'designer_id', 'designer_url',
-            'artist_id', 'artist_url',
+            'designer_id', 'designer_url', 'designer_type',
+            'artist_id', 'artist_url', 'artist_type',
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data',
             'image', 'thumbnail', 'image_description'
         ]);
@@ -142,8 +142,8 @@ class CharacterController extends Controller
             'description', 'is_visible', 'is_giftable', 'is_tradeable', 'is_sellable',
             'sale_value', 'transferrable_at', 'use_cropper',
             'x0', 'x1', 'y0', 'y1',
-            'designer_id', 'designer_url',
-            'artist_id', 'artist_url',
+            'designer_id', 'designer_url', 'designer_type',
+            'artist_id', 'artist_url', 'artist_type',
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data',
             'image', 'thumbnail'
         ]);
