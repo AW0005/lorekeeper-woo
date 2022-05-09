@@ -11,7 +11,7 @@
       <div class="col-sm-6">
           <div class="card mb-3">
               <div class="card-body">
-                  <h5 class="card-title">Prompt Submissions @if($submissionCount)<span class="badge badge-primary">{{ $submissionCount }}</span>@endif</h5>
+                  <h5 class="card-title">Prompt Submissions @if($submissionCount)<span class="badge badge-danger">{{ $submissionCount }}</span>@endif</h5>
                   <p class="card-text">
                       @if($submissionCount)
                           {{ $submissionCount }} submission{{ $submissionCount == 1 ? '' : 's' }} awaiting processing.
@@ -28,7 +28,7 @@
       <div class="col-sm-6">
           <div class="card mb-3">
               <div class="card-body">
-                  <h5 class="card-title">Claims @if($claimCount)<span class="badge badge-primary">{{ $claimCount }}</span>@endif</h5>
+                  <h5 class="card-title">Claims @if($claimCount)<span class="badge badge-danger">{{ $claimCount }}</span>@endif</h5>
                   <p class="card-text">
                       @if($claimCount)
                           {{ $claimCount }} claim{{ $claimCount == 1 ? '' : 's' }} awaiting processing.
@@ -47,7 +47,7 @@
       <div class="col-sm-6">
           <div class="card mb-3">
               <div class="card-body">
-                  <h5 class="card-title">Design Updates @if($designCount)<span class="badge badge-primary">{{ $designCount }}</span>@endif</h5>
+                  <h5 class="card-title">Design Updates @if($designCount)<span class="badge badge-danger">{{ $designCount }}</span>@endif</h5>
                   <p class="card-text">
                       @if($designCount)
                           {{ $designCount }} design update{{ $designCount == 1 ? '' : 's' }} awaiting processing.
@@ -64,7 +64,7 @@
       <div class="col-sm-6">
           <div class="card mb-3">
               <div class="card-body">
-                  <h5 class="card-title">MYO Approvals @if($myoCount)<span class="badge badge-primary">{{ $myoCount }}</span>@endif</h5>
+                  <h5 class="card-title">MYO Approvals @if($myoCount)<span class="badge badge-danger">{{ $myoCount }}</span>@endif</h5>
                   <p class="card-text">
                       @if($myoCount)
                           {{ $myoCount }} MYO slot{{ $myoCount == 1 ? '' : 's' }} awaiting processing.
@@ -82,7 +82,7 @@
           <div class="col-sm-6">
               <div class="card mb-3">
                   <div class="card-body">
-                      <h5 class="card-title">Character Transfers @if($transferCount + $tradeCount)<span class="badge badge-primary">{{ $transferCount + $tradeCount }}</span>@endif</h5>
+                      <h5 class="card-title">Character Transfers @if($transferCount + $tradeCount)<span class="badge badge-danger">{{ $transferCount + $tradeCount }}</span>@endif</h5>
                       <p class="card-text">
                           @if($transferCount + $tradeCount)
                               {{ $transferCount + $tradeCount }} character transfer{{$transferCount + $tradeCount == 1 ? '' : 's' }} and/or trade{{$transferCount + $tradeCount == 1 ? '' : 's' }} awaiting processing.
@@ -102,7 +102,7 @@
       <div class="col-sm-6">
         <div class="card mb-3">
             <div class="card-body">
-                <h5 class="card-title">Reports @if($reportCount||$assignedReportCount)<span class="badge badge-primary">{{ $reportCount + $assignedReportCount }}</span>@endif</h5>
+                <h5 class="card-title">Reports @if($reportCount||$assignedReportCount)<span class="badge badge-danger">{{ $reportCount + $assignedReportCount }}</span>@endif</h5>
                 <p class="card-text">
                     @if($reportCount||$assignedReportCount)
                         @if($reportCount)
@@ -135,14 +135,14 @@
       </div>
     @endif
     @if($galleryRequireApproval)
-        <div class="col-sm-6">        
+        <div class="col-sm-6">
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Gallery Submissions @if($gallerySubmissionCount)<span class="badge badge-primary">{{ $gallerySubmissionCount }}</span>@endif</h5>
+                    <h5 class="card-title">Gallery Submissions @if($gallerySubmissionCount)<span class="badge badge-danger">{{ $gallerySubmissionCount }}</span>@endif</h5>
                     <p class="card-text">
                         @if($gallerySubmissionCount)
                             {{ $gallerySubmissionCount }} gallery submission{{$gallerySubmissionCount == 1 ? '' : 's' }} awaiting processing.
-                        @else 
+                        @else
                             The gallery submission queue is clear. Hooray!
                         @endif
                     </p>
@@ -154,14 +154,14 @@
         </div>
     @endif
     @if($galleryCurrencyAwards)
-        <div class="col-sm-6">        
+        <div class="col-sm-6">
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Gallery Currency Awards @if($galleryAwardCount)<span class="badge badge-primary">{{ $galleryAwardCount }}</span>@endif</h5>
+                    <h5 class="card-title">Gallery Currency Awards @if($galleryAwardCount)<span class="badge badge-danger">{{ $galleryAwardCount }}</span>@endif</h5>
                     <p class="card-text">
                         @if($galleryAwardCount)
                             {{ $galleryAwardCount }} gallery submission{{$galleryAwardCount == 1 ? '' : 's' }} awaiting currency rewards.
-                        @else 
+                        @else
                             The gallery currency award queue is clear. Hooray!
                         @endif
                     </p>

@@ -70,7 +70,7 @@
       </div>
       <div class="col-6 col-md-3">{!! pretty_date($submission->created_at) !!}</div>
       <div class="col-3 col-md-1">
-        <span class="btn btn-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ $submission->status }}</span>
+        <span class="badge badge-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : 'danger') }} badge-lg">{{ $submission->status }}</span>
       </div>
       <div class="col-3 col-md-1"><a href="{{ $submission->adminUrl }}" class="btn btn-primary btn-sm py-0 px-1">Details</a></div>
     </div>

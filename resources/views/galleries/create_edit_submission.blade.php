@@ -128,7 +128,7 @@
                                             <div class="d-flex">{!! $collaborator->has_approved ? '<div class="btn btn-success mb-2 mr-2" data-toggle="tooltip" title="Has Approved"><i class="fas fa-check"></i></div>' : '' !!}{!! Form::select('collaborator_id[]', $users, $collaborator->user_id, ['class' => 'form-control mr-2 collaborator-select original', 'placeholder' => 'Select User']) !!}</div>
                                             <div class="d-flex">
                                                 {!! Form::text('collaborator_data[]', $collaborator->data, ['class' => 'form-control mr-2', 'placeholder' => 'Role (Sketch, Lines, etc.)']) !!}
-                                                <a href="#" class="remove-collaborator btn btn-danger mb-2">×</a>
+                                                <a href="#" class="remove-collaborator btn btn-danger mb-2"><i class="fas fa-times"></i></a>
                                             </div>
                                         </div>
                                     @endforeach
@@ -162,7 +162,7 @@
                                             <div class="d-flex">{!! Form::select('participant_id[]', $users, $participant->user_id, ['class' => 'form-control mr-2 participant-select original', 'placeholder' => 'Select User']) !!}</div>
                                             <div class="d-flex">
                                                 {!! Form::select('participant_type[]', ['Gift' => 'Gift For', 'Trade' => 'Traded For', 'Comm' => 'Commissioned', 'Comm (Currency)' => 'Commissioned ('.$currency->name.')'], $participant->type, ['class' => 'form-control mr-2', 'placeholder' => 'Select Role']) !!}
-                                                <a href="#" class="remove-participant btn btn-danger mb-2">×</a>
+                                                <a href="#" class="remove-participant btn btn-danger mb-2"><i class="fas fa-times"></i></a>
                                             </div>
                                         </div>
                                     @endforeach
@@ -231,14 +231,14 @@
         {!! Form::select('collaborator_id[]', $users, null, ['class' => 'form-control mr-2 collaborator-select', 'placeholder' => 'Select User']) !!}
         <div class="d-flex">
             {!! Form::text('collaborator_data[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Role (Sketch, Lines, etc.)']) !!}
-            <a href="#" class="remove-collaborator btn btn-danger mb-2">×</a>
+            <a href="#" class="remove-collaborator btn btn-danger mb-2"><i class="fas fa-times"></i></a>
         </div>
     </div>
     <div class="participant-row hide mb-2">
         {!! Form::select('participant_id[]', $users, null, ['class' => 'form-control mr-2 participant-select', 'placeholder' => 'Select User']) !!}
         <div class="d-flex">
             {!! Form::select('participant_type[]', ['Gift' => 'Gift For', 'Trade' => 'Traded For', 'Comm' => 'Commissioned', 'Comm (Currency)' => 'Commissioned ('.$currency->name.')'], null, ['class' => 'form-control mr-2', 'placeholder' => 'Select Role']) !!}
-            <a href="#" class="remove-participant btn btn-danger mb-2">×</a>
+            <a href="#" class="remove-participant btn btn-danger mb-2"><i class="fas fa-times"></i></a>
         </div>
     </div>
 

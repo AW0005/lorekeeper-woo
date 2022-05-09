@@ -47,13 +47,15 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
+    <!-- Adobe Fonts -->
+    <link rel="stylesheet" href="https://use.typekit.net/wic8npe.css">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/lorekeeper.css') }}" rel="stylesheet">
 
     {{-- Font Awesome --}}
-    <link href="{{ asset('css/all.min.css') }}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/9254973c80.js" crossorigin="anonymous"></script>
 
     {{-- jQuery UI --}}
     <link href="{{ asset('css/jquery-ui.min.css') }}" rel="stylesheet">
@@ -75,7 +77,6 @@
 </head>
 <body>
     <div id="app">
-        <div class="site-header-image" id="header" style="background-image: url('{{ asset('images/header.png') }}');"></div>
         @include('layouts._nav')
         @if ( View::hasSection('sidebar') )
 			<div class="site-mobile-header bg-secondary"><a href="#" class="btn btn-sm btn-outline-light" id="mobileMenuButton">Menu <i class="fas fa-caret-right ml-1"></i></a></div>
@@ -101,9 +102,10 @@
                         @yield('content')
                     </div>
 
-                    <div class="site-footer mt-4" id="footer">
+
+                </div>
+                <div class="site-footer mt-4" id="footer">
                             @include('layouts._footer')
-                    </div>
                 </div>
             </div>
 

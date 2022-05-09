@@ -1,8 +1,12 @@
 :root {
     --blue: #11d8f1;
     --purple: #b773e2;
+    --light-purple: #cd98ed;
+    --dark-purple: #734690;
     --pink: #d96cb6;
     --red: #f57c7c;
+    --dark-red: #d84f4f;
+    --green: #549a43;
     --coal: #313236;
     --white: #fff;
 }
@@ -24,6 +28,118 @@
 
 /**************************************************************************************************
 
+    Font-Awesome Overrides
+
+**************************************************************************************************/
+
+.fas.fa-times {
+    margin-left: 2px;
+    margin-top: 6px;
+}
+
+/**************************************************************************************************
+
+    Bootstrap Overrides
+
+**************************************************************************************************/
+
+.bg-danger {
+    background-color: var(--red) !important;
+    filter: brightness(100%) !important;
+    color: var(--coal) !important;
+}
+
+.btn {
+    padding: 3px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.2ch;
+}
+
+.btn.btn-primary {
+    background-color: var(--coal);
+    border: 3px solid var(--coal);
+}
+
+.badge {
+    vertical-align: text-top;
+}
+
+.badge-primary {
+    background-color: var(--coal);
+}
+
+.badge-success {
+    background-color: var(--green);
+}
+
+.badge-danger {
+    background-color: var(--dark-red);
+}
+
+.badge-lg {
+    font-size: 10px;
+}
+
+.alert-warning {
+    background-color: var(--light-purple);
+    color: var(--dark-purple);
+}
+
+.alert-danger {
+    background-color: var(--red);
+}
+
+.btn.btn-danger {
+    background-color: var(--dark-red);
+    border: 3px double var(--dark-red);
+}
+
+.btn.btn-success {
+    background-color: var(--green);
+    border-color: var(--green);
+}
+
+.btn.btn-outline-success {
+    color: var(--green);
+    border-color: var(--green);
+}
+
+.btn.btn-outline-success:hover {
+    background-color: var(--green);
+    color: var(--white);
+    border-color: var(--green);
+}
+
+.btn.btn-outline-primary,
+.btn.btn-outline-info {
+    color: var(--coal);
+    border-color: var(--coal);
+}
+
+.btn.btn-outline-primary:hover,
+.btn.btn-outline-info:hover {
+    background-color: var(--coal);
+    color: var(--white);
+    border-color: var(--coal);
+}
+
+.dropdown-menu {
+    border-radius: 0;
+    border: none;
+    background-color: var(--coal);
+}
+
+.dropdown-menu .dropdown-item {
+    color: var(--light-purple);
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: var(--coal);
+    color: var(--purple);
+}
+
+/**************************************************************************************************
+
     Base styles
 
 **************************************************************************************************/
@@ -39,8 +155,10 @@ h5,
 .h4,
 .h5 {
     text-transform: uppercase;
-    font-family: Roboto Condensed, serif;
-    font-weight: bold;
+    font-family: neue-haas-grotesk-display, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08ch;
+    text-rendering: geometricPrecision;
 }
 
 h1 a,
@@ -79,9 +197,10 @@ a:hover {
 
 body {
     background-color: transparent;
-    font-family: Lato, sans-serif;
+    font-family: neue-haas-grotesk-text, sans-serif;
     min-height: 100vh;
     font-size: 80%;
+    text-rendering: geometricPrecision;
 }
 
 /**************************************************************************************************
@@ -109,7 +228,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #ddd;
+    background-color: var(--coal);
 }
 
 main {
@@ -126,20 +245,62 @@ main > .row {
     box-shadow: 0px 0px 6px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    border-radius: 20px;
+    margin: 10px 0;
 }
 
 /* Header */
 
-.site-header-image {
-    /*background-color: #eee;*/
-    background-repeat: repeat;
-    min-height: 200px;
+.navbar {
+    background-color: var(--coal) !important;
 }
 
-.navbar .navbar-brand,
+.navbar .navbar-brand img {
+    height: 50px;
+    margin-top: -5px;
+    margin-right: 5px;
+    image-resolution: 100dpi;
+}
+
+.navbar .navbar-brand {
+    font-family: neue-haas-grotesk-display, sans-serif;
+    font-size: 42px;
+    line-height: 1.2;
+    font-weight: 900;
+    font-style: normal;
+    letter-spacing: 0.15ch;
+
+    color: var(--white);
+    -webkit-text-fill-color: var(--coal);
+    -webkit-text-stroke-width: 1.2px;
+    -webkit-text-stroke-color: var(--blue);
+    text-rendering: geometricPrecision;
+    padding: 0;
+}
+
 .navbar .nav-item {
     text-transform: uppercase;
-    font-family: Roboto Condensed, serif;
+    font-family: neue-haas-grotesk-display, sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: 0.12ch;
+}
+
+.navbar .nav-item .nav-link {
+    white-space: nowrap;
+    color: var(--light-purple) !important;
+}
+
+.navbar .nav-item .nav-link:hover {
+    color: var(--purple) !important;
+}
+
+.navbar .nav-item .nav-link.text-warning {
+    color: var(--red) !important;
+}
+
+.navbar .nav-item .nav-link.text-warning:hover {
+    color: var(--dark-red) !important;
 }
 
 .navbar .row {
@@ -172,12 +333,12 @@ main > .row {
 .sidebar .sidebar-header,
 .sidebar .sidebar-section .sidebar-section-header {
     text-transform: uppercase;
-    font-family: Roboto Condensed, serif;
+    font-family: neue-haas-grotesk-text, sans-serif;
     font-weight: bold;
 }
 
 .sidebar .sidebar-header {
-    background-color: #343a40;
+    background-color: var(--dark-purple);
 }
 .sidebar .sidebar-header a {
     color: white;
@@ -195,7 +356,7 @@ main > .row {
 
 .sidebar a {
     text-transform: uppercase;
-    font-family: Roboto Condensed, serif;
+    font-family: neue-haas-grotesk-text, sans-serif;
     color: rgba(0, 0, 0, 0.4);
 }
 .sidebar a:hover {
@@ -214,7 +375,7 @@ main > .row {
 .sidebar a.active,
 .sidebar a.active:hover {
     color: white;
-    background-color: #343a40;
+    background-color: var(--dark-purple);
 }
 
 .site-mobile-header {
@@ -224,7 +385,7 @@ main > .row {
 
 @media (max-width: 767px) {
     .site-mobile-header {
-        top: 54px !important;
+        top: 78px !important;
     }
 
     .timestamp {
@@ -240,7 +401,7 @@ main > .row {
     .site-mobile-header {
         display: block;
         position: fixed;
-        top: 68px;
+        top: 78px;
         z-index: 4;
         width: 100%;
     }
@@ -316,6 +477,8 @@ main > .row {
 
 .site-footer {
     text-align: center;
+    width: 100%;
+    color: var(--white);
 }
 
 .site-footer .navbar {
@@ -331,7 +494,7 @@ main > .row {
 
 .site-footer .copyright {
     padding: 0 1rem 1rem;
-    color: rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .mce-content-body {
@@ -359,7 +522,7 @@ main > .row {
 }
 .nav-tabs .nav-link {
     text-transform: uppercase;
-    font-family: Roboto Condensed, serif;
+    font-family: neue-haas-grotesk-text, sans-serif;
 }
 
 .display-user,
@@ -377,7 +540,7 @@ main > .row {
 .breadcrumb {
     background-color: transparent;
     padding: 0;
-    font-family: Roboto Condensed, serif;
+    font-family: neue-haas-grotesk-text, sans-serif;
     text-transform: uppercase;
     align-items: center;
 }
@@ -431,7 +594,7 @@ main > .row {
     cursor: pointer;
     padding: 0.3rem 1.25rem;
     font-size: 0.9rem;
-    font-family: Roboto Condensed, serif;
+    font-family: neue-haas-grotesk-text, sans-serif;
     color: inherit;
     text-transform: uppercase;
 }
@@ -490,7 +653,7 @@ main > .row {
 }
 
 .sortable .handle {
-    color: #343a40;
+    color: var(--coal);
 }
 .sortable .sortable-placeholder {
     background-color: rgba(0, 0, 0, 0.1);
@@ -553,6 +716,12 @@ tr.accountbound {
 }
 
 /* TRANSFERS *************************************************************************************/
+
+.submission-character .remove-character {
+    position: absolute;
+    right: 10px;
+    top: 6px;
+}
 
 .transfer-row,
 .submission-character-row {

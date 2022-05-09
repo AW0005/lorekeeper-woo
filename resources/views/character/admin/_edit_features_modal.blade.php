@@ -21,7 +21,7 @@
                 <div class="d-flex mb-2">
                     {!! Form::select('feature_id[]', $features, $feature->feature_id, ['class' => 'form-control mr-2 feature-select original', 'placeholder' => 'Select Trait']) !!}
                     {!! Form::text('feature_data[]', $feature->data, ['class' => 'form-control mr-2', 'placeholder' => 'Extra Info (Optional)']) !!}
-                    <a href="#" class="remove-feature btn btn-danger mb-2">×</a>
+                    <a href="#" class="remove-feature btn btn-danger mb-2"><i class="fas fa-times"></i></a>
                 </div>
             @endforeach
         </div>
@@ -29,7 +29,7 @@
         <div class="feature-row hide mb-2">
             {!! Form::select('feature_id[]', $features, null, ['class' => 'form-control mr-2 feature-select', 'placeholder' => 'Select Trait']) !!}
             {!! Form::text('feature_data[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Extra Info (Optional)']) !!}
-            <a href="#" class="remove-feature btn btn-danger mb-2">×</a>
+            <a href="#" class="remove-feature btn btn-danger mb-2"><i class="fas fa-times"></i></a>
         </div>
     </div>
 
