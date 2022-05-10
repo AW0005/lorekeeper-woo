@@ -1,6 +1,6 @@
 
 <script>
-$( document ).ready(function() {    
+$( document ).ready(function() {
     var $lootTable  = $('#lootTableBody');
     var $lootRow = $('#lootRow').find('.loot-row');
     var $itemSelect = $('#lootRowData').find('.item-select');
@@ -12,7 +12,6 @@ $( document ).ready(function() {
         var $raffleSelect = $('#lootRowData').find('.raffle-select');
     @endif
 
-    $('#lootTableBody .selectize').selectize();
     attachRemoveListener($('#lootTableBody .remove-loot-button'));
 
     $('#addLoot').on('click', function(e) {
@@ -70,5 +69,5 @@ $( document ).ready(function() {
     }
 
 });
-    
+
 </script>

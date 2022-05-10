@@ -48,7 +48,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     {!! Form::label('Character Category') !!}
-                    <select name="character_category_id" id="category" class="form-control" placeholder="Select Category">
+                    <select name="character_category_id" id="category" class="form-control selectize" placeholder="Select Category">
                         <option value="" data-code="">Select Category</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}" data-code="{{ $category->code }}" {{ old('character_category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }} ({{ $category->code }})</option>
@@ -224,17 +224,17 @@
 
     <div class="form-group">
         {!! Form::label('Species') !!} @if($isMyo) {!! add_help('This will lock the slot into a particular species. Leave it blank if you would like to give the user a choice.') !!} @endif
-        {!! Form::select('species_id', $specieses, old('species_id'), ['class' => 'form-control', 'id' => 'species']) !!}
+        {!! Form::select('species_id', $specieses, old('species_id'), ['class' => 'form-control selectize', 'id' => 'species']) !!}
     </div>
 
     <div class="form-group" id="subtypes">
         {!! Form::label('Subtype (Optional)') !!} @if($isMyo) {!! add_help('This will lock the slot into a particular subtype. Leave it blank if you would like to give the user a choice, or not select a subtype. The subtype must match the species selected above, and if no species is specified, the subtype will not be applied.') !!} @endif
-        {!! Form::select('subtype_id', $subtypes, old('subtype_id'), ['class' => 'form-control disabled', 'id' => 'subtype']) !!}
+        {!! Form::select('subtype_id', [0 => 'Pick a Species First'], old('subtype_id'), ['class' => 'form-control disabled selectize', 'id' => 'subtype']) !!}
     </div>
 
     <div class="form-group">
         {!! Form::label('Character Rarity') !!} @if($isMyo) {!! add_help('This will lock the slot into a particular rarity. Leave it blank if you would like to give the user more choices.') !!} @endif
-        {!! Form::select('rarity_id', $rarities, old('rarity_id'), ['class' => 'form-control']) !!}
+        {!! Form::select('rarity_id', $rarities, old('rarity_id'), ['class' => 'form-control selectize']) !!}
     </div>
 
     <div class="form-group">
@@ -266,12 +266,24 @@
 @endif
 
 <script>
+    const subTypes = <?php echo json_encode($subtypes); ?>;
     $( "#species" ).change(function() {
-      var species = $('#species').val();
-      var myo = '<?php echo($isMyo); ?>';
-      $.ajax({
-        type: "GET", url: "{{ url('admin/masterlist/check-subtype') }}?species="+species+"&myo="+myo, dataType: "text"
-      }).done(function (res) { $("#subtypes").html(res); }).fail(function (jqXHR, textStatus, errorThrown) { alert("AJAX call failed: " + textStatus + ", " + errorThrown); });
+        var species = $('#species').val();
+        const dd = $('#subtypes select')[0].selectize;
+
+        dd.clear();
+        dd.clearOptions();
+
+        let newSet = subTypes.reduce((filtered, subtype, index) => {
+            if (subtype.species_id === parseInt(species, 10) || !subtype.species_id) {
+                filtered.push({text: subtype.name, value: subtype.id || 0});
+            }
+            return filtered;
+        }, []);
+
+        dd.addOption(newSet);
+        dd.setValue(0);
+        dd.refreshOptions(false);
     });
 </script>
 

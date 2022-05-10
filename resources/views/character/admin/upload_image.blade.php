@@ -185,7 +185,6 @@ $( document ).ready(function() {
 
     // Designers and artists //////////////////////////////////////////////////////////////////////
 
-    $('.selectize').selectize();
     $('.add-designer').on('click', function(e) {
         e.preventDefault();
         addDesignerRow($(this));

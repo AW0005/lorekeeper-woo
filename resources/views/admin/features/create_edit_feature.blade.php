@@ -46,19 +46,19 @@
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('Trait Category (Optional)') !!}
-            {!! Form::select('feature_category_id', $categories, $feature->feature_category_id, ['class' => 'form-control']) !!}
+            {!! Form::select('feature_category_id', $categories, $feature->feature_category_id, ['class' => 'form-control selectize']) !!}
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('Species Restriction (Optional)') !!}
-            {!! Form::select('species_id', $specieses, $feature->species_id, ['class' => 'form-control']) !!}
+            {!! Form::select('species_id', $specieses, $feature->species_id, ['class' => 'form-control selectize']) !!}
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('Subtype (Optional)') !!} {!! add_help('This is cosmetic and does not limit choice of traits in selections.') !!}
-            {!! Form::select('subtype_id', $subtypes, $feature->subtype_id, ['class' => 'form-control']) !!}
+            {!! Form::select('subtype_id', array_column($subtypes, 'name'), $feature->subtype_id, ['class' => 'form-control selectize']) !!}
         </div>
     </div>
 </div>
@@ -87,12 +87,34 @@
 @section('scripts')
 @parent
 <script>
-$( document ).ready(function() {    
+$( document ).ready(function() {
     $('.delete-feature-button').on('click', function(e) {
         e.preventDefault();
         loadModal("{{ url('admin/data/traits/delete') }}/{{ $feature->id }}", 'Delete Trait');
     });
 });
-    
+
 </script>
+
+<script>
+    const subTypes = <?php echo json_encode($subtypes); ?>;
+
+    $("[name=species_id]").change(() => {
+        var species = $("[name=species_id]").val();
+        const dd = $('[name=subtype_id]')[0].selectize;
+        dd.clearOptions();
+
+        let newSet = subTypes.reduce((filtered, subtype, index) => {
+            if (subtype.species_id === parseInt(species, 10) || !subtype.species_id || species === 'none') {
+                filtered.push({text: subtype.name, value: subtype.id});
+            }
+            return filtered;
+        }, []);
+
+        dd.addOption(newSet);
+        dd.refreshOptions(false);
+    });
+</script>
+
 @endsection
+

@@ -30,7 +30,6 @@ $( document ).ready(function() {
 
     // Designers and artists //////////////////////////////////////////////////////////////////////
 
-    $('.selectize').selectize();
     $('.add-designer').on('click', function(e) {
         e.preventDefault();
         addDesignerRow($(this));
@@ -47,7 +46,7 @@ $( document ).ready(function() {
         $trigger.css({ visibility: 'hidden' });
         $clone.find('.designer-select').selectize();
     }
-    
+
     $('.add-artist').on('click', function(e) {
         e.preventDefault();
         addArtistRow($(this));
@@ -66,7 +65,7 @@ $( document ).ready(function() {
     }
 
     // Traits /////////////////////////////////////////////////////////////////////////////////////
-    
+
     $('.initial.feature-select').selectize({
         render: {
             item: featureSelectedRender
@@ -173,7 +172,7 @@ $( document ).ready(function() {
         $y1.val(values.points[3]);
     }
 
-    
+
 });
-    
+
 </script>

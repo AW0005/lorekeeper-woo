@@ -95,7 +95,4 @@
 @endsection
 @section('scripts')
     @parent
-    <script>
-        $('.selectize').selectize();
-    </script>
 @endsection

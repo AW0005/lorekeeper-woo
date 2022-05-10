@@ -28,6 +28,29 @@
 
 /**************************************************************************************************
 
+    Selectize Overrides
+
+**************************************************************************************************/
+
+div.selectize-control.single .selectize-input:after,
+div.selectize-control.single .selectize-input.dropdown-active:after {
+    right: 9px;
+}
+
+div.selectize-input {
+    padding-right: 24px;
+}
+
+div.selectize-input input {
+    display: none !important;
+}
+
+div.form-control.selectize-control {
+    height: calc(2.19rem + 2px); /* bootstrap form controls I think */
+}
+
+/**************************************************************************************************
+
     Font-Awesome Overrides
 
 **************************************************************************************************/
@@ -42,6 +65,12 @@
     Bootstrap Overrides
 
 **************************************************************************************************/
+
+.toggle-group .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .bg-danger {
     background-color: var(--red) !important;

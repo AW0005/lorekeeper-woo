@@ -82,11 +82,4 @@
     </ul>
 @endif
 
-<script>
-    $(document).ready(function() {
-        $('.selectize').selectize();
-    });
-
-</script>
-
 @endsection

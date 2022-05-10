@@ -1,15 +1,15 @@
 <div>
     {!! Form::open(['method' => 'GET']) !!}
-        <div class="form-inline justify-content-end">
-            <div class="form-group mr-3 mb-3">
+        <div class="form-inline justify-content-end mb-3">
+            <div class="form-group mr-3">
                 {!! Form::label('name', 'Character Name/Code: ', ['class' => 'mr-2']) !!}
                 {!! Form::text('name', Request::get('name'), ['class' => 'form-control']) !!}
             </div>
-            <div class="form-group mb-3">
-                {!! Form::select('rarity_id', $rarities, Request::get('rarity_id'), ['class' => 'form-control mr-3']) !!}
+            <div class="form-group">
+                {!! Form::select('rarity_id', $rarities, Request::get('rarity_id'), ['class' => 'form-control selectize mr-3']) !!}
             </div>
-            <div class="form-group mb-3">
-                {!! Form::select('species_id', $specieses, Request::get('species_id'), ['class' => 'form-control']) !!}
+            <div class="form-group">
+                {!! Form::select('species_id', $specieses, Request::get('species_id'), ['class' => 'form-control selectize']) !!}
             </div>
         </div>
         <div class="text-right mb-3"><a href="#advancedSearch" class="btn btn-sm btn-outline-info" data-toggle="collapse">Show Advanced Search Options <i class="fas fa-caret-down"></i></a></div>
@@ -18,11 +18,11 @@
                 @if(!$isMyo)
                     <div class="masterlist-search-field">
                         {!! Form::label('character_category_id', 'Category: ') !!}
-                        {!! Form::select('character_category_id', $categories, Request::get('character_category_id'), ['class' => 'form-control']) !!}
+                        {!! Form::select('character_category_id', $categories, Request::get('character_category_id'), ['class' => 'form-control selectize']) !!}
                     </div>
-                    <div class="masterlist-search-field">
+                    <div id="subtypes" class="masterlist-search-field">
                         {!! Form::label('subtype_id', 'Species Subtype: ') !!}
-                        {!! Form::select('subtype_id', $subtypes, Request::get('subtype_id'), ['class' => 'form-control']) !!}
+                        {!! Form::select('subtype_id', array_column($subtypes, 'name'), Request::get('subtype_id'), ['class' => 'form-control selectize']) !!}
                     </div>
                 @endif
                 <hr/>
@@ -63,11 +63,11 @@
                 @if(!$isMyo)
                     <div class="masterlist-search-field">
                         {!! Form::label('is_gift_art_allowed', 'Gift Art Status: ') !!}
-                        {!! Form::select('is_gift_art_allowed', [0 => 'Any', 2 => 'Ask First', 1 => 'Yes', 3 => 'Yes OR Ask First'], Request::get('is_gift_art_allowed'), ['class' => 'form-control']) !!}
+                        {!! Form::select('is_gift_art_allowed', [0 => 'Any', 2 => 'Ask First', 1 => 'Yes', 3 => 'Yes OR Ask First'], Request::get('is_gift_art_allowed'), ['class' => 'form-control selectize']) !!}
                     </div>
                     <div class="masterlist-search-field">
                         {!! Form::label('is_gift_writing_allowed', 'Gift Writing Status: ') !!}
-                        {!! Form::select('is_gift_writing_allowed', [0 => 'Any', 2 => 'Ask First', 1 => 'Yes', 3 => 'Yes OR Ask First'], Request::get('is_gift_writing_allowed'), ['class' => 'form-control']) !!}
+                        {!! Form::select('is_gift_writing_allowed', [0 => 'Any', 2 => 'Ask First', 1 => 'Yes', 3 => 'Yes OR Ask First'], Request::get('is_gift_writing_allowed'), ['class' => 'form-control selectize']) !!}
                     </div>
                 @endif
                 <br />
@@ -113,7 +113,7 @@
         <div class="form-inline justify-content-end mb-3">
             <div class="form-group mr-3">
                 {!! Form::label('sort', 'Sort: ', ['class' => 'mr-2']) !!}
-                {!! Form::select('sort', ['number_desc' => 'Number Descending', 'number_asc' => 'Number Ascending', 'id_desc' => 'Newest First', 'id_asc' => 'Oldest First', 'sale_value_desc' => 'Highest Sale Value', 'sale_value_asc' => 'Lowest Sale Value'], Request::get('sort'), ['class' => 'form-control']) !!}
+                {!! Form::select('sort', ['number_desc' => 'Number Descending', 'number_asc' => 'Number Ascending', 'id_desc' => 'Newest First', 'id_asc' => 'Oldest First', 'sale_value_desc' => 'Highest Sale Value', 'sale_value_asc' => 'Lowest Sale Value'], Request::get('sort'), ['class' => 'form-control selectize']) !!}
             </div>
             {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
         </div>
@@ -183,3 +183,23 @@
 {!! $characters->render() !!}
 
 <div class="text-center mt-4 small text-muted">{{ $characters->total() }} result{{ $characters->total() == 1 ? '' : 's' }} found.</div>
+
+<script>
+    const subTypes = <?php echo json_encode($subtypes); ?>;
+
+    $("[name=species_id]").change(() => {
+        var species = $("[name=species_id]").val();
+        const dd = $('#subtypes select')[0].selectize;
+        dd.clearOptions();
+
+        let newSet = subTypes.reduce((filtered, subtype, index) => {
+            if (subtype.species_id === parseInt(species, 10) || !subtype.species_id || species === '0') {
+                filtered.push({text: subtype.name, value: subtype.id});
+            }
+            return filtered;
+        }, []);
+
+        dd.addOption(newSet);
+        dd.refreshOptions(false);
+    });
+</script>

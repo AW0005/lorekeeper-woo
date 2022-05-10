@@ -184,7 +184,6 @@
 @parent
 <script>
 $( document ).ready(function() {
-    $('.selectize').selectize();
 
     $('#promptsList').selectize({
         maxItems: 10

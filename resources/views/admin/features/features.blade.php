@@ -20,16 +20,16 @@
             {!! Form::text('name', Request::get('name'), ['class' => 'form-control', 'placeholder' => 'Name']) !!}
         </div>
         <div class="form-group mr-3 mb-3">
-            {!! Form::select('species_id', $specieses, Request::get('species_id'), ['class' => 'form-control']) !!}
+            {!! Form::select('species_id', $specieses, Request::get('species_id'), ['class' => 'form-control selectize']) !!}
         </div>
         <div class="form-group mr-3 mb-3">
-            {!! Form::select('subtype_id', $subtypes, Request::get('subtype_id'), ['class' => 'form-control']) !!}
+            {!! Form::select('subtype_id', array_column($subtypes, 'name'), Request::get('subtype_id'), ['class' => 'form-control selectize']) !!}
         </div>
         <div class="form-group mr-3 mb-3">
-            {!! Form::select('rarity_id', $rarities, Request::get('rarity_id'), ['class' => 'form-control']) !!}
+            {!! Form::select('rarity_id', $rarities, Request::get('rarity_id'), ['class' => 'form-control selectize']) !!}
         </div>
         <div class="form-group mr-3 mb-3">
-            {!! Form::select('feature_category_id', $categories, Request::get('name'), ['class' => 'form-control']) !!}
+            {!! Form::select('feature_category_id', $categories, Request::get('name'), ['class' => 'form-control selectize']) !!}
         </div>
         <div class="form-group mb-3">
             {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
@@ -68,4 +68,24 @@
 
 @section('scripts')
 @parent
+<script>
+    const subTypes = <?php echo json_encode($subtypes); ?>;
+
+    $("[name=species_id]").change(() => {
+        var species = $("[name=species_id]").val();
+        console.log(species);
+        const dd = $('[name=subtype_id]')[0].selectize;
+        dd.clearOptions();
+
+        let newSet = subTypes.reduce((filtered, subtype, index) => {
+            if (subtype.species_id === parseInt(species, 10) || !subtype.species_id || species === 'none') {
+                filtered.push({text: subtype.name, value: subtype.id});
+            }
+            return filtered;
+        }, []);
+
+        dd.addOption(newSet);
+        dd.refreshOptions(false);
+    });
+</script>
 @endsection

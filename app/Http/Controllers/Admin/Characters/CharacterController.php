@@ -60,7 +60,7 @@ class CharacterController extends Controller
             'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes' => ['0' => 'Pick a Species First'],
+            'subtypes' => array_merge(['0' => ['name' => 'Select Subtype']], Subtype::orderBy('subtypes.sort', 'DESC')->get()->all()),
             'features' => Feature::getFeaturesByCategory(),
             'isMyo' => false
         ]);
@@ -81,20 +81,6 @@ class CharacterController extends Controller
             'features' => Feature::getFeaturesByCategory(),
             'isMyo' => true
         ]);
-    }
-
-    /**
-     * Shows the edit image subtype portion of the modal
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function getCreateCharacterMyoSubtype(Request $request) {
-      $species = $request->input('species');
-      return view('admin.masterlist._create_character_subtype', [
-          'subtypes' => ['0' => 'Select Subtype'] + Subtype::where('species_id','=',$species)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-          'isMyo' => $request->input('myo')
-      ]);
     }
 
     /**
