@@ -286,7 +286,7 @@ class BrowseController extends Controller
             'characters' => $query->paginate(24)->appends($request->query()),
             'categories' => [0 => 'Any Category'] + CharacterCategory::whereNotIn('id', $subCategories)->orderBy('character_categories.sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses' => [0 => 'Any Species'] + Species::whereNotIn('id', $subSpecies)->orderBy('specieses.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes' => array_merge([0 => ['name' => 'Any Subtype']], Subtype::where('species_id','=',$species)->orderBy('subtypes.sort', 'DESC')->get()->all()),
+            'subtypes' => array_merge([0 => ['name' => 'Any Subtype']], Subtype::orderBy('subtypes.sort', 'DESC')->get()->all()),
             'rarities' => [0 => 'Any Rarity'] + Rarity::orderBy('rarities.sort', 'DESC')->pluck('name', 'id')->toArray(),
             'features' => Feature::getFeaturesByCategory(),
             'sublists' => Sublist::orderBy('sort', 'DESC')->get(),

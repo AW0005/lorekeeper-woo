@@ -197,7 +197,7 @@ class FeatureController extends Controller
             'feature' => new Feature,
             'rarities' => ['none' => 'Select a Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses' => ['none' => 'No restriction'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes' => array_merge(['none' => ['name' => 'No Subtype']], Subtype::orderBy('subtypes.sort', 'DESC')->get()->all()),
+            'subtypes' => array_merge([0 => ['name' => 'No Subtype']], Subtype::orderBy('subtypes.sort', 'DESC')->get()->all()),
             'categories' => ['none' => 'No category'] + FeatureCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
     }
@@ -216,7 +216,7 @@ class FeatureController extends Controller
             'feature' => $feature,
             'rarities' => ['none' => 'Select a Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses' => ['none' => 'No restriction'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes' => array_merge(['none' => ['name' => 'No Subtype']], Subtype::orderBy('subtypes.sort', 'DESC')->get()->all()),
+            'subtypes' => array_merge([0 => ['name' => 'No Subtype', 'species_id' => 'none']], Subtype::orderBy('subtypes.sort', 'DESC')->get()->all()),
             'categories' => ['none' => 'No category'] + FeatureCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
     }

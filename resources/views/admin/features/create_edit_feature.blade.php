@@ -102,16 +102,18 @@ $( document ).ready(function() {
     $("[name=species_id]").change(() => {
         var species = $("[name=species_id]").val();
         const dd = $('[name=subtype_id]')[0].selectize;
+        dd.clear();
         dd.clearOptions();
 
         let newSet = subTypes.reduce((filtered, subtype, index) => {
             if (subtype.species_id === parseInt(species, 10) || !subtype.species_id || species === 'none') {
-                filtered.push({text: subtype.name, value: subtype.id});
+                filtered.push({text: subtype.name, value: subtype.id || 'none'});
             }
             return filtered;
         }, []);
 
         dd.addOption(newSet);
+        dd.setValue('none');
         dd.refreshOptions(false);
     });
 </script>
