@@ -69,6 +69,18 @@ div.form-control.selectize-control {
     height: calc(2.19rem + 2px); /* bootstrap form controls I think */
 }
 
+.selectize-dropdown .optgroup .option {
+    padding-left: 20px;
+}
+
+.selectize-dropdown .optgroup .optgroup-header {
+    background: rgb(242, 242, 242);
+}
+
+div.selectize-dropdown .optgroup::before {
+    display: none;
+}
+
 /**************************************************************************************************
 
     Font-Awesome Overrides
