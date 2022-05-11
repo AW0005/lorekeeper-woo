@@ -61,7 +61,7 @@ class CharacterController extends Controller
             'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes' => array_merge(['0' => ['name' => 'Select Subtype']], Subtype::orderBy('subtypes.sort', 'DESC')->get()->all()),
-            'features' => Feature::getFeaturesByCategory(),
+            'features' => Feature::getFeaturesByCategory(true),
             'isMyo' => false
         ]);
     }
@@ -78,7 +78,7 @@ class CharacterController extends Controller
             'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes' => ['0' => 'Pick a Species First'],
-            'features' => Feature::getFeaturesByCategory(),
+            'features' => Feature::getFeaturesByCategory(true),
             'isMyo' => true
         ]);
     }

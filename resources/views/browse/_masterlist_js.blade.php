@@ -53,7 +53,7 @@
 
         // handle the ones that were already there
         var $existingFeatures = $('#featureBody .feature-block');
-        $existingFeatures.find('.selectize').selectize({
+        $existingFeatures.find('select').selectize({
             render: {
                 item: featureSelectedRender
             }
@@ -64,7 +64,7 @@
             e.preventDefault();
             var $clone = $featureSelect.clone();
             $featureBody.append($clone);
-            $clone.find('.selectize').selectize({
+            $clone.find('select').selectize({
                 render: {
                     item: featureSelectedRender
                 }

@@ -155,6 +155,26 @@ Traits
 @parent
 <script>
 $( document ).ready(function() {
+    const features = <?php echo json_encode($features) ?>;
+
+        const getFeatureOptions = (species) => {
+            const arry = [];
+            const groups = [];
+            for(const [key, cat] of Object.entries(features)) {
+                const catObj = [];
+                groups.push(key);
+                for(feat in cat) {
+                    if((!species || cat[feat].species_id === species)) {
+                        arry.push({text: cat[feat].name, value: cat[feat].id, optgroup: key });
+                    }
+                }
+            }
+
+            arry.reverse()
+            return {features: arry, groups};
+        }
+
+
 
     // Cropper ////////////////////////////////////////////////////////////////////////////////////
 
@@ -238,9 +258,26 @@ $( document ).ready(function() {
             e.preventDefault();
             removeFeatureRow($(this));
         })
-        $clone.find('.feature-select').selectize({
+        const selects = $clone.find('.feature-select');
+
+        selects.selectize({
             render: {
                 item: featureSelectedRender
+            }
+        });
+
+        selects.each(select => {
+            const selectize = selects[select].selectize;
+            if(selectize) {
+                const {features, groups} = getFeatureOptions(parseInt($('#species').val(), 10));
+
+                const selected = selectize.items[0];
+                selectize.clear()
+                selectize.clearOptions();
+                groups.forEach(group => selectize.addOptionGroup(group, {label: group}));
+                selectize.addOption(features);
+                selectize.refreshOptions(false);
+                selectize.addItem(selected);
             }
         });
     }

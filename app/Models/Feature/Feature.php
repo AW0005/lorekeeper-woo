@@ -252,16 +252,16 @@ class Feature extends Model
     }
 
     /**********************************************************************************************
-    
+
         Other Functions
 
     **********************************************************************************************/
-    
-    public static function getFeaturesByCategory()
+
+    public static function getFeaturesByCategory($smart = false)
     {
         $sorted_feature_categories = collect(FeatureCategory::all()->sortBy('sort')->pluck('name')->toArray());
 
-        $grouped = Feature::select('name', 'id', 'feature_category_id')->with('category')->orderBy('name')->get()->keyBy('id')->groupBy('category.name', $preserveKeys = true)->toArray();
+        $grouped = Feature::select('name', 'id', 'feature_category_id', 'species_id')->with('category')->orderBy('name')->get()->keyBy('id')->groupBy('category.name', $preserveKeys = true)->all();
         if(isset($grouped[""])) {
             if(!$sorted_feature_categories->contains('Miscellaneous')) $sorted_feature_categories->push('Miscellaneous');
             $grouped['Miscellaneous'] = $grouped['Miscellaneous'] ?? [] + $grouped[""];
@@ -271,11 +271,14 @@ class Feature extends Model
             return in_array($value, array_keys($grouped), true);
         });
 
-        foreach($grouped as $category => $features) foreach($features as $id => $feature) $grouped[$category][$id] = $feature["name"];
+        if(!$smart){
+            foreach($grouped as $category => $features) foreach($features as $id => $feature) $grouped[$category][$id] = $feature["name"];
+        }
+
         $features_by_category = $sorted_feature_categories->map(function($category) use($grouped) {
             return [$category => $grouped[$category]];
         });
-        
-        return $features_by_category;
+
+        return $smart ? $grouped : $features_by_category;
     }
 }

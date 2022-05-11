@@ -90,10 +90,10 @@
                     <div id="featureBody" class="row">
                         @if(Request::get('feature_id'))
                             @foreach(Request::get('feature_id') as $featureId)
-                                <div class="feature-block col-md-3 col-sm-4 col-6 mt-3">
+                                <div class="feature-block col-xs-12 col-6 mt-3">
                                     <div class="card">
                                         <div class="card-body d-flex">
-                                            {!! Form::select('feature_id[]', $features, $featureId, ['class' => 'form-control feature-select selectize', 'placeholder' => 'Select Trait']) !!}
+                                            {!! Form::select('feature_id[]', $features, $featureId, ['class' => 'form-control feature-select', 'placeholder' => 'Select Trait']) !!}
                                             <a href="#" class="btn feature-remove ml-2"><i class="fas fa-times"></i></a>
                                         </div>
                                     </div>
@@ -120,10 +120,10 @@
     {!! Form::close() !!}
 </div>
 <div class="hide" id="featureContent">
-    <div class="feature-block col-md-3 col-sm-4 col-6 mt-3">
+    <div class="feature-block col-xs-12 col-6 mt-3">
         <div class="card">
             <div class="card-body d-flex">
-                {!! Form::select('feature_id[]', $features, null, ['class' => 'form-control feature-select selectize', 'placeholder' => 'Select Trait']) !!}
+                {!! Form::select('feature_id[]', $features, null, ['class' => 'form-control feature-select', 'placeholder' => 'Select Trait']) !!}
                 <a href="#" class="btn feature-remove ml-2"><i class="fas fa-times"></i></a>
             </div>
         </div>
