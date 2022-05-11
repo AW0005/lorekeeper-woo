@@ -56,7 +56,6 @@
                 }
             }
 
-            arry.reverse()
             return {features: arry, groups};
         }
 

@@ -268,7 +268,7 @@ class Feature extends Model
     {
         $sorted_feature_categories = collect(FeatureCategory::all()->sortBy('sort')->pluck('name')->toArray());
 
-        $grouped = Feature::with('category')->orderBy('name')->get()->keyBy('id')->groupBy('category.name', $preserveKeys = true)->all();
+        $grouped = Feature::with('category')->orderBy('feature_category_id')->get()->keyBy('id')->groupBy('category.name', $preserveKeys = true)->all();
         if(isset($grouped[""])) {
             if(!$sorted_feature_categories->contains('Miscellaneous')) $sorted_feature_categories->push('Miscellaneous');
             $grouped['Miscellaneous'] = $grouped['Miscellaneous'] ?? [] + $grouped[""];

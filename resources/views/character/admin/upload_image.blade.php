@@ -170,7 +170,6 @@ $( document ).ready(function() {
                 }
             }
 
-            arry.reverse()
             return {features: arry, groups};
         }
 
