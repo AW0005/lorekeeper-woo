@@ -55,7 +55,7 @@
         var $existingFeatures = $('#featureBody .feature-block');
         $existingFeatures.find('select').selectize({
             render: {
-                item: featureSelectedRender
+                item: featureSelectedRender,
             }
         });
         addRemoveListener($existingFeatures);
@@ -66,14 +66,14 @@
             $featureBody.append($clone);
             $clone.find('select').selectize({
                 render: {
-                    item: featureSelectedRender
+                    item: featureSelectedRender,
                 }
             });
             addRemoveListener($clone);
         });
 
         function featureSelectedRender(item, escape) {
-            return '<div><span>' + escape(item["text"].trim()) + ' (' + escape(item["optgroup"].trim()) + ')' + '</span></div>';
+            return '<div><span>' + item["text"].trim() + '<span class="subdued"> [' + escape(item["optgroup"].trim()) + ']</span>' + '</span></div>';
         }
 
         function addRemoveListener($node)

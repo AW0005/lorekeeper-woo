@@ -11,6 +11,26 @@
     --white: #fff;
 }
 
+.Common {
+    color: var(--red) !important;
+}
+
+.Rare {
+    color: var(--pink) !important;
+}
+
+.Premium {
+    color: var(--purple) !important;
+}
+
+.Epic {
+    color: var(--blue) !important;
+}
+
+.subdued {
+    filter: brightness(200%);
+}
+
 /**************************************************************************************************
 
     Font definitions

@@ -11,6 +11,8 @@ use App\Models\Rarity;
 
 class Feature extends Model
 {
+
+    protected $appends = array('simpleName');
     /**
      * The attributes that are mass assignable.
      *
@@ -187,7 +189,7 @@ class Feature extends Model
      */
     public function getDisplayNameAttribute()
     {
-        return '<a href="'.$this->url.'" class="display-trait">'.$this->name.'</a>'.($this->rarity? ' (' . $this->rarity->displayName . ')' : '');
+        return '<a href="'.$this->url.'" class="display-trait '.$this->rarity->name.'">'.$this->name.'</a>'.($this->subtype ? ' (' . $this->subtype->displayName . ')' : '');
     }
 
     /**
@@ -251,6 +253,11 @@ class Feature extends Model
         return url('masterlist?feature_id[]='.$this->id);
     }
 
+    public function getSimpleNameAttribute()
+    {
+        return '<span class="'.$this->rarity->name.'">'.$this->name.'</span>'.($this->subtype ? ' (' . $this->subtype->name . ')' : '');
+    }
+
     /**********************************************************************************************
 
         Other Functions
@@ -261,7 +268,7 @@ class Feature extends Model
     {
         $sorted_feature_categories = collect(FeatureCategory::all()->sortBy('sort')->pluck('name')->toArray());
 
-        $grouped = Feature::select('name', 'id', 'feature_category_id', 'species_id')->with('category')->orderBy('name')->get()->keyBy('id')->groupBy('category.name', $preserveKeys = true)->all();
+        $grouped = Feature::with('category')->orderBy('name')->get()->keyBy('id')->groupBy('category.name', $preserveKeys = true)->all();
         if(isset($grouped[""])) {
             if(!$sorted_feature_categories->contains('Miscellaneous')) $sorted_feature_categories->push('Miscellaneous');
             $grouped['Miscellaneous'] = $grouped['Miscellaneous'] ?? [] + $grouped[""];

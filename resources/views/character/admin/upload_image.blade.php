@@ -165,7 +165,7 @@ $( document ).ready(function() {
                 groups.push(key);
                 for(feat in cat) {
                     if((!species || cat[feat].species_id === species)) {
-                        arry.push({text: cat[feat].name, value: cat[feat].id, optgroup: key });
+                        arry.push({text: cat[feat].simpleName, value: cat[feat].id, optgroup: key });
                     }
                 }
             }
@@ -262,7 +262,8 @@ $( document ).ready(function() {
 
         selects.selectize({
             render: {
-                item: featureSelectedRender
+                item: featureSelectedRender,
+                option: (opt) => `<div class="option" data-selectable="" data-value="${opt['value']}">${opt['text']}</div>`
             }
         });
 
@@ -285,7 +286,7 @@ $( document ).ready(function() {
         $trigger.parent().remove();
     }
     function featureSelectedRender(item, escape) {
-        return '<div><span>' + escape(item["text"].trim()) + ' (' + escape(item["optgroup"].trim()) + ')' + '</span></div>';
+        return '<div><span>' + item["text"].trim() + '<span class="subdued"> [' + escape(item["optgroup"].trim()) + ']</span>' + '</span></div>';
     }
 
     // Croppie ////////////////////////////////////////////////////////////////////////////////////
