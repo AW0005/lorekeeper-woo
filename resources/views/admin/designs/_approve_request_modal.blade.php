@@ -11,10 +11,14 @@
         </select>
     </div>
     <div class="form-group">
+        {!! Form::label('Year') !!}
+        {!! Form::text('year', date("Y"), ['class' => 'form-control mr-2', 'id' => 'year']) !!}
+    </div>
+    <div class="form-group">
         {!! Form::label('Number') !!} {!! add_help('This number helps to identify the character and should preferably be unique either within the category, or among all characters.') !!}
         <div class="d-flex">
             {!! Form::text('number', $request->character->number, ['class' => 'form-control mr-2', 'id' => 'number']) !!}
-            <a href="#" id="pull-number" class="btn btn-primary" data-toggle="tooltip" title="This will find the highest number assigned to a character currently and add 1 to it. It can be adjusted to pull the highest number in the category or the highest overall number - this setting is in the code.">Pull Next Number</a> 
+            <a href="#" id="pull-number" class="btn btn-primary" data-toggle="tooltip" title="This will find the highest number assigned to a character currently and add 1 to it. It can be adjusted to pull the highest number in the category or the highest overall number - this setting is in the code.">Pull #</a>
         </div>
     </div>
 
@@ -32,7 +36,7 @@
     <h3>Transfer Information</h3>
 
     <div class="alert alert-info">
-        These are displayed on the character's profile, but don't have any effect on site functionality except for the following: 
+        These are displayed on the character's profile, but don't have any effect on site functionality except for the following:
         <ul>
             <li>If all switches are off, the character cannot be transferred by the user (directly or through trades).</li>
             <li>If a transfer cooldown is set, the character also cannot be transferred by the user (directly or through trades) until the cooldown is up.</li>
@@ -57,10 +61,10 @@
         </div>
     </div>
     <div class="form-group">
-        {!! Form::label('On Transfer Cooldown Until (Optional)') !!} 
+        {!! Form::label('On Transfer Cooldown Until (Optional)') !!}
         {!! Form::text('transferrable_at', $request->character->transferrable_at, ['class' => 'form-control', 'id' => 'datepicker']) !!}
     </div>
-    
+
     <h3>Image Settings</h3>
 
     <div class="form-group">

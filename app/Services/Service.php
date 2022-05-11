@@ -47,7 +47,7 @@ abstract class Service {
     }
 
     /**
-     * Return if an error exists. 
+     * Return if an error exists.
      * @return bool
      */
     public function hasErrors()
@@ -56,7 +56,7 @@ abstract class Service {
     }
 
     /**
-     * Return if an error exists. 
+     * Return if an error exists.
      * @return bool
      */
     public function hasError($key)
@@ -65,7 +65,7 @@ abstract class Service {
     }
 
     /**
-     * Return errors. 
+     * Return errors.
      * @return Illuminate\Support\MessageBag
      */
     public function errors()
@@ -73,7 +73,7 @@ abstract class Service {
         return $this->errors;
     }
     /**
-     * Return errors. 
+     * Return errors.
      * @return array
      */
     public function getAllErrors()
@@ -82,7 +82,7 @@ abstract class Service {
     }
 
     /**
-     * Return error by key. 
+     * Return error by key.
      * @return Illuminate\Support\MessageBag
      */
     public function getError($key)
@@ -115,7 +115,7 @@ abstract class Service {
      * @param Illuminate\Support\MessageBag $errors
      * @return void
      */
-    protected function setErrors($errors) 
+    protected function setErrors($errors)
     {
         $this->errors->merge($errors);
     }
@@ -146,7 +146,7 @@ abstract class Service {
      * Returns the current field if it is numeric, otherwise searches for a field if it is an array or object.
      * @param mixed $data
      * @param string $field
-     * @return mixed 
+     * @return mixed
      */
     protected function getNumeric($data, $field = 'id')
     {
@@ -196,7 +196,7 @@ abstract class Service {
             // Don't want to leave a lot of random images lying around,
             // so move the old image first if it exists.
             if($oldName) { $this->moveImage($dir, $name, $oldName, $copy); }
-            
+
             // Then overwrite the old image.
             return $this->saveImage($image, $dir, $name, $copy);
         }
@@ -207,6 +207,7 @@ abstract class Service {
     // Moves an old image within the same directory.
     private function moveImage($dir, $name, $oldName, $copy = false)
     {
+
         if($copy) File::copy($dir . '/' . $oldName, $dir . '/' . $name);
         else File::move($dir . '/' . $oldName, $dir . '/' . $name);
         return true;
@@ -214,7 +215,7 @@ abstract class Service {
 
     // Moves an uploaded image into a directory, checking if it exists.
     private function saveImage($image, $dir, $name, $copy = false)
-    { 
+    {
         if(!file_exists($dir))
         {
             // Create the directory.
@@ -224,10 +225,11 @@ abstract class Service {
             }
             chmod($dir, 0755);
         }
+
         if($copy) File::copy($image, $dir . '/' . $name);
         else File::move($image, $dir . '/' . $name);
         chmod($dir . '/' . $name, 0755);
-        
+
         return true;
     }
 

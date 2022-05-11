@@ -39,7 +39,7 @@ class Character extends Model
      */
     protected $fillable = [
         'character_image_id', 'character_category_id', 'rarity_id', 'user_id',
-        'owner_alias', 'number', 'slug', 'description', 'parsed_description',
+        'owner_alias', 'number', 'year', 'slug', 'description', 'parsed_description',
         'is_sellable', 'is_tradeable', 'is_giftable',
         'sale_value', 'transferrable_at', 'is_visible',
         'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'sort',

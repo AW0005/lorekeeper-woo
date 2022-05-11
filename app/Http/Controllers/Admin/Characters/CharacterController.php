@@ -45,7 +45,7 @@ class CharacterController extends Controller
      */
     public function getPullNumber(Request $request, CharacterManager $service)
     {
-        return $service->pullNumber($request->get('category'));
+        return $service->pullNumber($request->get('category'), $request->get('year'));
     }
 
     /**
@@ -94,7 +94,7 @@ class CharacterController extends Controller
     {
         $request->validate(Character::$createRules);
         $data = $request->only([
-            'user_id', 'owner_url', 'character_category_id', 'number', 'slug',
+            'user_id', 'owner_url', 'character_category_id', 'number', 'year', 'slug',
             'description', 'is_visible', 'is_giftable', 'is_tradeable', 'is_sellable',
             'sale_value', 'transferrable_at', 'use_cropper',
             'x0', 'x1', 'y0', 'y1',
@@ -103,6 +103,7 @@ class CharacterController extends Controller
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data',
             'image', 'thumbnail', 'image_description'
         ]);
+
         if ($character = $service->createCharacter($data, Auth::user())) {
             flash('Character created successfully.')->success();
             return redirect()->to($character->url);
@@ -159,6 +160,7 @@ class CharacterController extends Controller
             'categories' => CharacterCategory::orderBy('sort')->pluck('name', 'id')->toArray(),
             'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'number' => format_masterlist_number($this->character->number, Config::get('lorekeeper.settings.character_number_digits')),
+            'year' => $this->character->year,
             'isMyo' => false
         ]);
     }
@@ -193,7 +195,7 @@ class CharacterController extends Controller
     {
         $request->validate(Character::$updateRules);
         $data = $request->only([
-            'character_category_id', 'number', 'slug',
+            'character_category_id', 'number', 'year', 'slug',
             'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
             'transferrable_at'
         ]);

@@ -49,7 +49,7 @@ class CharacterManager extends Service
      * @param  int  $categoryId
      * @return string
      */
-    public function pullNumber($categoryId)
+    public function pullNumber($categoryId, $year)
     {
         $digits = Config::get('lorekeeper.settings.character_number_digits');
         $result = str_pad('', $digits, '0'); // A default value, in case
@@ -65,7 +65,7 @@ class CharacterManager extends Service
         }
         else if (Config::get('lorekeeper.settings.character_pull_number') == 'category' && $categoryId)
         {
-            $character = Character::myo(0)->where('character_category_id', $categoryId)->orderBy('number', 'DESC')->first();
+            $character = Character::myo(0)->where('character_category_id', $categoryId)->where('year', $year)->orderBy('number', 'DESC')->first();
             if($character) $number = ltrim($character->number, 0);
             if(!strlen($number)) $number = '0';
         }
@@ -187,7 +187,7 @@ class CharacterManager extends Service
 
             $characterData = Arr::only($data, [
                 'character_category_id', 'rarity_id', 'user_id',
-                'number', 'slug', 'description',
+                'number', 'year', 'slug', 'description',
                 'sale_value', 'transferrable_at', 'is_visible'
             ]);
 
@@ -237,8 +237,8 @@ class CharacterManager extends Service
                 // Use default images for MYO slots without an image provided
                 if(!isset($data['image']))
                 {
-                    $data['image'] = asset('images/myo.png');
-                    $data['thumbnail'] = asset('images/myo-th.png');
+                    $data['image'] = public_path('images/myo.png');
+                    $data['thumbnail'] = public_path('images/myo-th.png');
                     $data['extension'] = 'png';
                     $data['default_image'] = true;
                     unset($data['use_cropper']);
@@ -1106,7 +1106,7 @@ class CharacterManager extends Service
 
             $characterData = Arr::only($data, [
                 'character_category_id',
-                'number', 'slug',
+                'number', 'slug', 'year',
             ]);
             $characterData['is_sellable'] = isset($data['is_sellable']);
             $characterData['is_tradeable'] = isset($data['is_tradeable']);
@@ -1134,6 +1134,11 @@ class CharacterManager extends Service
                     $result[] = 'character code';
                     $old['slug'] = $character->slug;
                     $new['slug'] = $characterData['slug'];
+                }
+                if($characterData['year'] != $character->year) {
+                    $result[] = 'character year';
+                    $old['year'] = $character->year;
+                    $new['year'] = $characterData['year'];
                 }
             }
             else {

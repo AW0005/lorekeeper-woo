@@ -1,6 +1,6 @@
 <script>
 $( document ).ready(function() {
-    const features = <?php echo json_encode($features) ?>;
+    const features = <?php if(isset($features)) echo json_encode($features) ?>;
 
     const getFeatureOptions = (species) => {
         const arry = [];

@@ -6,13 +6,19 @@
         </div>
     @else
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     {!! Form::label('Character Category') !!}
                     {!! Form::select('character_category_id', $categories, $character->category->id, ['class' => 'form-control']) !!}
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
+                <div class="form-group">
+                    {!! Form::label('Year') !!}
+                    {!! Form::text('year', $year, ['class' => 'form-control mr-2', 'id' => 'year']) !!}
+                </div>
+            </div>
+            <div class="col-md-4">
                 <div class="form-group">
                     {!! Form::label('Number') !!} {!! add_help('This number helps to identify the character and should preferably be unique either within the category, or among all characters.') !!}
                     {!! Form::text('number', $number, ['class' => 'form-control mr-2', 'id' => 'number']) !!}
@@ -26,7 +32,7 @@
     @endif
 
     <div class="alert alert-info">
-        These are displayed on the character's profile, but don't have any effect on site functionality except for the following: 
+        These are displayed on the character's profile, but don't have any effect on site functionality except for the following:
         <ul>
             <li>If all switches are off, the character cannot be transferred by the user (directly or through trades).</li>
             <li>If a transfer cooldown is set, the character also cannot be transferred by the user (directly or through trades) until the cooldown is up.</li>
@@ -51,7 +57,7 @@
         </div>
     </div>
     <div class="form-group">
-        {!! Form::label('On Transfer Cooldown Until (Optional)') !!} 
+        {!! Form::label('On Transfer Cooldown Until (Optional)') !!}
         {!! Form::text('transferrable_at', $character->transferrable_at, ['class' => 'form-control', 'id' => 'datepicker']) !!}
     </div>
 
