@@ -185,7 +185,7 @@
 <div class="text-center mt-4 small text-muted">{{ $characters->total() }} result{{ $characters->total() == 1 ? '' : 's' }} found.</div>
 
 <script>
-    const subTypes = <?php echo json_encode($subtypes); ?>;
+    const subTypes = <?php echo json_encode($isMyo ? [] : $subtypes); ?>;
 
     $("[name=species_id]").change(() => {
         var species = $("[name=species_id]").val();
