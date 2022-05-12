@@ -428,6 +428,10 @@ class CharacterManager extends Service
                 });
             }
         }
+
+        // START: Can probably make this a switch based on rarity for different watermarks
+        // This file is probably where I can double check what's going on with the thumbnail's stretching too.
+        // Should probably make sure the re-sizing and such makes sense locally tbh
         // Watermark the image if desired
         if(Config::get('lorekeeper.settings.watermark_masterlist_images') == 1) {
             $watermark = Image::make('images/watermark.png');

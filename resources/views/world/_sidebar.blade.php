@@ -1,8 +1,13 @@
 <ul>
     <li class="sidebar-header"><a href="{{ url('world') }}" class="card-link">Encyclopedia</a></li>
     <li class="sidebar-section">
+        <div class="sidebar-section-header">Trait Guides</div>
+        <div class="sidebar-item"><a href="{{ url('world/species/1/traits') }}" class="{{ set_active('world/species/1/traits') }}">AW0005 Trait Guide</a></div>
+        <!-- <div class="sidebar-item"><a href="{{ url('world/species/2/traits') }}" class="{{ set_active('world/species/2/traits') }}">Holos Trait Guide</a></div> -->
+    </li>
+    <li class="sidebar-section">
         <div class="sidebar-section-header">Characters</div>
-        <div class="sidebar-item"><a href="{{ url('world/species') }}" class="{{ set_active('world/species*') }}">Species</a></div>
+        <div class="sidebar-item"><a href="{{ url('world/species') }}" class="{{ set_active(['world/species/**/[!traits]', 'world/species']) }}">Species</a></div>
         <div class="sidebar-item"><a href="{{ url('world/subtypes') }}" class="{{ set_active('world/subtypes*') }}">Subtypes</a></div>
         <div class="sidebar-item"><a href="{{ url('world/rarities') }}" class="{{ set_active('world/rarities*') }}">Rarities</a></div>
         <div class="sidebar-item"><a href="{{ url('world/trait-categories') }}" class="{{ set_active('world/trait-categories*') }}">Trait Categories</a></div>
