@@ -7,12 +7,16 @@
 
 @include('character._header', ['character' => $character])
 
-<p>This will add a new image to the character's gallery. The character's active image will be changed to the new one automatically. If the character is marked as visible, the owner of the character will be notified of the upload.</p>
+<p>This will add a new image to the character's gallery. If the character is marked as visible, the owner of the character will be notified of the upload.</p>
 
 {!! Form::open(['url' => 'admin/character/'.$character->slug.'/image', 'files' => true]) !!}
 
 <h3>Validity</h3>
 
+<div class="form-group">
+    {!! Form::checkbox('set_active', 1, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+    {!! Form::label('set_active', 'Set Active Image', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned on, the image will be set as the active image for the character.') !!}
+</div>
 <div class="form-group">
     {!! Form::checkbox('is_valid', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
     {!! Form::label('is_valid', 'Is Valid', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, the image will still be visible, but displayed with a note that the image is not a valid reference.') !!}

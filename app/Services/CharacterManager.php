@@ -634,8 +634,10 @@ class CharacterManager extends Service
             if(!$image) throw new \Exception("Error happened while trying to create image.");
 
             // Update the character's image ID
-            $character->character_image_id = $image->id;
-            $character->save();
+            if(isset($data['set_active']) && $data['set_active'] == 1) {
+                $character->character_image_id = $image->id;
+                $character->save();
+            }
 
             // Add a log for the character
             // This logs all the updates made to the character
