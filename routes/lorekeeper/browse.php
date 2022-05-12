@@ -68,7 +68,10 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function() {
     Characters
 **************************************************************************************************/
 Route::get('/masterlist', 'BrowseController@getCharacters');
-Route::get('/myos', 'BrowseController@getMyos');
+// Limiting myo masterlist viewing to staff
+Route::group(['middleware' => 'power:manage_characters'], function() {
+    Route::get('/myos', 'BrowseController@getMyos');
+})
 Route::get('/sublist/{key}', 'BrowseController@getSublist');
 Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function() {
     Route::get('{slug}', 'CharacterController@getCharacter');
