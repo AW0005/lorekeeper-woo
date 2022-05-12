@@ -207,7 +207,7 @@ class CharacterManager extends Service
             $character = Character::create($characterData);
 
             // Create character profile row
-            $character->profile()->create([]);
+            $character->profile()->create(['link' => $data['profile_link']]);
 
             return $character;
         } catch(\Exception $e) {

@@ -94,7 +94,7 @@ class CharacterController extends Controller
     {
         $request->validate(Character::$createRules);
         $data = $request->only([
-            'user_id', 'owner_url', 'character_category_id', 'number', 'year', 'slug',
+            'user_id', 'owner_url', 'character_category_id', 'number', 'year', 'slug', 'profile_link',
             'description', 'is_visible', 'is_giftable', 'is_tradeable', 'is_sellable',
             'sale_value', 'transferrable_at', 'use_cropper',
             'x0', 'x1', 'y0', 'y1',

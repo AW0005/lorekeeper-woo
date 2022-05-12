@@ -80,17 +80,24 @@
     @endif
 
     @if(!$isMyo)
+    <div class="row" style="align-items: center;">
+        <div class="form-group col-5">
+            {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Turn this off to hide the '.($isMyo ? 'MYO slot' : 'character').'. Only mods with the Manage Masterlist power (that\'s you!) can view it - the owner will also not be able to see the '.($isMyo ? 'MYO slot' : 'character').'\'s page.') !!}
+            {!! Form::checkbox('is_visible', 1, old('is_visible') || 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+        </div>
+        <div class="form-group col-7">
+            {!! Form::label('profile_link', 'Profile Link', ['class' => 'form-check-label ml-3']) !!} {!! add_help('For Toyhouse, or similar profiles.') !!}
+            {!! Form::text('profile_link', old('profile_link'), ['class' => 'form-control']) !!}
+        </div>
+    </div>
+    @endif
+
+
+    @if(!$isMyo)
     <div class="form-group">
         {!! Form::label('Description (Optional)') !!}
         {!! add_help('This section is for making additional notes about the character and is separate from the character\'s profile (this is not editable by the user).') !!}
         {!! Form::textarea('description', old('description'), ['class' => 'form-control wysiwyg']) !!}
-    </div>
-    @endif
-
-    @if(!$isMyo)
-    <div class="form-group">
-        {!! Form::checkbox('is_visible', 1, old('is_visible') || 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Turn this off to hide the '.($isMyo ? 'MYO slot' : 'character').'. Only mods with the Manage Masterlist power (that\'s you!) can view it - the owner will also not be able to see the '.($isMyo ? 'MYO slot' : 'character').'\'s page.') !!}
     </div>
     @endif
 
