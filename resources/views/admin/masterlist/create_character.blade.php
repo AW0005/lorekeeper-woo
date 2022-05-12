@@ -15,7 +15,7 @@
 
     {!! Form::open(['url' => 'admin/masterlist/create-'.($isMyo ? 'myo' : 'character'), 'files' => true]) !!}
 
-    <h3>Basic Information</h3>
+    <h3 class="mt-3">Basic Information</h3>
 
     @if($isMyo)
         <div class="form-group">
@@ -79,41 +79,35 @@
         </div>
     @endif
 
+    @if(!$isMyo)
     <div class="form-group">
         {!! Form::label('Description (Optional)') !!}
-        @if($isMyo)
-            {!! add_help('This section is for making additional notes about the MYO slot. If there are restrictions for the character that can be created by this slot that cannot be expressed with the options below, use this section to describe them.') !!}
-        @else
-            {!! add_help('This section is for making additional notes about the character and is separate from the character\'s profile (this is not editable by the user).') !!}
-        @endif
+        {!! add_help('This section is for making additional notes about the character and is separate from the character\'s profile (this is not editable by the user).') !!}
         {!! Form::textarea('description', old('description'), ['class' => 'form-control wysiwyg']) !!}
     </div>
+    @endif
 
+    @if(!$isMyo)
     <div class="form-group">
         {!! Form::checkbox('is_visible', 1, old('is_visible'), ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
         {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Turn this off to hide the '.($isMyo ? 'MYO slot' : 'character').'. Only mods with the Manage Masterlist power (that\'s you!) can view it - the owner will also not be able to see the '.($isMyo ? 'MYO slot' : 'character').'\'s page.') !!}
     </div>
+    @endif
 
-    <h3>Transfer Information</h3>
-
-    <div class="alert alert-info">
-        These are displayed on the {{ $isMyo ? 'MYO slot' : 'character' }}'s profile, but don't have any effect on site functionality except for the following:
-        <ul>
-            <li>If all switches are off, the {{ $isMyo ? 'MYO slot' : 'character' }} cannot be transferred by the user (directly or through trades).</li>
-            <li>If a transfer cooldown is set, the {{ $isMyo ? 'MYO slot' : 'character' }} also cannot be transferred by the user (directly or through trades) until the cooldown is up.</li>
-        </ul>
-    </div>
-    <div class="form-group">
-        {!! Form::checkbox('is_giftable', 1, old('is_giftable'), ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('is_giftable', 'Is Giftable', ['class' => 'form-check-label ml-3']) !!}
-    </div>
-    <div class="form-group">
-        {!! Form::checkbox('is_tradeable', 1, old('is_tradeable'), ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('is_tradeable', 'Is Tradeable', ['class' => 'form-check-label ml-3']) !!}
-    </div>
-    <div class="form-group">
-        {!! Form::checkbox('is_sellable', 1, old('is_sellable'), ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'resellable']) !!}
-        {!! Form::label('is_sellable', 'Is Resellable', ['class' => 'form-check-label ml-3']) !!}
+    <h3 class="mt-4">Transfer Information</h3>
+    <div class="row" style="justify-content: space-between;">
+        <div class="form-group">
+            {!! Form::label('is_giftable', 'Is Giftable', ['class' => 'form-check-label ml-3']) !!}
+            {!! Form::checkbox('is_giftable', 1, old('is_giftable'), ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+        </div>
+        <div class="form-group">
+            {!! Form::label('is_tradeable', 'Is Tradeable', ['class' => 'form-check-label ml-3']) !!}
+            {!! Form::checkbox('is_tradeable', 1, old('is_tradeable'), ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+        </div>
+        <div class="form-group">
+            {!! Form::label('is_sellable', 'Is Sellable', ['class' => 'form-check-label ml-3']) !!}
+            {!! Form::checkbox('is_sellable', 1, old('is_sellable'), ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'resellable']) !!}
+        </div>
     </div>
     <div class="card mb-3" id="resellOptions">
         <div class="card-body">
@@ -126,47 +120,43 @@
         {!! Form::text('transferrable_at', old('transferrable_at'), ['class' => 'form-control', 'id' => 'datepicker']) !!}
     </div>
 
-    <h3>Image Upload</h3>
-
+    @if(!$isMyo)
+    <h3 class="mt-4">Image Upload</h3>
     <div class="form-group">
         {!! Form::label('Image') !!}
-        @if($isMyo)
-            {!! add_help('This is a cover image for the MYO slot. If left blank, a default image will be used.') !!}
-        @else
-            {!! add_help('This is the full masterlist image. Note that the image is not protected in any way, so take precautions to avoid art/design theft.') !!}
-        @endif
+        {!! add_help('This is the full masterlist image. Note that the image is not protected in any way, so take precautions to avoid art/design theft.') !!}
         <div>{!! Form::file('image', ['id' => 'mainImage']) !!}</div>
     </div>
-@if (Config::get('lorekeeper.settings.masterlist_image_automation') === 1)
-    <div class="form-group">
-        {!! Form::checkbox('use_cropper', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'useCropper']) !!}
-        {!! Form::label('use_cropper', 'Use Thumbnail Automation', ['class' => 'form-check-label ml-3']) !!} {!! add_help('A thumbnail is required for the upload (used for the masterlist). You can use the Thumbnail Automation, or upload a custom thumbnail.') !!}
-    </div>
-    <div class="card mb-3" id="thumbnailCrop">
-        <div class="card-body">
-            <div id="cropSelect">By using this function, the thumbnail will be automatically generated from the full image.</div>
-            {!! Form::hidden('x0', 1) !!}
-            {!! Form::hidden('x1', 1) !!}
-            {!! Form::hidden('y0', 1) !!}
-            {!! Form::hidden('y1', 1) !!}
+    @if (Config::get('lorekeeper.settings.masterlist_image_automation') === 1)
+        <div class="form-group">
+            {!! Form::checkbox('use_cropper', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'useCropper']) !!}
+            {!! Form::label('use_cropper', 'Use Thumbnail Automation', ['class' => 'form-check-label ml-3']) !!} {!! add_help('A thumbnail is required for the upload (used for the masterlist). You can use the Thumbnail Automation, or upload a custom thumbnail.') !!}
         </div>
-    </div>
-@else
-    <div class="form-group">
-        {!! Form::checkbox('use_cropper', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'useCropper']) !!}
-        {!! Form::label('use_cropper', 'Use Image Cropper', ['class' => 'form-check-label ml-3']) !!} {!! add_help('A thumbnail is required for the upload (used for the masterlist). You can use the image cropper (crop dimensions can be adjusted in the site code), or upload a custom thumbnail.') !!}
-    </div>
-    <div class="card mb-3" id="thumbnailCrop">
-        <div class="card-body">
-            <div id="cropSelect">Select an image to use the thumbnail cropper.</div>
-            <img src="#" id="cropper" class="hide" alt="" />
-            {!! Form::hidden('x0', null, ['id' => 'cropX0']) !!}
-            {!! Form::hidden('x1', null, ['id' => 'cropX1']) !!}
-            {!! Form::hidden('y0', null, ['id' => 'cropY0']) !!}
-            {!! Form::hidden('y1', null, ['id' => 'cropY1']) !!}
+        <div class="card mb-3" id="thumbnailCrop">
+            <div class="card-body">
+                <div id="cropSelect">By using this function, the thumbnail will be automatically generated from the full image.</div>
+                {!! Form::hidden('x0', 1) !!}
+                {!! Form::hidden('x1', 1) !!}
+                {!! Form::hidden('y0', 1) !!}
+                {!! Form::hidden('y1', 1) !!}
+            </div>
         </div>
-    </div>
-@endif
+    @else
+        <div class="form-group">
+            {!! Form::checkbox('use_cropper', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'useCropper']) !!}
+            {!! Form::label('use_cropper', 'Use Image Cropper', ['class' => 'form-check-label ml-3']) !!} {!! add_help('A thumbnail is required for the upload (used for the masterlist). You can use the image cropper (crop dimensions can be adjusted in the site code), or upload a custom thumbnail.') !!}
+        </div>
+        <div class="card mb-3" id="thumbnailCrop">
+            <div class="card-body">
+                <div id="cropSelect">Select an image to use the thumbnail cropper.</div>
+                <img src="#" id="cropper" class="hide" alt="" />
+                {!! Form::hidden('x0', null, ['id' => 'cropX0']) !!}
+                {!! Form::hidden('x1', null, ['id' => 'cropX1']) !!}
+                {!! Form::hidden('y0', null, ['id' => 'cropY0']) !!}
+                {!! Form::hidden('y1', null, ['id' => 'cropY1']) !!}
+            </div>
+        </div>
+    @endif
     <div class="card mb-3" id="thumbnailUpload">
         <div class="card-body">
             {!! Form::label('Thumbnail Image') !!} {!! add_help('This image is shown on the masterlist page.') !!}
@@ -219,32 +209,34 @@
             <a href="#" class="add-artist btn btn-link mb-2" data-toggle="tooltip" title="Add another artist">+</a>
         </div>
     </div>
-    @if(!$isMyo)
-        <div class="form-group">
-            {!! Form::label('Image Notes (Optional)') !!} {!! add_help('This section is for making additional notes about the image.') !!}
-            {!! Form::textarea('image_description', old('image_description'), ['class' => 'form-control wysiwyg']) !!}
-        </div>
+    <div class="form-group">
+        {!! Form::label('Image Notes (Optional)') !!} {!! add_help('This section is for making additional notes about the image.') !!}
+        {!! Form::textarea('image_description', old('image_description'), ['class' => 'form-control wysiwyg']) !!}
+    </div>
     @endif
 
-    <h3>Traits</h3>
+    @if(!$isMyo)<h3 class="mt-4">Traits</h3>@else<h3 class="mt-4">MYO Limitations</h3>@endif
 
     <div class="form-group">
         {!! Form::label('Species') !!} @if($isMyo) {!! add_help('This will lock the slot into a particular species. Leave it blank if you would like to give the user a choice.') !!} @endif
         {!! Form::select('species_id', $specieses, old('species_id'), ['class' => 'form-control selectize', 'id' => 'species']) !!}
     </div>
 
+    @if(!$isMyo)
     <div class="form-group" id="subtypes">
         {!! Form::label('Subtype (Optional)') !!} @if($isMyo) {!! add_help('This will lock the slot into a particular subtype. Leave it blank if you would like to give the user a choice, or not select a subtype. The subtype must match the species selected above, and if no species is specified, the subtype will not be applied.') !!} @endif
         {!! Form::select('subtype_id', [0 => 'Pick a Species First'], old('subtype_id'), ['class' => 'form-control disabled selectize', 'id' => 'subtype']) !!}
     </div>
+    @endif
 
     <div class="form-group">
         {!! Form::label('Character Rarity') !!} @if($isMyo) {!! add_help('This will lock the slot into a particular rarity. Leave it blank if you would like to give the user more choices.') !!} @endif
         {!! Form::select('rarity_id', $rarities, old('rarity_id'), ['class' => 'form-control selectize']) !!}
     </div>
 
+    @if(!$isMyo)
     <div class="form-group">
-        {!! Form::label('Traits') !!} @if($isMyo) {!! add_help('These traits will be listed as required traits for the slot. The user will still be able to add on more traits, but not be able to remove these. This is allowed to conflict with the rarity above; you may add traits above the character\'s specified rarity.') !!} @endif
+        {!! Form::label('Traits') !!}
         <div id="featureList">
         </div>
         <div><a href="#" class="btn btn-primary" id="add-feature">Add Trait</a></div>
@@ -254,6 +246,7 @@
             <a href="#" class="remove-feature btn btn-danger mb-2"><i class="fas fa-times"></i></a>
         </div>
     </div>
+    @endif
 
     <div class="text-right">
         {!! Form::submit('Create Character', ['class' => 'btn btn-primary']) !!}

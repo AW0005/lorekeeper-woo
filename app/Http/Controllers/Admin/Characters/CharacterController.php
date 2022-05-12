@@ -126,7 +126,7 @@ class CharacterController extends Controller
         $request->validate(Character::$myoRules);
         $data = $request->only([
             'user_id', 'owner_url', 'name',
-            'description', 'is_visible', 'is_giftable', 'is_tradeable', 'is_sellable',
+            'description', 'is_giftable', 'is_tradeable', 'is_sellable',
             'sale_value', 'transferrable_at', 'use_cropper',
             'x0', 'x1', 'y0', 'y1',
             'designer_id', 'designer_url', 'designer_type',
