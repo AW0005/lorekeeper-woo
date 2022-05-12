@@ -7,12 +7,8 @@
     </div>
 
 <div class="form-group">
-    {!! Form::label('Description (Optional)') !!} 
-    @if($isMyo)
-        {!! add_help('This section is for making additional notes about the MYO slot. If there are restrictions for the character that can be created by this slot that cannot be expressed with the options below, use this section to describe them.') !!}
-    @else
-        {!! add_help('This section is for making additional notes about the character and is separate from the character\'s profile (this is not editable by the user).') !!}
-    @endif
+    {!! Form::label('Description (Optional)') !!}
+    {!! add_help('This section is for making additional notes about the MYO slot. If there are restrictions for the character that can be created by this slot that cannot be expressed with the options below, use this section to describe them.') !!}
     {!! Form::textarea('description', $tag->getData()['description'], ['class' => 'form-control wysiwyg']) !!}
 </div>
 
@@ -22,25 +18,19 @@
 </div>
 
 <h3>Transfer Information</h3>
-
-<div class="alert alert-info">
-    These are displayed on the MYO slot's profile, but don't have any effect on site functionality except for the following: 
-    <ul>
-        <li>If all switches are off, the MYO slot cannot be transferred by the user (directly or through trades).</li>
-        <li>If a transfer cooldown is set, the MYO slot also cannot be transferred by the user (directly or through trades) until the cooldown is up.</li>
-    </ul>
-</div>
-<div class="form-group">
-    {!! Form::checkbox('is_giftable', 1, $tag->getData()['is_giftable'], ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-    {!! Form::label('is_giftable', 'Is Giftable', ['class' => 'form-check-label ml-3']) !!}
-</div>
-<div class="form-group">
-    {!! Form::checkbox('is_tradeable', 1, $tag->getData()['is_tradeable'], ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-    {!! Form::label('is_tradeable', 'Is Tradeable', ['class' => 'form-check-label ml-3']) !!}
-</div>
-<div class="form-group">
-    {!! Form::checkbox('is_sellable', 1, $tag->getData()['is_sellable'], ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'resellable']) !!}
-    {!! Form::label('is_sellable', 'Is Resellable', ['class' => 'form-check-label ml-3']) !!}
+<div class="row" style="justify-content: space-between; margin: 0;">
+    <div class="form-group">
+        {!! Form::label('is_giftable', 'Is Giftable', ['class' => 'form-check-label ml-3']) !!}
+        {!! Form::checkbox('is_giftable', 1, $tag->getData()['is_giftable'], ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+    </div>
+    <div class="form-group">
+        {!! Form::label('is_tradeable', 'Is Tradeable', ['class' => 'form-check-label ml-3']) !!}
+        {!! Form::checkbox('is_tradeable', 1, $tag->getData()['is_tradeable'], ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+    </div>
+    <div class="form-group">
+        {!! Form::label('is_sellable', 'Is Resellable', ['class' => 'form-check-label ml-3']) !!}
+        {!! Form::checkbox('is_sellable', 1, $tag->getData()['is_sellable'], ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'resellable']) !!}
+    </div>
 </div>
 <div class="card mb-3" id="resellOptions">
     <div class="card-body">

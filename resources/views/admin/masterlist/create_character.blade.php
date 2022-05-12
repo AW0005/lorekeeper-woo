@@ -94,11 +94,12 @@
     </div>
     @endif
 
+
     <h3 class="mt-4">Transfer Information</h3>
     <div class="row" style="justify-content: space-between;">
         <div class="form-group">
             {!! Form::label('is_giftable', 'Is Giftable', ['class' => 'form-check-label ml-3']) !!}
-            {!! Form::checkbox('is_giftable', 1, old('is_giftable'), ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+            {!! Form::checkbox('is_giftable', 1, old('is_giftable'), ['class' => 'form-check-input', 'data-toggle' => 'toggle' ]) !!}
         </div>
         <div class="form-group">
             {!! Form::label('is_tradeable', 'Is Tradeable', ['class' => 'form-check-label ml-3']) !!}
