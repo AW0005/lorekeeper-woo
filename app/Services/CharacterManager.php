@@ -410,16 +410,23 @@ class CharacterManager extends Service
 
         // Resize image if desired
         if(Config::get('lorekeeper.settings.masterlist_image_dimension') != 0) {
-                // Resize Width
-                $image->resize(Config::get('lorekeeper.settings.masterlist_image_dimension'), null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
+            // Resize Width
+            $image->resize(Config::get('lorekeeper.settings.masterlist_image_dimension'), null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
         }
 
         // Watermark the image if desired
         if(Config::get('lorekeeper.settings.watermark_masterlist_images') == 1) {
             $watermark = Image::make('images/'.$characterImage->rarity->name.'.png');
+            //Downsize the watermark if we need to.
+            if($watermark->width() > $image->width()){
+                $watermark->resize($image->width(), null, function($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+            }
             $image->insert($watermark, 'center');
         }
 
@@ -443,11 +450,7 @@ class CharacterManager extends Service
             $trimColor = TRUE;
         }
 
-        if(Config::get('lorekeeper.settings.watermark_masterlist_thumbnails') == 1 && !$isMyo) {
-            // Trim transparent parts of image.
-            $image->trim(isset($trimColor) && $trimColor ? 'top-left' : 'transparent');
-
-            if (Config::get('lorekeeper.settings.masterlist_image_automation') == 1)
+        if (Config::get('lorekeeper.settings.masterlist_image_automation') == 1)
             {
                 // Make the image be square
                 $imageWidth = $image->width();
@@ -464,6 +467,11 @@ class CharacterManager extends Service
                     $image = $canvas->insert($image, 'center');
                 }
             }
+
+
+        if(Config::get('lorekeeper.settings.watermark_masterlist_thumbnails') == 1 && !$isMyo) {
+            // Trim transparent parts of image.
+            $image->trim(isset($trimColor) && $trimColor ? 'top-left' : 'transparent');
 
             $cropWidth = Config::get('lorekeeper.settings.masterlist_thumbnails.width');
             $cropHeight = Config::get('lorekeeper.settings.masterlist_thumbnails.height');
