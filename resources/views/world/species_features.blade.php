@@ -15,6 +15,11 @@
         </h5>
         <div class="card-body inventory-body">
             @foreach($categoryFeatures->chunk(4) as $chunk)
+                <div class="row">
+                    <div class="col-12">
+                        {!! $categories[$categoryId]->description !!}
+                    </div>
+                </div>
                 <div class="row mb-3">
                     @foreach($chunk as $featureId=>$feature)
                         <div class="col-sm-3 col-6 text-center align-self-center inventory-item">

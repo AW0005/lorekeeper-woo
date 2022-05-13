@@ -215,6 +215,8 @@ class WorldController extends Controller
         $features = count($categories) ?
             $species->features()
                 ->orderByRaw('FIELD(feature_category_id,'.implode(',', $categories->pluck('id')->toArray()).')')
+                // NOTE: I will probably want to put this back and figure out how to order the CTRL and CP categories
+                // the way I want some other way when I go to add more traits that are now out of order by id.
                 // ->orderByRaw('FIELD(rarity_id,'.implode(',', $rarities->pluck('id')->toArray()).')')
                 // ->orderBy('has_image', 'DESC')
                 // ->orderBy('name')
