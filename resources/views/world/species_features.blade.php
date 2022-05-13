@@ -32,9 +32,6 @@
                             @endif
                             <p>
                                 {!! $feature->first()->displayName !!}
-                            @if($feature->first()->subtype)
-                                <br/>({!! $feature->first()->subtype->displayName !!} Subtype)
-                            @endif
                             </p>
                         </div>
                     @endforeach
