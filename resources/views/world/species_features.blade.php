@@ -14,11 +14,13 @@
             {!! isset($categories[$categoryId]) ? '<a href="'.$categories[$categoryId]->searchUrl.'">'.$categories[$categoryId]->name.'</a>' : 'Miscellaneous' !!}
         </h5>
         <div class="card-body inventory-body">
-            <div class="row">
+            @if($categories[$categoryId]->description)
+            <div class="row mb-5" style="border-bottom: 1px solid #F7F7F7;">
                 <div class="col-12">
                     {!! $categories[$categoryId]->description !!}
                 </div>
             </div>
+            @endif
             @foreach($categoryFeatures->chunk(4) as $chunk)
                 <div class="row mb-3">
                     @foreach($chunk as $featureId=>$feature)
