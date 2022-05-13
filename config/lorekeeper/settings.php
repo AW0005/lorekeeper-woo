@@ -121,7 +121,7 @@ return [
     |
     | 0: Do not watermark. 1: Automatically watermark masterlist images.
     |
-    | Dimension, in pixels, to scale the shorter dimension (between width/height)
+    | Dimension, in pixels, to scale the width (edited from main)
     | of submitted masterlist images to. Enter "0" to disable resizing.
     |
     | File format to encode masterlist image uploads to.
@@ -137,7 +137,7 @@ return [
     |
     */
     'watermark_masterlist_images' => 1,
-    'masterlist_image_dimension' => 600,
+    'masterlist_image_dimension' => 1000,
     'masterlist_image_format' => null,
     'masterlist_image_background' => null,
 

@@ -410,31 +410,16 @@ class CharacterManager extends Service
 
         // Resize image if desired
         if(Config::get('lorekeeper.settings.masterlist_image_dimension') != 0) {
-            $imageWidth = $image->width();
-            $imageHeight = $image->height();
-
-            if( $imageWidth > $imageHeight) {
-                // Landscape
-                $image->resize(null, Config::get('lorekeeper.settings.masterlist_image_dimension'), function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
-            }
-            else {
-                // Portrait
+                // Resize Width
                 $image->resize(Config::get('lorekeeper.settings.masterlist_image_dimension'), null, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
-            }
         }
 
-        // START: Can probably make this a switch based on rarity for different watermarks
-        // This file is probably where I can double check what's going on with the thumbnail's stretching too.
-        // Should probably make sure the re-sizing and such makes sense locally tbh
         // Watermark the image if desired
         if(Config::get('lorekeeper.settings.watermark_masterlist_images') == 1) {
-            $watermark = Image::make('images/watermark.png');
+            $watermark = Image::make('images/'.$characterImage->rarity->name.'.png');
             $image->insert($watermark, 'center');
         }
 
@@ -510,6 +495,7 @@ class CharacterManager extends Service
                         });
                     }
                 }
+
             // Watermark the image
                 $watermark = Image::make('images/watermark.png');
                 $image->insert($watermark, 'center');
