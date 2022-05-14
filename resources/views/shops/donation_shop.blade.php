@@ -1,22 +1,28 @@
 @extends('shops.layout')
 
-@section('shops-title') Donation Shop @endsection
+@section('shops-title') Donation Tree @endsection
 
 @section('shops-content')
 {!! breadcrumbs(['Shops' => 'shops', 'Donation Shop' => 'shops/donation-shop']) !!}
 
 <h1>
-    Donation Shop
+    Donation Tree
 </h1>
 
-<div class="text-center">
-    <img src="{{ asset('images/donation_shop.png') }}" style="max-width:100%" />
-    <p>{!! $text->parsed_text !!}</p>
+<div>
+    <div style="display:flex;">
+        <img src="{{ asset('images/donation_shop.png') }}" style="max-width:100%; height: 250px" />
+        <div class="mt-5">{!! $text->parsed_text !!}</div>
+    </div>
 
     @if(Auth::check() && Auth::user()->donationShopCooldown)
         You can collect an item {!! pretty_date(Auth::user()->donationShopCooldown) !!}!
     @endif
 </div>
+
+@if($items->count() == 0)
+<h6 class="text-center m-5"> The Donation Tree is Empty right now! </h6>
+@endif
 
 @foreach($items as $categoryId=>$categoryItems)
     <div class="card mb-3 inventory-category">
