@@ -7,6 +7,7 @@
 @section('profile-content')
 {!! breadcrumbs(['Users' => 'users', $user->name => $user->url]) !!}
 
+@include('widgets._awardcase_feature', ['target' => $user, 'count' => Config::get('lorekeeper.extensions.awards.user_featured'), 'float' => false])
 
 @if($user->is_banned)
     <div class="alert alert-danger">This user has been banned.</div>

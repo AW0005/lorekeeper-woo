@@ -94,6 +94,10 @@ return [
                 'name' => 'Item Grants',
                 'url' => 'admin/grants/items'
             ],
+            [
+                'name' => 'Badge Grants',
+                'url' => 'admin/grants/awards'
+            ],
         ]
     ],
     'Masterlist' => [
@@ -132,6 +136,14 @@ return [
             //     'name' => 'Galleries',
             //     'url' => 'admin/data/galleries'
             // ],
+            [
+                'name' => 'Badge Categories',
+                'url' => 'admin/data/award-categories'
+            ],
+            [
+                'name' => 'Badges',
+                'url' => 'admin/data/awards'
+            ],
             [
                 'name' => 'Character Categories',
                 'url' => 'admin/data/character-categories'

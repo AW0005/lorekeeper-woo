@@ -52,9 +52,16 @@ return [
     'scroll_to_top' => 1, // 1 - On, 0 - off
 
     // Character Reward Expansion - Uri
-    'character_reward_expansion' => [
-        'expanded' => 1,
-        'default_recipient' => 0, // 0 to default to the character's owner (if a user), 1 to default to the submission user.
+    'character_reward_expansion'    => [
+        'expanded'                  => 1,
+        'default_recipient'         => 0, // 0 to default to the character's owner (if a user), 1 to default to the submission user.
+    ],
+
+
+    // Awards - Uri
+    'awards' => [
+        'user_featured'             => 1,   // Number of awards displayed prominently on the user profile
+        'character_featured'        => 1,   // Number of awards displayed prominently on the character page
     ],
 
     // Extra Image Credits - Newt

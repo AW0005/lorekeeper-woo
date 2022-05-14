@@ -19,6 +19,7 @@ use App\Models\Character\CharacterTransfer;
 use App\Models\Trade;
 use App\Models\User\UserItem;
 
+use App\Services\AwardCaseManager;
 use App\Services\CharacterManager;
 use App\Services\CurrencyManager;
 use App\Services\TradeManager;
