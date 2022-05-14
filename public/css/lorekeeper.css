@@ -61,9 +61,10 @@ div.selectize-input {
     padding-right: 24px;
 }
 
-div.selectize-input input {
+/* Can't do this without killing ability to search dd's */
+/* div.selectize-input input {
     display: none !important;
-}
+} */
 
 div.form-control.selectize-control {
     height: calc(2.19rem + 2px); /* bootstrap form controls I think */
