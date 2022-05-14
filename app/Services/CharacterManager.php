@@ -201,13 +201,14 @@ class CharacterManager extends Service
             $characterData['is_gift_art_allowed'] = 0;
             $characterData['is_gift_writing_allowed'] = 0;
             $characterData['is_trading'] = 0;
-            $characterData['parsed_description'] = parse($data['description']);
+            $characterData['parsed_description'] = isset($data['description']) ? parse($data['description']) : null;
             if($isMyo) $characterData['is_myo_slot'] = 1;
 
             $character = Character::create($characterData);
 
             // Create character profile row
-            $character->profile()->create(['link' => $data['profile_link']]);
+            $profile = isset($data['profile_link']) ? ['link' => $data['profile_link']] : [];
+            $character->profile()->create($profile);
 
             return $character;
         } catch(\Exception $e) {
@@ -262,55 +263,66 @@ class CharacterManager extends Service
             $image = CharacterImage::create($imageData);
 
             // Check if entered url(s) have aliases associated with any on-site users
-            foreach($data['designer_url'] as $key=>$url) {
-                $recipient = checkAlias($url, false);
-                if(is_object($recipient)) {
-                    $data['designer_id'][$key] = $recipient->id;
-                    $data['designer_url'][$key] = null;
+            if(isset($data['designer_url'])) {
+                foreach($data['designer_url'] as $key=>$url) {
+                    $recipient = checkAlias($url, false);
+                    if(is_object($recipient)) {
+                        $data['designer_id'][$key] = $recipient->id;
+                        $data['designer_url'][$key] = null;
+                    }
                 }
             }
-            foreach($data['artist_url'] as $key=>$url) {
-                $recipient = checkAlias($url, false);
-                if(is_object($recipient)) {
-                    $data['artist_id'][$key] = $recipient->id;
-                    $data['artist_url'][$key] = null;
+            if(isset($data['artist_url'])) {
+                foreach($data['artist_url'] as $key=>$url) {
+                    $recipient = checkAlias($url, false);
+                    if(is_object($recipient)) {
+                        $data['artist_id'][$key] = $recipient->id;
+                        $data['artist_url'][$key] = null;
+                    }
                 }
             }
 
             // Check that users with the specified id(s) exist on site
-            foreach($data['designer_id'] as $id) {
-                if(isset($id) && $id) {
-                    $user = User::find($id);
-                    if(!$user) throw new \Exception('One or more designers is invalid.');
+            if(isset($data['designer_id'])) {
+                foreach($data['designer_id'] as $id) {
+                    if(isset($id) && $id) {
+                        $user = User::find($id);
+                        if(!$user) throw new \Exception('One or more designers is invalid.');
+                    }
                 }
             }
-            foreach($data['artist_id'] as $id) {
-                if(isset($id) && $id) {
-                    $user = $user = User::find($id);
-                    if(!$user) throw new \Exception('One or more artists is invalid.');
+            if(isset($data['artist_id'])) {
+                foreach($data['artist_id'] as $id) {
+                    if(isset($id) && $id) {
+                        $user = $user = User::find($id);
+                        if(!$user) throw new \Exception('One or more artists is invalid.');
+                    }
                 }
             }
-
             // Attach artists/designers
-            foreach($data['designer_id'] as $key => $id) {
-                if($id || $data['designer_url'][$key])
-                    DB::table('character_image_creators')->insert([
-                        'character_image_id' => $image->id,
-                        'type' => 'Designer',
-                        'url' => $data['designer_url'][$key],
-                        'user_id' => $id,
-                        'credit_type' => isset($data['designer_type'][$key]) ? $data['designer_type'][$key] : null
-                    ]);
+            if(isset($data['designer_id'])) {
+                foreach($data['designer_id'] as $key => $id) {
+                    if($id || $data['designer_url'][$key])
+                        DB::table('character_image_creators')->insert([
+                            'character_image_id' => $image->id,
+                            'type' => 'Designer',
+                            'url' => $data['designer_url'][$key],
+                            'user_id' => $id,
+                            'credit_type' => isset($data['designer_type'][$key]) ? $data['designer_type'][$key] : null
+                        ]);
+                }
             }
-            foreach($data['artist_id'] as $key => $id) {
-                if($id || $data['artist_url'][$key])
-                    DB::table('character_image_creators')->insert([
-                        'character_image_id' => $image->id,
-                        'type' => 'Artist',
-                        'url' => $data['artist_url'][$key],
-                        'user_id' => $id,
-                        'credit_type' => isset($data['artist_type'][$key]) ? $data['artist_type'][$key] : null
-                    ]);
+            if(isset($data['artist_id'])) {
+                foreach($data['artist_id'] as $key => $id) {
+                    if($id || $data['artist_url'][$key])
+                        DB::table('character_image_creators')->insert([
+                            'character_image_id' => $image->id,
+                            'type' => 'Artist',
+                            'url' => $data['artist_url'][$key],
+                            'user_id' => $id,
+                            'credit_type' => isset($data['artist_type'][$key]) ? $data['artist_type'][$key] : null
+                        ]);
+                }
             }
 
             // Save image
@@ -324,9 +336,11 @@ class CharacterManager extends Service
             if(!$isMyo) $this->processImage($image);
 
             // Attach features
-            foreach($data['feature_id'] as $key => $featureId) {
-                if($featureId) {
-                    $feature = CharacterFeature::create(['character_image_id' => $image->id, 'feature_id' => $featureId, 'data' => $data['feature_data'][$key]]);
+            if(isset($data['feature_id'])) {
+                foreach($data['feature_id'] as $key => $featureId) {
+                    if($featureId) {
+                        $feature = CharacterFeature::create(['character_image_id' => $image->id, 'feature_id' => $featureId, 'data' => $data['feature_data'][$key]]);
+                    }
                 }
             }
 
