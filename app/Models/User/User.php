@@ -404,6 +404,25 @@ class User extends Authenticatable implements MustVerifyEmail
         if(!$bday || $bday->diffInYears(carbon::now()) < 18) return false;
         else return true;
     }
+
+    /**
+     * Check if user can collect from the donation shop.
+     *
+     * @return int
+     */
+    public function getDonationShopCooldownAttribute()
+    {
+        // Fetch log for most recent collection
+        $log = ItemLog::where('recipient_id', $this->id)->where('log_type', 'Collected from Donation Shop')->orderBy('id', 'DESC')->first();
+        // If there is no log, by default, the cooldown is null
+        if(!$log) return null;
+        // If the cooldown would already be up, it is null
+        if($log->created_at->addMinutes(Config::get('lorekeeper.settings.donation_shop.cooldown')) <= Carbon::now()) return null;
+        // Otherwise, calculate the remaining time
+        return $log->created_at->addMinutes(Config::get('lorekeeper.settings.donation_shop.cooldown'));
+        return null;
+    }
+
     /**********************************************************************************************
 
         OTHER FUNCTIONS
