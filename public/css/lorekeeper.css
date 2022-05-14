@@ -67,7 +67,7 @@ div.selectize-input {
 } */
 
 div.form-control.selectize-control {
-    height: calc(2.19rem + 2px); /* bootstrap form controls I think */
+    margin-bottom: -8px;
 }
 
 .selectize-dropdown .optgroup .option {
@@ -198,6 +198,10 @@ div.selectize-dropdown .optgroup::before {
 .dropdown-menu .dropdown-item:hover {
     background-color: var(--coal);
     color: var(--purple);
+}
+
+.d-flex {
+    align-items: flex-start;
 }
 
 /**************************************************************************************************
