@@ -1,17 +1,17 @@
 @extends('admin.layout')
 
-@section('admin-title') Awards @endsection
+@section('admin-title') Badges @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Awards' => 'admin/data/awards']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', 'Badges' => 'admin/data/awards']) !!}
 
-<h1>Awards</h1>
+<h1>Badges</h1>
 
-<p>This is a list of awards in the game. Awards can be granted via prompts, claims, or admin grants. Awards can also be set to be held by characters, users, or both.</p>
+<p>This is a list of badges in the game. Badges can be granted via prompts, claims, or admin grants. Badges can also be set to be held by characters, users, or both.</p>
 
 <div class="text-right mb-3">
-    <a class="btn btn-primary" href="{{ url('admin/data/award-categories') }}"><i class="fas fa-folder"></i> Award Categories</a>
-    <a class="btn btn-primary" href="{{ url('admin/data/awards/create') }}"><i class="fas fa-plus"></i> Create New Award</a>
+    <a class="btn btn-primary" href="{{ url('admin/data/award-categories') }}"><i class="fas fa-folder"></i> Badge Categories</a>
+    <a class="btn btn-primary" href="{{ url('admin/data/awards/create') }}"><i class="fas fa-plus"></i> Create New Badge</a>
 </div>
 
 <div>
@@ -29,7 +29,7 @@
 </div>
 
 @if(!count($awards))
-    <p>No awards found.</p>
+    <p>No badges found.</p>
 @else
     {!! $awards->render() !!}
 
