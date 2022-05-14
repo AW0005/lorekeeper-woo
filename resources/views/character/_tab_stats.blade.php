@@ -13,8 +13,6 @@
     <div class="col-lg-9 col-8">{!! format_date($character->created_at) !!}</div>
 </div>
 @if(!$parent)
-    <hr />
-
 <hr />
 
 <h5><i class="text-{{ $character->is_giftable ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> {{ $character->is_giftable ? 'Can' : 'Cannot'  }} be gifted</h5>
@@ -24,6 +22,8 @@
     <div class="col-lg-3 col-4"><h5>Sale Value</h5></div>
     <div class="col-lg-9 col-8">{{ Config::get('lorekeeper.settings.currency_symbol') }}{{ $character->sale_value }}</div>
 </div>
+@endif
+
 @if($character->transferrable_at && $character->transferrable_at->isFuture())
     <div class="row">
         <div class="col-lg-3 col-4"><h5>Cooldown</h5></div>
