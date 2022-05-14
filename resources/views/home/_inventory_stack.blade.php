@@ -97,7 +97,7 @@
                     <li class="list-group-item">
                         <a class="card-title h5 collapse-title" data-toggle="collapse" href="#donateForm">@if($stack->first()->user_id != $user->id) [ADMIN] @endif Donate Item</a>
                         <div id="donateForm" class="collapse">
-                            <p>This will donate this item to the <a href="{{ url('shops/donation-shop') }}">Donation Shop</a>, where it will be available for other users to take. This action is not reversible. Are you sure you want to donate this item?</p>
+                            <p>This will donate this item to the <a href="{{ url('shops/donation-shop') }}">Donation Tree</a>, where it will be available for other users to take. This action is not reversible. Are you sure you want to donate this item?</p>
                             <div class="text-right">
                                 {!! Form::button('Donate', ['class' => 'btn btn-warning', 'name' => 'action', 'value' => 'donate', 'type' => 'submit']) !!}
                             </div>

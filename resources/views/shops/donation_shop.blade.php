@@ -3,7 +3,7 @@
 @section('shops-title') Donation Tree @endsection
 
 @section('shops-content')
-{!! breadcrumbs(['Shops' => 'shops', 'Donation Shop' => 'shops/donation-shop']) !!}
+{!! breadcrumbs(['Shops' => 'shops', 'Donation Tree' => 'shops/donation-shop']) !!}
 
 <h1>
     Donation Tree

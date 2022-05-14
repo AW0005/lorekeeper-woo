@@ -175,7 +175,7 @@ class ShopManager extends Service
             $stock->save();
 
             // Give the user the item
-            if(!(new InventoryManager)->creditItem(null, $user, 'Collected from Donation Shop', [
+            if(!(new InventoryManager)->creditItem(null, $user, 'Collected from Donation Tree', [
                 'data' => isset($stock->stack->data['data']) ? $stock->stack->data['data'] : null,
                 'notes' => isset($stock->stack->data['notes']) ? $stock->stack->data['notes'] : null,
             ], $stock->item, 1)) throw new \Exception("Failed to collect item.");

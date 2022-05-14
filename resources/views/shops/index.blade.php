@@ -25,7 +25,7 @@
             <a href="{{ url('shops/donation-shop') }}"><img src="{{ asset('images/donation_shop.png') }}" /></a>
         </div>
         <div class="shop-name mt-1">
-            <a href="{{ url('shops/donation-shop') }}" class="h5 mb-0">Donation Shop</a>
+            <a href="{{ url('shops/donation-shop') }}" class="h5 mb-0">Donation Tree</a>
         </div>
     </div>
 </div>
