@@ -226,7 +226,7 @@ abstract class Service {
             chmod($dir, 0755);
         }
 
-        dd($image);
+        dd($copy);
         if($copy) File::copy($image, $dir . '/' . $name);
         else File::move($image, $dir . '/' . $name);
         chmod($dir . '/' . $name, 0755);
