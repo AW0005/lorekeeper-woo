@@ -1,6 +1,7 @@
 <script>
 $( document ).ready(function() {
     const features = <?php if(isset($features)) echo json_encode($features) ?>;
+    const species_id = <?php echo (null !== old('species_id') ? old('species_id') : '0') ?>;
 
     const getFeatureOptions = (species) => {
         const arry = [];
@@ -17,6 +18,33 @@ $( document ).ready(function() {
 
         return {features: arry, groups};
     }
+
+    const org = $('.original select');
+
+    console.log(org);
+    console.log(<?php echo json_encode(old('feature_id')) ?>);
+        org.selectize({
+            render: {
+                item: featureSelectedRender,
+                option: (opt) => `<div class="option" data-selectable="" data-value="${opt['value']}">${opt['text']}</div>`
+            }
+        });
+
+        org.each(select => {
+            const selectize = org[select].selectize;
+            if(selectize) {
+                const {features, groups} = getFeatureOptions(species_id);
+
+                const selected = org[select].getAttribute('value');
+                selectize.clear()
+                selectize.clearOptions();
+                groups.forEach(group => selectize.addOptionGroup(group, {label: group}));
+                selectize.addOption(features);
+                selectize.refreshOptions(false);
+                selectize.addItem(selected);
+
+            }
+        });
 
     // Cropper ////////////////////////////////////////////////////////////////////////////////////
 
@@ -83,12 +111,6 @@ $( document ).ready(function() {
 
     // Traits /////////////////////////////////////////////////////////////////////////////////////
 
-    $('.initial.feature-select').selectize({
-        render: {
-            item: featureSelectedRender,
-            option: (opt) => `<div class="option" data-selectable="" data-value="${opt['value']}">${opt['text']}</div>`
-        }
-    });
     $('#add-feature').on('click', function(e) {
         e.preventDefault();
         addFeatureRow();

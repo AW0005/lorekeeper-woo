@@ -251,6 +251,17 @@
     <div class="form-group">
         {!! Form::label('Traits') !!}
         <div id="featureList">
+            @if(old('feature_id'))
+                @foreach(old('feature_id') as $feature)
+                    @if(isset($feature))
+                    <div class="feature-row d-flex original mb-2">
+                        {!! Form::select('feature_id[]', $features, null, ['class' => 'form-control mr-2 feature-select', 'placeholder' => 'Select Trait', 'value' => $feature]) !!}
+                        {!! Form::text('feature_data[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Extra Info (Optional)']) !!}
+                        <a href="#" class="remove-feature btn btn-danger mb-2"><i class="fas fa-times"></i></a>
+                    </div>
+                    @endif
+                @endforeach
+            @endif
         </div>
         <div><a href="#" class="btn btn-primary" id="add-feature">Add Trait</a></div>
         <div class="feature-row hide mb-2">
