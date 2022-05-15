@@ -356,10 +356,9 @@ class CharacterManager extends Service
             if(isset($data['use_cropper'])) $this->cropThumbnail(Arr::only($data, ['x0','x1','y0','y1']), $image, $isMyo);
             else $this->handleImage($data['thumbnail'], $image->imageDirectory, $image->thumbnailFileName, null, isset($data['default_image']));
 
-            dd('hrm');
             // Process and save the image itself
             if(!$isMyo) $this->processImage($image);
-
+            dd('hrm');
             // Attach features
             if(isset($data['feature_id'])) {
                 foreach($data['feature_id'] as $key => $featureId) {
