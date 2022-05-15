@@ -73,7 +73,6 @@
 
     $("[name=species_id]").change(() => {
         var species = $("[name=species_id]").val();
-        console.log(species);
         const dd = $('[name=subtype_id]')[0].selectize;
         dd.clearOptions();
 

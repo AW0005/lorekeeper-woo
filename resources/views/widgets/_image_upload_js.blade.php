@@ -21,30 +21,27 @@ $( document ).ready(function() {
 
     const org = $('.original select');
 
-    console.log(org);
-    console.log(<?php echo json_encode(old('feature_id')) ?>);
-        org.selectize({
-            render: {
-                item: featureSelectedRender,
-                option: (opt) => `<div class="option" data-selectable="" data-value="${opt['value']}">${opt['text']}</div>`
-            }
-        });
+    org.selectize({
+        render: {
+            item: featureSelectedRender,
+            option: (opt) => `<div class="option" data-selectable="" data-value="${opt['value']}">${opt['text']}</div>`
+        }
+    });
 
-        org.each(select => {
-            const selectize = org[select].selectize;
-            if(selectize) {
-                const {features, groups} = getFeatureOptions(species_id);
+    org.each(select => {
+        const selectize = org[select].selectize;
+        if(selectize) {
+            const {features, groups} = getFeatureOptions(species_id);
 
-                const selected = org[select].getAttribute('value');
-                selectize.clear()
-                selectize.clearOptions();
-                groups.forEach(group => selectize.addOptionGroup(group, {label: group}));
-                selectize.addOption(features);
-                selectize.refreshOptions(false);
-                selectize.addItem(selected);
-
-            }
-        });
+            const selected = org[select].getAttribute('value');
+            selectize.clear()
+            selectize.clearOptions();
+            groups.forEach(group => selectize.addOptionGroup(group, {label: group}));
+            selectize.addOption(features);
+            selectize.refreshOptions(false);
+            selectize.addItem(selected);
+        }
+    });
 
     // Cropper ////////////////////////////////////////////////////////////////////////////////////
 
