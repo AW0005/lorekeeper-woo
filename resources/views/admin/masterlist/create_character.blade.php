@@ -238,7 +238,7 @@
     @if(!$isMyo)
     <div class="form-group" id="subtypes">
         {!! Form::label('Subtype (Optional)') !!} @if($isMyo) {!! add_help('This will lock the slot into a particular subtype. Leave it blank if you would like to give the user a choice, or not select a subtype. The subtype must match the species selected above, and if no species is specified, the subtype will not be applied.') !!} @endif
-        {!! Form::select('subtype_id', [0 => 'Pick a Species First'], old('subtype_id'), ['class' => 'form-control disabled selectize', 'id' => 'subtype']) !!}
+        {!! Form::select('subtype_id', old('subtype_id') ? $subtypes : [0 => 'Pick a Species First'], old('subtype_id'), ['class' => 'form-control disabled selectize', 'id' => 'subtype']) !!}
     </div>
     @endif
 
@@ -290,6 +290,29 @@
 
 <script>
     const subTypes = <?php echo json_encode($subtypes); ?>;
+    const species_id = <?php echo (null !== old('species_id') ? old('species_id') : '0') ?>;
+    const subType_id = <?php echo (null !== old('subtype_id') ? old('subtype_id') : 'undefined') ?>;
+
+    window.addEventListener('load', () => {
+        if(subType_id) {
+            const dd = $('#subtypes select')[0].selectize;
+
+            dd.clear();
+            dd.clearOptions();
+
+            let newSet = subTypes.reduce((filtered, subtype, index) => {
+                if (subtype.species_id === parseInt(species_id, 10) || !subtype.species_id) {
+                    filtered.push({text: subtype.name, value: subtype.id || 0});
+                }
+                return filtered;
+            }, []);
+
+            dd.addOption(newSet);
+            dd.setValue(subType_id);
+            dd.refreshOptions(false);
+        }
+    });
+
     $( "#species" ).change(function() {
         var species = $('#species').val();
         const dd = $('#subtypes select')[0].selectize;
