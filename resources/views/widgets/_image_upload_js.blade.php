@@ -117,7 +117,7 @@ $( document ).ready(function() {
         removeFeatureRow($(this));
     })
     function addFeatureRow() {
-        var $clone = $('.feature-row').clone();
+        var $clone = $('.feature-row.hide').clone();
         $('#featureList').append($clone);
         $clone.removeClass('hide feature-row');
         $clone.addClass('d-flex');
