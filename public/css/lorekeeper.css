@@ -467,7 +467,7 @@ main > .row {
     .site-mobile-header {
         display: block;
         position: fixed;
-        top: 78px;
+        top: 68px;
         z-index: 4;
         width: 100%;
     }
