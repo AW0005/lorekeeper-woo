@@ -124,7 +124,9 @@ $( document ).ready(function() {
             e.preventDefault();
             removeFeatureRow($(this));
         })
+        $clone.find('input').attr('name', 'feature_data[]');
         const selects = $clone.find('.feature-select');
+        selects.attr('name', 'feature_id[]');
 
         selects.selectize({
             render: {
