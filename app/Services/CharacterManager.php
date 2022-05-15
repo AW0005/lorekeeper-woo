@@ -358,7 +358,7 @@ class CharacterManager extends Service
 
             // Process and save the image itself
             if(!$isMyo) $this->processImage($image);
-            dd('hrm');
+
             // Attach features
             if(isset($data['feature_id'])) {
                 foreach($data['feature_id'] as $key => $featureId) {
