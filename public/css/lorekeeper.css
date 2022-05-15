@@ -451,7 +451,7 @@ main > .row {
 
 @media (max-width: 767px) {
     .site-mobile-header {
-        top: 78px !important;
+        top: 68px !important;
     }
 
     .timestamp {
