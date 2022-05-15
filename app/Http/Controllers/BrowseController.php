@@ -257,10 +257,10 @@ class BrowseController extends Controller
 
         switch($request->get('sort')) {
             case 'number_desc':
-                $query->orderBy('characters.number', 'DESC');
+                $query->orderBy('characters.year', 'DESC')->orderBy('characters.number', 'DESC');
                 break;
             case 'number_asc':
-                $query->orderBy('characters.number', 'ASC');
+                $query->orderBy('characters.year', 'ASC')->orderBy('characters.number', 'ASC');
                 break;
             case 'id_desc':
                 $query->orderBy('characters.id', 'DESC');
