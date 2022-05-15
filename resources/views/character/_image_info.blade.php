@@ -47,7 +47,7 @@
                     <div><h5>Traits</h5></div>
                     @if(Config::get('lorekeeper.extensions.traits_by_category'))
                         <div>
-                            @php $traitgroup = $image->features()->orderBy('feature_category_id', 'ASC')->get()->groupBy('feature_category_id') @endphp
+                            @php $traitgroup = $image->features()->get()->groupBy('feature_category_id') @endphp
                             @if($image->features()->count())
                                 @foreach($traitgroup as $key => $group)
                                 <div class="mb-2">
