@@ -356,7 +356,7 @@ class CharacterManager extends Service
             if(isset($data['use_cropper'])) $this->cropThumbnail(Arr::only($data, ['x0','x1','y0','y1']), $image, $isMyo);
             else $this->handleImage($data['thumbnail'], $image->imageDirectory, $image->thumbnailFileName, null, isset($data['default_image']));
 
-            // dd('hrm');
+            dd('hrm');
             // Process and save the image itself
             if(!$isMyo) $this->processImage($image);
 
@@ -369,7 +369,6 @@ class CharacterManager extends Service
                 }
             }
 
-            dd($image);
             return $image;
         } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
