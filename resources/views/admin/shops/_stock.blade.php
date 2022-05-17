@@ -53,5 +53,6 @@
                     {!! Form::select('purchase_limit_timeframe['.$key.']', ["lifetime" => "Lifetime", "yearly" => "Yearly", "monthly" => "Monthly", "weekly" => "Weekly", "daily" => "Daily"] , $stock ? $stock->purchase_limit_timeframe : 0, ['class' => 'form-control stock-field', 'data-name' => 'purchase_limit_timeframe']) !!}
                 </div>
             </div>
+        </div>
     </div>
 </div>
