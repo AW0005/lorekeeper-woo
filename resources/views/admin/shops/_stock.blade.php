@@ -1,7 +1,7 @@
 <div class="card mb-3 stock {{ $stock ? '' : 'hide' }}">
     <div class="p-3">
         <div class="row" style="align-items: flex-start;">
-            <a class="col-1" data-toggle="collapse" href="#collapsable-{{$key}}">
+            <a class="col-1 p-0" data-toggle="collapse" href="#collapsable-{{$key}}">
                 <i class="fas fa-angle-down" style="font-size: 24px"></i>
             </a>
             <div class="col-7">

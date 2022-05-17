@@ -113,10 +113,13 @@ div.toggle.btn {
     min-width: 125px;
 }
 
-[data-toggle="collapse"][aria-expanded="true"] i::before {
+[data-toggle="collapse"] i::before {
     display: block;
-    transform: rotate(-90deg);
     transition: 0.5s ease;
+}
+
+[data-toggle="collapse"][aria-expanded="true"] i::before {
+    transform: rotate(-90deg);
 }
 
 .bg-danger {
