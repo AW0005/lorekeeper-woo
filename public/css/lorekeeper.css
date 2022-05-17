@@ -105,6 +105,16 @@ div.selectize-dropdown .optgroup::before {
     align-items: center;
 }
 
+div.toggle.btn {
+    min-width: 125px;
+}
+
+[data-toggle="collapse"][aria-expanded="true"] i::before {
+    display: block;
+    transform: rotate(-90deg);
+    transition: 0.5s ease;
+}
+
 .bg-danger {
     background-color: var(--red) !important;
     filter: brightness(100%) !important;
