@@ -78,6 +78,8 @@ $( document ).ready(function() {
     var $shopStock = $('#shopStock');
     var $stock = $('#shopStockData').find('.stock');
 
+    $('#shopStock').find('.stock select').selectize();
+
     $('.delete-shop-button').on('click', function(e) {
         e.preventDefault();
         loadModal("{{ url('admin/data/shops/delete') }}/{{ $shop->id }}", 'Delete Shop');
@@ -88,6 +90,10 @@ $( document ).ready(function() {
         var clone = $stock.clone();
         $shopStock.append(clone);
         clone.removeClass('hide');
+        clone.find('select').selectize();
+        const key = $('[data-toggle]').length;
+        clone.find('[data-toggle]').attr('href', '#collapsable-' + key);
+        clone.find('.collapse').attr('id', 'collapsable-' + key);
         attachStockListeners(clone);
         refreshStockFieldNames();
     });
@@ -122,6 +128,6 @@ $( document ).ready(function() {
         });
     }
 });
-    
+
 </script>
 @endsection

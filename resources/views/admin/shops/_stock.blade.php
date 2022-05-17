@@ -1,12 +1,12 @@
 <div class="card mb-3 stock {{ $stock ? '' : 'hide' }}">
     <div class="p-3">
-        <div class="row" style="align-items: flex-start;">
+        <div class="row m-0" style="align-items: flex-start;">
             <a class="col-1 p-0" data-toggle="collapse" href="#collapsable-{{$key}}">
                 <i class="fas fa-angle-down" style="font-size: 24px"></i>
             </a>
             <div class="col-7">
                 {!! Form::label('item_id['.$key.']', 'Item') !!}
-                {!! Form::select('item_id['.$key.']', $items, $stock ? $stock->item_id : null, ['class' => 'form-control stock-field selectize', 'data-name' => 'item_id']) !!}
+                {!! Form::select('item_id['.$key.']', $items, $stock ? $stock->item_id : null, ['class' => 'form-control stock-field', 'data-name' => 'item_id']) !!}
             </div>
             <div class="col-2">
                 {!! Form::label('cost['.$key.']', 'Cost (CC)') !!}
@@ -17,7 +17,7 @@
         <!-- Hidden form fields I don't need but I don't feel like defaulting them in the service -->
         <div class="row hide">
             <div class="hide">
-                {!! Form::select('currency_id['.$key.']', $currencies, $stock ? $stock->currency_id : null, ['class' => 'form-control stock-field selectize', 'data-name' => 'currency_id']) !!}
+                {!! Form::select('currency_id['.$key.']', $currencies, $stock ? $stock->currency_id : null, ['class' => 'form-control stock-field', 'data-name' => 'currency_id']) !!}
             </div>
             <div class="col-md-6">
                 <div class="form-group">
