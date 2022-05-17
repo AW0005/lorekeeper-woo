@@ -99,6 +99,10 @@ div.selectize-dropdown .optgroup::before {
 
 **************************************************************************************************/
 
+label {
+    margin-bottom: 2px !important;
+}
+
 .toggle-group .btn {
     display: flex;
     justify-content: center;
