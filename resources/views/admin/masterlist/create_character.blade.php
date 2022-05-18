@@ -133,13 +133,15 @@
         {!! Form::text('transferrable_at', old('transferrable_at'), ['class' => 'form-control', 'id' => 'datepicker']) !!}
     </div>
 
-    @if(!$isMyo)
+
     <h3 class="mt-4">Image Upload</h3>
     <div class="form-group">
         {!! Form::label('Image') !!}
-        {!! add_help('This is the full masterlist image. Note that the image is not protected in any way, so take precautions to avoid art/design theft.') !!}
+        @if(!$isMyo){!! add_help('This is the full masterlist image. Note that the image is not protected in any way, so take precautions to avoid art/design theft.') !!}@endif
+        @if($isMyo){!! add_help('The default image for MYOs should only be replaced for BDAY MYOs.') !!}@endif
         <div>{!! Form::file('image', ['id' => 'mainImage']) !!}</div>
     </div>
+    @if(!$isMyo)
     @if (Config::get('lorekeeper.settings.masterlist_image_automation') === 1)
         <div class="form-group">
             {!! Form::checkbox('use_cropper', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'useCropper']) !!}
