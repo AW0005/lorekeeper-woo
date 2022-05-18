@@ -11,12 +11,8 @@
 
     @if($stock->item->parsed_description)
         <div class="mb-2">
-            <a data-toggle="collapse" href="#itemDescription" class="h5">Description <i class="fas fa-caret-down"></i></a>
-            <div class="card collapse show mt-1" id="itemDescription">
-                <div class="card-body">
-                    {!! $stock->item->parsed_description !!}
-                </div>
-            </div>
+            <h5>Description</h5>
+            {!! $stock->item->parsed_description !!}
         </div>
     @endif
 
