@@ -42,16 +42,6 @@ return [
         'description' => 'The awards graphic on the front page. PNG format, default size of 200px x 200px (no restriction).',
         'filename' => 'awards.png'
     ],
-    'myo' => [
-        'name' => 'MYO Default Image',
-        'description' => 'The default image used for MYO slots when no image is uploaded. PNG format, no size restriction.',
-        'filename' => 'myo.png'
-    ],
-    'myo-th' => [
-        'name' => 'MYO Default Image (Thumbnail)',
-        'description' => 'The default masterlist thumbnail used for MYO slots when no image is uploaded. PNG format, size of masterlist thumbnails.',
-        'filename' => 'myo-th.png'
-    ],
     'meta-image' => [
         'name' => 'Meta Tag Image',
         'description' => 'The image displayed in meta tag previews on social media, discord, and the like. PNG format, no size restriction.',
