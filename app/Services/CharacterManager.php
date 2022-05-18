@@ -261,8 +261,6 @@ class CharacterManager extends Service
                 // Use default images for MYO slots without an image provided
                 if(!isset($data['image']))
                 {
-                    $data['image'] = public_path('images/myo.png');
-                    $data['thumbnail'] = public_path('images/myo-th.png');
                     $data['extension'] = 'png';
                     $data['default_image'] = true;
                     unset($data['use_cropper']);
@@ -284,6 +282,12 @@ class CharacterManager extends Service
             $imageData['character_id'] = $character->id;
 
             $image = CharacterImage::create($imageData);
+
+            // Easier to pick these up after the image model exists and we can grab names
+            if(isset($data['default_image'])) {
+                $data['image'] = public_path('images/'.$image->species->name.'-myo/'.$image->rarity->name.'.png');
+                $data['thumbnail'] = public_path('images/'.$image->species->name.'-myo/'.$image->rarity->name.'.png');
+            }
 
             // Check if entered url(s) have aliases associated with any on-site users
             if(isset($data['designer_url'])) {
@@ -457,7 +461,7 @@ class CharacterManager extends Service
 
         // Watermark the image if desired
         if(Config::get('lorekeeper.settings.watermark_masterlist_images') == 1) {
-            $watermark = Image::make('images/'.$characterImage->rarity->name.'.png');
+            $watermark = Image::make('images/watermarks/'.$characterImage->rarity->name.'.png');
             //Downsize the watermark if we need to.
             if($watermark->width() > $image->width()){
                 $watermark->resize($image->width(), null, function($constraint) {
