@@ -163,6 +163,7 @@ div.toggle.btn {
 .alert-warning {
     background-color: var(--white-purple);
     color: var(--dark-purple);
+    border-color: var(--purple);
 }
 
 .alert-danger {
