@@ -14,7 +14,7 @@
                 </li>
                 @if(Auth::check() && Auth::user()->hasPower('manage_characters'))
                     <li class="nav-item">
-                        <a class="nav-link" id="settingsTab-{{ $image->id }}" data-toggle="tab" href="#settings-{{ $image->id }}" role="tab"><i class="fas fa-cog"></i></a>
+                        <a class="nav-link" id="settingsTab-{{ $image->id }}" data-toggle="tab" href="#settings-{{ $image->id }}" role="tab">Admin <i class="fas fa-cog"></i></a>
                     </li>
                 @endif
             </ul>
