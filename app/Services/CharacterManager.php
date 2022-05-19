@@ -270,7 +270,7 @@ class CharacterManager extends Service
                 'species_id', 'subtype_id', 'rarity_id', 'use_cropper',
                 'x0', 'x1', 'y0', 'y1',
             ]);
-            $imageData['use_cropper'] = isset($data['use_cropper']) ;
+            $imageData['use_cropper'] = isset($data['use_cropper']) || $isMyo;
             $imageData['description'] = isset($data['image_description']) ? $data['image_description'] : null;
             $imageData['parsed_description'] = parse($imageData['description']);
             $imageData['hash'] = randomString(10);
