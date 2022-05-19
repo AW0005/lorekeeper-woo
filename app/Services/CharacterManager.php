@@ -263,6 +263,7 @@ class CharacterManager extends Service
                 {
                     $data['extension'] = 'png';
                     $data['default_image'] = true;
+                    $data['use_cropper'] = true;
                 }
             }
             $imageData = Arr::only($data, [
