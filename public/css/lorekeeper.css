@@ -272,11 +272,13 @@ a.h5:hover {
     text-decoration: none;
 }
 
-.parsed-text a {
+.parsed-text a,
+#tinymce a {
     color: var(--blue);
 }
 
-.parsed-text a:hover {
+.parsed-text a:hover,
+#tinymce a:hover {
     color: var(--blue);
     filter: brightness(80%);
 }
