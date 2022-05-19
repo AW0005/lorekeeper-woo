@@ -584,11 +584,11 @@ class CharacterManager extends Service
             }
         }
         else {
-            $cropWidth = $points['x1'] - $points['x0'];
-            $cropHeight = $points['y1'] - $points['y0'];
 
             if (Config::get('lorekeeper.settings.masterlist_image_automation') == 0)
             {
+                $cropWidth = $points['x1'] - $points['x0'];
+                $cropHeight = $points['y1'] - $points['y0'];
                 // Crop according to the selected area
                 $image->crop($cropWidth, $cropHeight, $points['x0'], $points['y0']);
             }
