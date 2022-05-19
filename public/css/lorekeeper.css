@@ -272,6 +272,15 @@ a.h5:hover {
     text-decoration: none;
 }
 
+.parsed-text a {
+    color: var(--blue);
+}
+
+.parsed-text a:hover {
+    color: var(--blue);
+    filter: brightness(80%);
+}
+
 a {
     color: rgba(0, 0, 0, 0.7);
 }
