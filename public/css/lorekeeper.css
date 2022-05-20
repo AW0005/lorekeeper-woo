@@ -791,6 +791,19 @@ tr.outflow {
 
 /* INVENTORY *************************************************************************************/
 
+.inventory-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.inventory-item:first-child {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
 .inventory-category .inventory-body .inventory-item img {
     max-width: 100%;
 }
