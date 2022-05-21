@@ -10,9 +10,9 @@
 </h1>
 
 <div>
-    <div style="display:flex;">
+    <div class="row">
         <img src="{{ asset('images/donation_shop.png') }}" style="max-width:100%; height: 250px" />
-        <div class="mt-5">{!! $text->parsed_text !!}</div>
+        <div class="col-sm-6" class="mt-6">{!! $text->parsed_text !!}</div>
     </div>
 
     @if(Auth::check() && Auth::user()->donationShopCooldown)
