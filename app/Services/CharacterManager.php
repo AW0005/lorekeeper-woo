@@ -388,7 +388,7 @@ class CharacterManager extends Service
     private function processImage($characterImage)
     {
         // Trim transparent parts of image.
-        $image = Image::make($characterImage->imagePath . '/' . $characterImage->imageFileName)->trim('transparent');
+        $image = Image::make($characterImage->imagePath . '/' . $characterImage->imageFileName);
 
         if (Config::get('lorekeeper.settings.masterlist_image_automation') == 1)
         {
@@ -508,7 +508,6 @@ class CharacterManager extends Service
                     $image = $canvas->insert($image, 'center');
                 }
             }
-
 
         if(Config::get('lorekeeper.settings.watermark_masterlist_thumbnails') == 1 && !$isMyo) {
             // Trim transparent parts of image.
