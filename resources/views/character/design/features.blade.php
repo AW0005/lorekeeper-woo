@@ -14,7 +14,7 @@
     {!! Form::open(['url' => 'designs/'.$request->id.'/traits']) !!}
         <div class="form-group">
             {!! Form::label('species_id', 'Species') !!}
-            @if($request->character->is_myo_slot && $request->character->image->species_id)
+            @if(!$request->character->is_myoSlot || ($request->character->is_myo_slot && $request->character->image->species_id))
                 <div class="alert alert-secondary">{!! $request->character->image->species->displayName !!}</div>
             @else
                 {!! Form::select('species_id', $specieses, $request->species_id, ['class' => 'form-control', 'id' => 'species']) !!}
@@ -24,11 +24,11 @@
 
         <div class="form-group">
             {!! Form::label('subtype_id', 'Species Subtype') !!}
-            @if($request->character->is_myo_slot && $request->character->image->subtype_id)
+            @if(!$request->character->is_myo_slot || ($request->character->is_myo_slot && $request->character->image->subtype_id))
                 <div class="alert alert-secondary">{!! $request->character->image->subtype->displayName !!}</div>
             @else
                 <div id="subtypes">
-                  {!! Form::select('subtype_id', $subtypes, $request->subtype_id, ['class' => 'form-control', 'id' => 'subtype']) !!}
+                    {!! Form::select('subtype_id', $subtypes, $request->subtype_id, ['class' => 'form-control', 'id' => 'subtype']) !!}
                 </div>
             @endif
 
@@ -60,8 +60,8 @@
                 {{-- Add in the ones that currently exist --}}
                 @if($request->features)
                     @foreach($request->features as $feature)
-                        <div class="mb-2 d-flex">
-                            {!! Form::select('feature_id[]', $features, $feature->feature_id, ['class' => 'form-control mr-2 initial feature-select', 'placeholder' => 'Select Trait']) !!}
+                        <div class="mb-2 d-flex original">
+                            {!! Form::select('feature_id[]', $features, $feature->feature_id, ['class' => 'form-control mr-2 feature-select', 'placeholder' => 'Select Trait', 'value' => $feature->feature_id]) !!}
                             {!! Form::text('feature_data[]', $feature->data, ['class' => 'form-control mr-2', 'placeholder' => 'Extra Info (Optional)']) !!}
                             <a href="#" class="remove-feature btn btn-danger mb-2"><i class="fas fa-times"></i></a>
                         </div>
