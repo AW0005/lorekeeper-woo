@@ -1,8 +1,14 @@
 @extends('layouts.app')
 <style>
+    .site-page-content {
+        padding-bottom: 30px;
+    }
+
     .timestamp {
         filter: brightness(550%);
-        float: right;
+        position: absolute;
+        bottom: 15px;
+        right: 20px;
     }
 </style>
 @section('title') {{ $page->title }} @endsection
