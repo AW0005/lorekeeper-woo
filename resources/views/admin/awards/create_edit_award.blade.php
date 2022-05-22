@@ -1,13 +1,13 @@
 @extends('admin.layout')
 
-@section('admin-title') Awards @endsection
+@section('admin-title') Badges @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Awards' => 'admin/data/awards', ($award->id ? 'Edit' : 'Create').' Award' => $award->id ? 'admin/data/awards/edit/'.$award->id : 'admin/data/awards/create']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', 'Badges' => 'admin/data/awards', ($award->id ? 'Edit' : 'Create').' Badge' => $award->id ? 'admin/data/awards/edit/'.$award->id : 'admin/data/awards/create']) !!}
 
-<h1>{!! $award->id ? 'Edit '.$award->displayName : 'Create Award' !!}
+<h1>{!! $award->id ? 'Edit '.$award->displayName : 'Create Badge' !!}
     @if($award->id)
-        <a href="#" class="btn btn-outline-danger float-right delete-award-button">Delete Award</a>
+        <a href="#" class="btn btn-outline-danger float-right delete-award-button">Delete Badge</a>
     @endif
 </h1>
 

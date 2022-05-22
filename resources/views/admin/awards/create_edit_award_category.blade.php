@@ -1,9 +1,9 @@
 @extends('admin.layout')
 
-@section('admin-title') Award Categories @endsection
+@section('admin-title') Badge Categories @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Award Categories' => 'admin/data/award-categories', ($category->id ? 'Edit' : 'Create').' Category' => $category->id ? 'admin/data/award-categories/edit/'.$category->id : 'admin/data/award-categories/create']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', 'Badge Categories' => 'admin/data/award-categories', ($category->id ? 'Edit' : 'Create').' Category' => $category->id ? 'admin/data/award-categories/edit/'.$category->id : 'admin/data/award-categories/create']) !!}
 
 <h1>{{ $category->id ? 'Edit' : 'Create' }} Category
     @if($category->id)
@@ -59,12 +59,12 @@
 @section('scripts')
 @parent
 <script>
-$( document ).ready(function() {    
+$( document ).ready(function() {
     $('.delete-category-button').on('click', function(e) {
         e.preventDefault();
         loadModal("{{ url('admin/data/award-categories/delete') }}/{{ $category->id }}", 'Delete Category');
     });
 });
-    
+
 </script>
 @endsection

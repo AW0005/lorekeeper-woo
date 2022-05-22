@@ -1,10 +1,10 @@
 @extends('character.layout', ['isMyo' => $character->is_myo_slot])
 
-@section('profile-title') {{ $character->fullName }}'s Awards @endsection
+@section('profile-title') {{ $character->fullName }}'s Badges @endsection
 
 @section('profile-content')
 @if($character->is_myo_slot)
-{!! breadcrumbs(['MYO Slot Masterlist' => 'myos', $character->fullName => $character->url, 'Awards' => $character->url.'/awards']) !!}
+{!! breadcrumbs(['MYO Slot Masterlist' => 'myos', $character->fullName => $character->url, 'Badges' => $character->url.'/awards']) !!}
 @else
 {!! breadcrumbs([($character->category->masterlist_sub_id ? $character->category->sublist->name.' Masterlist' : 'Character masterlist') => ($character->category->masterlist_sub_id ? 'sublist/'.$character->category->sublist->key : 'masterlist' ), $character->fullName => $character->url, 'Awards' => $character->url.'/awards']) !!}
 @endif
@@ -15,7 +15,7 @@
     @if(Auth::check() && Auth::user()->hasPower('edit_inventories'))
         <a href="#" class="float-right btn btn-outline-info btn-sm" id="grantButton" data-toggle="modal" data-target="#grantModal"><i class="fas fa-cog"></i> Admin</a>
     @endif
-    Awards
+    Badges
 </h3>
 
 @foreach($awards as $categoryId=>$categoryAwards)
@@ -64,15 +64,15 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <span class="modal-title h5 mb-0">[ADMIN] Grant Awards</span>
+                    <span class="modal-title h5 mb-0">[ADMIN] Grant Badges</span>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                <p>Note that granting awards does not check against any hold limits for characters.</p>
+                <p>Note that granting Badges does not check against any hold limits for characters.</p>
                 <div class="form-group">
                 {!! Form::open(['url' => 'admin/character/'.$character->slug.'/grant-awards']) !!}
 
-                    {!! Form::label('Award(s)') !!} {!! add_help('Must have at least 1 award and Quantity must be at least 1.') !!}
+                    {!! Form::label('Badge(s)') !!} {!! add_help('Must have at least 1 badge and Quantity must be at least 1.') !!}
                     <div id="awardList">
                         <div class="d-flex mb-2">
                             {!! Form::select('award_ids[]', $awardOptions, null, ['class' => 'form-control mr-2 default award-select', 'placeholder' => 'Select Award']) !!}

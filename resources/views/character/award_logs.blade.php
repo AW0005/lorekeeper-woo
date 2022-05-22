@@ -1,6 +1,6 @@
 @extends('character.layout', ['isMyo' => $character->is_myo_slot])
 
-@section('profile-title') {{ $character->fullName }}'s Award Logs @endsection
+@section('profile-title') {{ $character->fullName }}'s Badges Logs @endsection
 
 @section('profile-content')
 @if($character->is_myo_slot)
@@ -11,7 +11,7 @@
 
 @include('character._header', ['character' => $character])
 
-<h3>Award Logs</h3>
+<h3>Badge Logs</h3>
 
 {!! $logs->render() !!}
 <div class="row ml-md-2 mb-4">

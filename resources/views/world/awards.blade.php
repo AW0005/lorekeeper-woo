@@ -4,7 +4,7 @@
 
 @section('content')
 {!! breadcrumbs(['World' => 'world', 'Badges' => 'world/awards']) !!}
-<h1>Awards</h1>
+<h1>Badges</h1>
 
 <div>
     {!! Form::open(['method' => 'GET', 'class' => '']) !!}

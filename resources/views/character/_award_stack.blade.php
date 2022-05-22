@@ -10,7 +10,7 @@
 
     @if($award->is_featured)
         <div class="alert alert-success mt-2">
-            This award is featured!
+            This badge is featured!
         </div>
     @endif
 

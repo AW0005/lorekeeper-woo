@@ -1,4 +1,4 @@
-<h3>Your Awardcase <a class="small awardcase-collapse-toggle collapse-toggle" href="#userAwardcase" data-toggle="collapse">Show</a></h3>
+<h3>Your Badges <a class="small awardcase-collapse-toggle collapse-toggle" href="#userAwardcase" data-toggle="collapse">Show</a></h3>
 <div class="card mb-3 collapse show" id="userAwardCase">
     <div class="card-body">
         <div class="text-right mb-3">
@@ -6,7 +6,7 @@
                 {!! Form::label('award_category_id', 'Filter:', ['class' => 'mr-2']) !!}
                 <select class="form-control d-inline-block w-auto" id="userAwardCategory">
                     <option value="all">All Categories</option>
-                    <option value="selected">Selected Awards</option>
+                    <option value="selected">Selected Badges</option>
                     <option disabled>&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</option>
                     <option value="0">Miscellaneous</option>
                     @foreach($categories as $category)
@@ -25,7 +25,7 @@
                 <thead class="thead-light">
                     <tr class="d-flex">
                         <th class="col-1"><input id="toggle-checks" type="checkbox"></th>
-                        <th class="col-2">Award</th>
+                        <th class="col-2">Badge</th>
                         <th class="col-4">Source</th>
                         <th class="col-3">Notes</th>
                         <th class="col-2">Quantity</th>

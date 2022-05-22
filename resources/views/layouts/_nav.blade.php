@@ -45,7 +45,7 @@
                                 Bank
                             </a>
                             <a class="dropdown-item" href="{{ url('awardcase') }}">
-                                Awards
+                                Badges
                             </a>
                         </div>
                     </li>
