@@ -104,6 +104,10 @@ label {
     margin-bottom: 2px !important;
 }
 
+.btn a {
+    color: unset;
+}
+
 .toggle-group .btn {
     display: flex;
     justify-content: center;
