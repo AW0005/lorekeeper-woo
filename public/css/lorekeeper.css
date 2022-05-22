@@ -104,7 +104,8 @@ label {
     margin-bottom: 2px !important;
 }
 
-.btn a {
+.btn a,
+.btn a:hover {
     color: unset;
 }
 
