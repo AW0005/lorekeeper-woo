@@ -1,14 +1,15 @@
 @extends('layouts.app')
-
+<style>
+    .timestamp {
+        filter: brightness(550%);
+        float: right;
+    }
+</style>
 @section('title') {{ $page->title }} @endsection
 
 @section('content')
 {!! breadcrumbs([$page->title => $page->url]) !!}
-<h1>{{ $page->title }}</h1>
-<div class="mb-4">
-    <div><strong>Created:</strong> {!! format_date($page->created_at) !!}</div>
-    <div><strong>Last updated:</strong> {!! format_date($page->updated_at) !!}</div>
-</div>  
+<h1 class="text-center">{{ $page->title }}</h1>
 
 <div class="site-page-content parsed-text">
     {!! $page->parsed_text !!}
@@ -22,4 +23,5 @@
     </div>
 @endif
 
+<div class="timestamp"><strong>Last updated:</strong> {!! format_date($page->updated_at) !!}</div>
 @endsection
