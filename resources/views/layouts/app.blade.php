@@ -82,7 +82,7 @@
 			<div class="site-mobile-header bg-secondary"><a href="#" class="btn btn-sm btn-outline-light" id="mobileMenuButton">Menu <i class="fas fa-caret-right ml-1"></i></a></div>
 		@endif
 
-        <main class="container-fluid">
+        <main class="container-fluid" @if(View::hasSection('sidebar')) style="margin-top: 122px;" @else style="margin-top: 68px" @endif>
             <div class="row">
 
                 <div class="sidebar col-lg-2" id="sidebar">

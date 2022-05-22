@@ -359,6 +359,12 @@ main > .row {
     margin: 10px 0;
 }
 
+@media (max-width: 992px) {
+    .main-content {
+        margin: 10px 20px;
+    }
+}
+
 /* Header */
 
 .navbar {
@@ -522,9 +528,9 @@ main > .row {
         width: 100%;
     }
 
-    main.container-fluid {
+    /* main.container-fluid {
         margin-top: 122px;
-    }
+    } */
 
     main.container-fluid > .row {
         position: relative;
