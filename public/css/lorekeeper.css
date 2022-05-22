@@ -510,6 +510,12 @@ main > .row {
     }
 }
 
+@media (min-width: 991px) {
+    main.container-fluid {
+        margin-top: 0 !important;
+    }
+}
+
 @media (max-width: 991px) {
     .site-header-image {
         display: none;
@@ -527,10 +533,6 @@ main > .row {
         z-index: 5;
         width: 100%;
     }
-
-    /* main.container-fluid {
-        margin-top: 122px;
-    } */
 
     main.container-fluid > .row {
         position: relative;
