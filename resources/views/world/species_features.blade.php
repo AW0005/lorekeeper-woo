@@ -30,7 +30,7 @@
                                     <img class="my-1" style="max-height:100%; height:150px; border-radius:.5em;" src="{{ $feature->first()->imageUrl }}" alt="{{ $feature->first()->name }}" />
                                 </a>
                             @endif
-                            <p>
+                            <p class="trait" data-id="{{ $feature->first()->id }}">
                                 {!! $feature->first()->displayName !!}
                             </p>
                         </div>
@@ -41,4 +41,17 @@
     </div>
 @endforeach
 
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $('.trait').on('click', function(e) {
+            e.preventDefault();
+
+            loadModal("{{ url('world/species/'.$species->id.'/trait') }}/" + $(this).data('id'), 'Trait Detail');
+        });
+    });
+
+</script>
 @endsection

@@ -258,6 +258,24 @@ class WorldController extends Controller
     }
 
     /**
+     * Shows a species' visual trait list.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getSpeciesFeatureDetail($speciesId, $id)
+    {
+        $feature = Feature::where('id', $id)->first();
+
+        if(!$feature) abort(404);
+        if(!Config::get('lorekeeper.extensions.species_trait_index')) abort(404);
+
+        return view('world._feature_entry', [
+            'feature' => $feature,
+        ]);
+    }
+
+    /**
      * Shows the items page.
      *
      * @param  \Illuminate\Http\Request  $request
