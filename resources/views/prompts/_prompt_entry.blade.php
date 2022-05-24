@@ -45,7 +45,7 @@
                     <tbody>
                         @foreach($prompt->rewards as $reward)
                             <tr>
-                                <td>{!! $reward->reward->displayName !!}</td>
+                                <td>{!! isset($reward->reward->displayName) ? $reward->reward->displayName : '' !!}</td>
                                 <td>{{ $reward->quantity }}</td>
                             </tr>
                         @endforeach
