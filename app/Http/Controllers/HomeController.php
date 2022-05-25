@@ -35,7 +35,7 @@ class HomeController extends Controller
     public function getIndex()
     {
         return view('welcome', [
-            'about' => SitePage::where('key', 'about')->first()
+            'about' => SitePage::where('key', 'welcome')->first()
         ]);
     }
 
