@@ -20,6 +20,12 @@
 
 <div class="site-page-content parsed-text">
     {!! $page->parsed_text !!}
+
+    @if($page->key == 'feedback')
+    <div style="height: 500px">
+    <script type="text/javascript" src="https://form.jotform.com/jsform/221458080725051"></script>
+</div>
+    @endif
 </div>
 
 @if($page->can_comment)
