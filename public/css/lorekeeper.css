@@ -313,6 +313,21 @@ img {
     -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
 }
 
+table thead {
+    background-color: var(--coal);
+    color: var(--white);
+    text-transform: uppercase;
+    font-family: "neue-haas-grotesk-display";
+}
+
+table td,
+table thead th,
+.table-sm td,
+.table-sm th {
+    border: 1px solid var(--coal) !important;
+    padding: 8px;
+}
+
 /**************************************************************************************************
 
     Helpers
