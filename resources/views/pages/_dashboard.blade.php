@@ -12,10 +12,10 @@
 </style>
 
 <div class="row" style="justify-content: space-between; align-items: flex-end;">
-    <div class="col-md-10">
+    <div class="col-sm-9">
         <h1 class="m-0">Welcome, {!! Auth::user()->displayName !!}!</h1>
     </div>
-    <div class="col-md-2 text-right">
+    <div class="col-sm-3 text-right">
         <h5>{!! $currency->display($currency->quantity) !!}</h5>
     </div>
 </div>
