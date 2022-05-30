@@ -38,7 +38,7 @@
             @endforeach
         </div>
     @else
-        <div>No Badges Owned.</div>
+        <div class="p-2">No Badges Owned.</div>
     @endif
     </div>
 </div>
