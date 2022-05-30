@@ -352,7 +352,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getDisplayAliasAttribute()
     {
-        if (!$this->hasAlias) return '(Unverified)';
+        if (!$this->hasAlias || !isset($this->primaryAlias)) return '(Unverified)';
         return $this->primaryAlias->displayAlias;
     }
 
