@@ -1,71 +1,125 @@
-<h1>Welcome, {!! Auth::user()->displayName !!}!</h1>
-<div class="card mb-4 timestamp">
-    <div class="card-body">
-        <i class="far fa-clock"></i> {!! format_date(Carbon\Carbon::now()) !!}
+<style>
+    .compact {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding-bottom: 10px;
+    }
+
+    .compact .row {
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="row" style="justify-content: space-between; align-items: flex-end;">
+    <div class="col-md-10">
+        <h1 class="m-0">Welcome, {!! Auth::user()->displayName !!}!</h1>
+    </div>
+    <div class="col-md-2 text-right">
+        <h5>{!! $currency->display($currency->quantity) !!}</h5>
     </div>
 </div>
-
-<div class="row justify-content-center">
+<hr class="mt-2 mb-4" />
+<div class="d-flex mb-4 align-items-center">
+    <h6 class="m-0 pl-1" style="writing-mode:tb;transform: rotate(180deg);">Badges</h6>
+    <div class="card flex-grow-1">
+    @if(count($awards))
+        <div class="row no-gutters">
+            @foreach($awards as $item)
+                <div class="col-sm-1 col-2 p-1">
+                    @if($item->imageUrl)
+                        <a href="{{ $item->url }}" class="h6 mb-0"><img src="{{ $item->imageUrl }}"  style="max-width: 100%" data-toggle="tooltip" title="{{ $item->name }}" alt="{{ $item->name }}"/></a>
+                    @else
+                    <div class="h6 mt-1">
+                        {!! $item->displayName !!}
+                    </div>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div>No Badges Owned.</div>
+    @endif
+    </div>
+</div>
+<div class="row">
     <div class="col-md-6">
+        <h3>News & Sales</h2>
         <div class="card mb-4">
-            <div class="card-body text-center">
-                <img src="{{ asset('images/account.png') }}" alt="Account" />
-                <h5 class="card-title">Account</h5>
+        @foreach($posts as $post)
+            <div class="card-header">
+                <h5 class="card-title mb-0">{!! $post->displayName !!}</h5>
+                <small>
+                    Posted {!! $post->post_at ? pretty_date($post->post_at) : pretty_date($post->created_at) !!} by {!! $post->user->displayName !!}
+                </small>
             </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><a href="{{ Auth::user()->url }}">Profile</a></li>
-                <li class="list-group-item"><a href="{{ url('account/settings') }}">User Settings</a></li>
-                <li class="list-group-item"><a href="{{ url('trades/open') }}">Trades</a></li>
-            </ul>
+        @endforeach
         </div>
     </div>
     <div class="col-md-6">
+        <h3>Open Prompts</h3>
         <div class="card mb-4">
-            <div class="card-body text-center">
-                <img src="{{ asset('images/characters.png') }}" alt="Characters" />
-                <h5 class="card-title">Characters</h5>
+        @foreach($prompts as $post)
+            <div class="card-header">
+                <h5 class="card-title mb-0">{!! $post->displayName !!}</h5>
+                <small>
+                    @if($post->summary){{ $post->summary }} <br/>@endif
+                    @if($post->start_at && $post->start_at->isFuture())<strong>Starts: </strong>{!! pretty_date($post->start_at) !!}@endif :: @if($post->end_at)<strong>Ends: </strong>{!! pretty_date($post->end_at) !!}@endif
+                </small>
             </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><a href="{{ url('characters') }}">My Characters</a></li>
-                <li class="list-group-item"><a href="{{ url('characters/myos') }}">My MYO Slots</a></li>
-                <li class="list-group-item"><a href="{{ url('characters/transfers/incoming') }}">Character Transfers</a></li>
-            </ul>
+        @endforeach
+        </div>
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col-md-6" style="display: flex;flex-direction: column;">
+        <div class="d-flex flex-row justify-content-between align-items-center"><h3>Inventory</h3><span class="text-right"><a href="{{ $user->url.'/inventory' }}">View all...</a></span></div>
+        <div class="card" style="flex: 1;">
+            <div class="card-body text-center compact">
+                @if(count($items))
+                    <div class="row no-gutters">
+                        @foreach($items as $item)
+                            <div class="col-3 p-1">
+                                @if($item->imageUrl)
+                                    <a href="{{ $item->url }}" class="h6 mb-0"><img src="{{ $item->imageUrl }}"  style="max-width: 100%" data-toggle="tooltip" title="{{ $item->name }}" alt="{{ $item->name }}"/></a>
+                                @else
+                                <div class="h6 mt-1">
+                                    {!! $item->displayName !!}
+                                </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div>No items owned.</div>
+                @endif
+            </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-body text-center">
-                <img src="{{ asset('images/inventory.png') }}" alt="Inventory" />
-                <h5 class="card-title">Inventory</h5>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><a href="{{ url('inventory') }}">My Inventory</a></li>
-                <li class="list-group-item"><a href="{{ Auth::user()->url . '/item-logs' }}">Item Logs</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="col-md-6">
+    <div class="d-flex flex-row justify-content-between align-items-center"><h3>MYOs</h3><span><a href="{{ $user->url.'/myos' }}">View all...</a></span></div>
         <div class="card">
-            <div class="card-body text-center">
-                <img src="{{ asset('images/currency.png') }}" alt="Bank" />
-                <h5 class="card-title">Bank</h5>
+            <div class="card-body text-center compact">
+            @if(count($myos))
+                <div class="row no-gutters">
+                    @foreach($myos as $myo)
+                    <div class="col-3 text-center p-1">
+                        @if($myo->image->thumbnailUrl)
+                        <div>
+                            <a href="{{ $myo->url }}"><img src="{{ $myo->image->thumbnailUrl }}" data-toggle="tooltip"  title="{{ $myo->fullName }}" alt="{{ $myo->fullName }}" style="max-width: 100%" /></a>
+                        </div>
+                        @else
+                        <div class="mt-1">
+                            <a href="{{ $myo->url }}" class="h6 mb-0"> @if(!$myo->is_visible) <i class="fas fa-eye-slash"></i> @endif {{ $myo->fullName }}</a>
+                        </div>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                    <div>No MYOs owned.</div>
+                @endif
             </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><a href="{{ url('bank') }}">Bank</a></li>
-                <li class="list-group-item"><a href="{{ Auth::user()->url . '/currency-logs' }}">Currency Logs</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card mb-12">
-            <div class="card-body text-center">
-                <img src="{{ asset('images/awards.png') }}" />
-                <h5 class="card-title">Badges</h5>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><a href="{{ url('awardcase') }}">My Badges</a></li>
-                <li class="list-group-item"><a href="{{ Auth::user()->url . '/award-logs' }}">Badge Logs</a></li>
-            </ul>
         </div>
     </div>
 </div>

@@ -16,10 +16,10 @@
             <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#{!! isset($categories[$categoryId]) ? str_replace(' ', '', $categories[$categoryId]->name) : 'miscellaneous' !!}" data-toggle="collapse">Show</a></h3>
         </h5>
         <div class="card-body inventory-body collapse show" id="{!! isset($categories[$categoryId]) ? str_replace(' ', '', $categories[$categoryId]->name) : 'miscellaneous' !!}">
-            @foreach($categoryItems->chunk(4) as $chunk)
+            @foreach($categoryItems->chunk(6) as $chunk)
                 <div class="row mb-3">
                     @foreach($chunk as $itemId=>$stack)
-                        <div class="col-sm-3 col-6 text-center inventory-item" data-id="{{ $stack->first()->pivot->id }}" data-name="{{ $user->name }}'s {{ $stack->first()->name }}">
+                        <div class="col-sm-2 col-4 text-center inventory-item" data-id="{{ $stack->first()->pivot->id }}" data-name="{{ $user->name }}'s {{ $stack->first()->name }}">
                             <div class="mb-1">
                                 <a href="#" class="inventory-stack"><img src="{{ $stack->first()->imageUrl }}" alt="{{ $stack->first()->name }}" /></a>
                             </div>

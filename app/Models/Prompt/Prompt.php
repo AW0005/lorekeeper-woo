@@ -179,7 +179,7 @@ class Prompt extends Model
      */
     public function scopeSortEnd($query, $reverse = false)
     {
-        return $query->orderBy('end_at', $reverse ? 'DESC' : 'ASC');
+        return $query->orderByRaw('ISNULL(end_at), end_at '.($reverse ? 'DESC' : 'ASC'));
     }
 
     /**********************************************************************************************

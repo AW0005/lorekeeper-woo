@@ -12,6 +12,10 @@ use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 
 use App\Models\SitePage;
+use App\Models\News;
+use App\Models\Sales\Sales;
+use App\Models\Prompt\Prompt;
+use App\Models\Character\Character;
 
 use App\Services\LinkService;
 use App\Services\DeviantArtService;
@@ -34,8 +38,16 @@ class HomeController extends Controller
      */
     public function getIndex()
     {
+        $user = Auth::user();
         return view('welcome', [
-            'about' => SitePage::where('key', 'welcome')->first()
+            'about' => SitePage::where('key', 'welcome')->first(),
+            'posts' => News::visible()->paginate(2)->concat(Sales::visible()->paginate(2))->sortByDesc('created_at'),
+            'prompts' => Prompt::active()->sortEnd()->paginate(3),
+            'awards' => $user->awards()->orderBy('user_awards.updated_at', 'DESC')->whereNull('deleted_at')->where('count','>',0)->take(12)->get(),
+            'currency' => $user->getCurrencies(true)->first(),
+            'user' => $user,
+            'items' => $user->items()->where('count', '>', 0)->orderBy('user_items.updated_at', 'DESC')->take(4)->get(),
+            'myos' => $user->myoSlots()->with('image')->paginate(4),
         ]);
     }
 
