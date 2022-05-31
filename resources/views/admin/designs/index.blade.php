@@ -53,8 +53,8 @@
             <span class="text-success">{{ $approveSum }}/{{ Settings::get('design_votes_needed') }}</span>
         </strong></div>
       @endif
-      <div class="col-4 col-md-1"><span class="btn btn-{{ $r->status == 'Pending' ? 'secondary' : ($r->status == 'Approved' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ $r->status }}</span></div>
-      <div class="col-4 col-md-1"><a href="{{ $r->url }}" class="btn btn-primary btn-sm">Details</a></div>
+      <div class="col-4 col-md-2"><span class="btn btn-{{ $r->status == 'Pending' ? 'secondary' : ($r->status == 'Approved' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ $r->status }}</span></div>
+      <div class="col-4 col-md-2"><a href="{{ $r->url }}" class="btn btn-primary btn-sm">Details</a></div>
     </div>
     @endforeach
   </div>
