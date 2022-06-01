@@ -28,7 +28,7 @@ class DesignController extends Controller
         $requests = CharacterDesignUpdate::where('status', ucfirst($status));
         if($type == 'myo-approvals') $requests = $requests->myos();
         else $requests = $requests->characters();
-        
+
         return view('admin.designs.index', [
             'requests' => $requests->paginate(30)->appends($request->query()),
             'isMyo' => ($type == 'myo-approvals')
@@ -59,8 +59,8 @@ class DesignController extends Controller
             flash('Request cancelled successfully.')->success();
         }
         elseif($action == 'approve' && $service->approveRequest($request->only([
-                'character_category_id', 'number', 'slug', 'description',
-                'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value', 
+                'character_category_id', 'year', 'number', 'slug', 'description',
+                'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
                 'transferrable_at', 'set_active', 'invalidate_old',
             ]), $r, Auth::user())) {
             flash('Request approved successfully.')->success();

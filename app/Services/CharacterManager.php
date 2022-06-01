@@ -2369,6 +2369,7 @@ is_object($sender) ? $sender->id : null,
             if($request->status != 'Pending') throw new \Exception("This request cannot be processed.");
             if(!isset($data['character_category_id'])) throw new \Exception("Please select a character category.");
             if(!isset($data['number'])) throw new \Exception("Please enter a character number.");
+            if(!isset($data['year'])) throw new \Exception("Please enter a character year.");
             if(!isset($data['slug']) || Character::where('slug', $data['slug'])->where('id', '!=', $request->character_id)->exists()) throw new \Exception("Please enter a unique character code.");
 
             // Remove any added items/currency
@@ -2478,6 +2479,7 @@ is_object($sender) ? $sender->id : null,
             if(isset($data['transferrable_at'])) $request->character->transferrable_at = $data['transferrable_at'];
             $request->character->character_category_id = $data['character_category_id'];
             $request->character->number = $data['number'];
+            $request->character->year = $data['year'];
             $request->character->slug = $data['slug'];
             $request->character->rarity_id = $request->rarity_id;
 
