@@ -275,7 +275,7 @@ class BrowseController extends Controller
                 $query->orderBy('characters.sale_value', 'ASC');
                 break;
             default:
-                $query->orderBy('characters.number', 'DESC');
+                $query->orderBy('characters.year', 'DESC')->orderBy('characters.number', 'DESC');
         }
 
         if(!Auth::check() || !Auth::user()->hasPower('manage_characters')) $query->visible();
