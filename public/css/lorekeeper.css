@@ -560,12 +560,16 @@ main > .row {
         position: absolute;
         padding-left: 0px;
         text-align: left;
-        background-color: #ddd;
+        background-color: var(--coal);
         z-index: 3;
         right: 0px;
         bottom: 0px;
         top: 0px;
-        overflow-y: scroll;
+        overflow-y: auto;
+        min-width: 20vw;
+        width: fit-content;
+        padding: 0px 10px;
+        box-shadow: 10px 0px 24px 20px var(--coal);
 
         left: -100%;
         transition: left 0.2s;
@@ -590,8 +594,20 @@ main > .row {
         border-radius: 0;
         margin-bottom: 1em;
         padding: 0.4em 0;
+        text-align: right;
 
         box-shadow: none;
+    }
+
+    .sidebar .sidebar-section,
+    .sidebar .sidebar-header {
+        border-radius: 5px;
+    }
+
+    .sidebar .sidebar-item a,
+    .sidebar .sidebar-section-header {
+        padding: 4px 25px;
+        padding-right: 10px;
     }
 
     /*fix for screen being over-wide on mobile*/
