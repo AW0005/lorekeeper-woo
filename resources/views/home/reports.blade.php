@@ -8,7 +8,8 @@
 My Reports
 </h1>
 
-<div class="text-right">
+<div class="d-flex justify-content-end">
+        <a class="btn btn-outline-primary mr-2" href="{{ url('reports/bug-reports') }}">All Bug Reports</a>
         <a href="{{ url('reports/new') }}" class="btn btn-success">New Report</a>
 </div>
 
@@ -38,7 +39,7 @@ My Reports
       </div>
     {!! $reports->render() !!}
     <div class="text-center mt-4 small text-muted">{{ $reports->total() }} result{{ $reports->total() == 1 ? '' : 's' }} found.</div>
-@else 
+@else
     <p>No reports found.</p>
 @endif
 

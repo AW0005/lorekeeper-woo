@@ -23,15 +23,16 @@ return [
             ]
         ]
     ],
-    'Reports' => [
-        'power' => 'manage_reports',
-        'links' => [
-            [
-                'name' => 'Report Queue',
-                'url' => 'admin/reports/pending'
-            ]
-        ]
-    ],
+    // Hiding in favor of the admin home page.
+    // 'Reports' => [
+    //     'power' => 'manage_reports',
+    //     'links' => [
+    //         [
+    //             'name' => 'Report Queue',
+    //             'url' => 'admin/reports/pending'
+    //         ]
+    //     ]
+    // ],
     'Site' => [
         'power' => 'edit_pages',
         'links' => [
@@ -57,32 +58,33 @@ return [
                 'url' => 'admin/users'
             ],
             [
-                'name' => 'Invitation Keys',
+                'name' => 'Invite Keys',
                 'url' => 'admin/invitations'
             ],
         ]
     ],
-    'Queues' => [
-        'power' => 'manage_submissions',
-        'links' => [
-            //Removing Galleries:  [
-            //     'name' => 'Gallery Submissions',
-            //     'url' => 'admin/gallery/submissions'
-            // ],
-            // [
-            //     'name' => 'Gallery Currency Awards',
-            //     'url' => 'admin/gallery/currency'
-            // ],
-            [
-                'name' => 'Prompt Submissions',
-                'url' => 'admin/submissions'
-            ],
-            [
-                'name' => 'Claim Submissions',
-                'url' => 'admin/claims'
-            ],
-        ]
-    ],
+    // Removed in favor of using the admin home
+    // 'Queues' => [
+    //     'power' => 'manage_submissions',
+    //     'links' => [
+    //         //Removing Galleries:  [
+    //         //     'name' => 'Gallery Submissions',
+    //         //     'url' => 'admin/gallery/submissions'
+    //         // ],
+    //         // [
+    //         //     'name' => 'Gallery Currency Awards',
+    //         //     'url' => 'admin/gallery/currency'
+    //         // ],
+    //         [
+    //             'name' => 'Prompt Submissions',
+    //             'url' => 'admin/submissions'
+    //         ],
+    //         [
+    //             'name' => 'Claim Submissions',
+    //             'url' => 'admin/claims'
+    //         ],
+    //     ]
+    // ],
     'Grants' => [
         'power' => 'edit_inventories',
         'links' => [
@@ -104,29 +106,34 @@ return [
         'power' => 'manage_characters',
         'links' => [
             [
-                'name' => 'Create Character',
+                'name' => '+ Character',
                 'url' => 'admin/masterlist/create-character'
             ],
             [
-                'name' => 'Create MYO Slot',
+                'name' => '+ MYO Slot',
                 'url' => 'admin/masterlist/create-myo'
             ],
             [
-                'name' => 'Character Transfers',
-                'url' => 'admin/masterlist/transfers/incoming'
+                'name' => 'All MYOs',
+                'url' => 'myos'
             ],
-            [
-                'name' => 'Character Trades',
-                'url' => 'admin/masterlist/trades/incoming'
-            ],
-            [
-                'name' => 'Design Updates',
-                'url' => 'admin/design-approvals/pending'
-            ],
-            [
-                'name' => 'MYO Approvals',
-                'url' => 'admin/myo-approvals/pending'
-            ],
+            // Hiding in favor of the admin home screen
+            // [
+            //     'name' => 'Character Transfers',
+            //     'url' => 'admin/masterlist/transfers/incoming'
+            // ],
+            // [
+            //     'name' => 'Character Trades',
+            //     'url' => 'admin/masterlist/trades/incoming'
+            // ],
+            // [
+            //     'name' => 'Design Updates',
+            //     'url' => 'admin/design-approvals/pending'
+            // ],
+            // [
+            //     'name' => 'MYO Approvals',
+            //     'url' => 'admin/myo-approvals/pending'
+            // ],
         ]
     ],
     'Data' => [
@@ -137,25 +144,34 @@ return [
             //     'url' => 'admin/data/galleries'
             // ],
             [
-                'name' => 'Badge Categories',
-                'url' => 'admin/data/award-categories'
+                'name' => 'Prompts',
+                'url' => 'admin/data/prompts'
             ],
             [
                 'name' => 'Badges',
                 'url' => 'admin/data/awards'
             ],
             [
-                'name' => 'Character Categories',
+                'name' => 'Loot Tables',
+                'url' => 'admin/data/loot-tables'
+            ],
+            [
+                'name' => 'Items',
+                'url' => 'admin/data/items'
+            ],
+            [
+                'name' => 'Shops',
+                'url' => 'admin/data/shops'
+            ],
+            [
+                'name' => 'Char. Prefixes',
                 'url' => 'admin/data/character-categories'
             ],
-            [
-                'name' => 'Sub Masterlists',
-                'url' => 'admin/data/sublists'
-            ],
-            [
-                'name' => 'Rarities',
-                'url' => 'admin/data/rarities'
-            ],
+            // Don't need these
+            // [
+            //     'name' => 'Sub Masterlists',
+            //     'url' => 'admin/data/sublists'
+            // ],
             [
                 'name' => 'Species',
                 'url' => 'admin/data/species'
@@ -169,24 +185,12 @@ return [
                 'url' => 'admin/data/traits'
             ],
             [
-                'name' => 'Shops',
-                'url' => 'admin/data/shops'
+                'name' => 'Rarities',
+                'url' => 'admin/data/rarities'
             ],
             [
                 'name' => 'Currencies',
                 'url' => 'admin/data/currencies'
-            ],
-            [
-                'name' => 'Prompts',
-                'url' => 'admin/data/prompts'
-            ],
-            [
-                'name' => 'Loot Tables',
-                'url' => 'admin/data/loot-tables'
-            ],
-            [
-                'name' => 'Items',
-                'url' => 'admin/data/items'
             ],
         ]
     ],

@@ -40,7 +40,6 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         return view('welcome', [
-            'about' => SitePage::where('key', 'welcome')->first(),
             'posts' => News::visible()->paginate(2)->concat(Sales::visible()->paginate(2))->sortByDesc('created_at'),
             'prompts' => Prompt::active()->sortEnd()->paginate(3),
             'awards' => $user->awards()->orderBy('user_awards.updated_at', 'DESC')->whereNull('deleted_at')->where('count','>',0)->take(12)->get(),

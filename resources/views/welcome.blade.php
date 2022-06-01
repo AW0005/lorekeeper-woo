@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends(Auth::check() ? 'home.layout' : 'layouts.app')
+
+
 
 @section('title') Home @endsection
 

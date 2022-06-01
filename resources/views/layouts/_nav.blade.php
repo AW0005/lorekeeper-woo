@@ -25,8 +25,20 @@
                         <a class="nav-link" href="{{ url('sales') }}">Sales</a>
                     @endif
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url('prompts/prompts') }}">Prompts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url('masterlist') }}">Masterlist</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url('shops') }}">Shops</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url('world') }}">Lore</a>
+                </li>
                 @if(Auth::check())
-                    <li class="nav-item dropdown">
+                    <!-- <li class="nav-item dropdown">
                         <a id="inventoryDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                             Home
                         </a>
@@ -48,8 +60,8 @@
                                 Badges
                             </a>
                         </div>
-                    </li>
-                    <li class="nav-item dropdown">
+                    </li> -->
+                    <!-- <li class="nav-item dropdown">
                         <a id="queueDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                             Activity
                         </a>
@@ -74,25 +86,14 @@
                                 Trades
                             </a>
                         </div>
-                    </li>
+                    </li> -->
                 @endif
-                <li class="nav-item dropdown">
+                <!-- <li class="nav-item dropdown">
                     <a id="browseDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         Browse
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="browseDropdown">
-                        <a class="dropdown-item" href="{{ url('users') }}">
-                            Users
-                        </a>
-                        <a class="dropdown-item" href="{{ url('masterlist') }}">
-                            Character Masterlist
-                        </a>
-                        @if(Auth::check() && Auth::user()->isStaff)
-                        <a class="dropdown-item" href="{{ url('myos') }}">
-                            MYO Slot Masterlist
-                        </a>
-                        @endif
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url('raffles') }}">
                             Raffles
@@ -102,8 +103,8 @@
                             Bug Reports
                         </a>
                     </div>
-                </li>
-                <li class="nav-item dropdown">
+                </li> -->
+                <!-- <li class="nav-item dropdown">
                     <a id="loreDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         World
                     </a>
@@ -119,7 +120,7 @@
                             Shops
                         </a>
                     </div>
-                </li>
+                </li> -->
                 <!-- Removing Galleries: <li class="nav-item">
                     <a class="nav-link" href="{{ url('gallery') }}">Gallery</a>
                 </li> -->
@@ -179,11 +180,11 @@
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ Auth::user()->url }}">
-                                Profile
-                            </a>
                             <a class="dropdown-item" href="{{ url('notifications') }}">
                                 Notifications
+                            </a>
+                            <a class="dropdown-item" href="{{ Auth::user()->url }}">
+                                Profile
                             </a>
                             <a class="dropdown-item" href="{{ url('account/bookmarks') }}">
                                 Bookmarks

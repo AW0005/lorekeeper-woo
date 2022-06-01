@@ -449,6 +449,8 @@ main > .row {
     list-style-type: none;
     display: inline-block;
     padding-top: 30px;
+    padding-inline-start: 35px;
+    width: 100%;
 }
 
 .sidebar ul li {
@@ -482,13 +484,14 @@ main > .row {
 .sidebar a,
 .sidebar-section-header {
     display: block;
-    padding: 0.1em 1em;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .sidebar a {
     text-transform: uppercase;
     font-family: neue-haas-grotesk-text, sans-serif;
-    color: rgba(0, 0, 0, 0.4);
+    color: rgba(0, 0, 0, 0.5);
 }
 .sidebar a:hover {
     color: #16181b;

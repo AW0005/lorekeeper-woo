@@ -57,7 +57,7 @@
         </div>
     </div>
     <div class="col-md-6">
-        <h3>Open Prompts</h3>
+    <div class="d-flex flex-row justify-content-between align-items-center"><h3>Open Prompts</h3><span class="text-right"><a href="{{ url('prompts/prompts') }}">View all...</a></span></div>
         <div class="card mb-4">
         @foreach($prompts as $post)
             <div class="card-header">
