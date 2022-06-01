@@ -450,6 +450,7 @@ main > .row {
     display: inline-block;
     padding-top: 30px;
     padding-inline-start: 35px;
+    max-width: 190px;
     width: 100%;
 }
 
