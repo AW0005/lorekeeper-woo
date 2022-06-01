@@ -297,7 +297,7 @@ a:hover {
     text-decoration: none;
 }
 
-html {
+html.app {
     background-color: var(--coal);
 }
 
