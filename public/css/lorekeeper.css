@@ -961,6 +961,11 @@ tr.accountbound {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
+.user-item td {
+    border: unset !important;
+    border-top: 1px solid #dee2e6 !important;
+}
+
 /* SHOPS *****************************************************************************************/
 .shops-row img {
     max-width: 100%;
