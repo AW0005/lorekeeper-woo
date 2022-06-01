@@ -297,6 +297,10 @@ a:hover {
     text-decoration: none;
 }
 
+html {
+    background-color: var(--coal);
+}
+
 body {
     background-color: transparent;
     font-family: neue-haas-grotesk-text, sans-serif;
@@ -565,7 +569,7 @@ main > .row {
         right: 0px;
         bottom: 0px;
         top: 0px;
-        overflow-y: auto;
+        height: fit-content;
         min-width: 20vw;
         width: fit-content;
         padding: 0px 10px;
