@@ -16,7 +16,7 @@
         <h1 class="m-0">Welcome, {!! Auth::user()->displayName !!}!</h1>
     </div>
     <div class="col-sm-3 text-right">
-        <h5>{!! $currency->display($currency->quantity) !!}</h5>
+        <h5>{!! isset($currency) ? $currency->display($currency->quantity) : 0 !!}</h5>
     </div>
 </div>
 <hr class="mt-2 mb-4" />

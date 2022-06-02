@@ -42,11 +42,11 @@ class HomeController extends Controller
         return view('welcome', [
             'posts' => News::visible()->paginate(2)->concat(Sales::visible()->paginate(2))->sortByDesc('created_at'),
             'prompts' => Prompt::active()->sortEnd()->paginate(3),
-            'awards' => $user->awards()->orderBy('user_awards.updated_at', 'DESC')->whereNull('deleted_at')->where('count','>',0)->take(12)->get(),
-            'currency' => $user->getCurrencies(true)->first(),
+            'awards' => $user ? $user->awards()->orderBy('user_awards.updated_at', 'DESC')->whereNull('deleted_at')->where('count','>',0)->take(12)->get() : null,
+            'currency' => $user ? $user->getCurrencies(true)->first() : null,
             'user' => $user,
-            'items' => $user->items()->where('count', '>', 0)->orderBy('user_items.updated_at', 'DESC')->take(4)->get(),
-            'myos' => $user->myoSlots()->with('image')->paginate(4),
+            'items' => $user ? $user->items()->where('count', '>', 0)->orderBy('user_items.updated_at', 'DESC')->take(4)->get() : null,
+            'myos' => $user ? $user->myoSlots()->with('image')->paginate(4) : null,
         ]);
     }
 
