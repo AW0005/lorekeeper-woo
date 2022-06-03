@@ -35,7 +35,7 @@
                     <a class="nav-link" href="{{ url('shops') }}">Shops</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('world') }}">Lore</a>
+                    <a class="nav-link" href="{{ url('world/species/1/traits') }}">Trait Guide</a>
                 </li>
                 @if(Auth::check())
                     <!-- <li class="nav-item dropdown">
