@@ -30,8 +30,12 @@ html {
     scroll-behavior: smooth;
 }
 
-a.badge, span.badge {
+a.badge {
     font-size: 88%;
+}
+
+span.badge {
+    font-size: 100%;
 }
 </style>
 @section('title') {{ $species->name }} Traits @endsection
