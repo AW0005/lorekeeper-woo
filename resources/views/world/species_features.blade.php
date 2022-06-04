@@ -4,6 +4,10 @@ div.inventory-item {
     align-self: flex-end !important;
 }
 
+.card-body {
+    padding: 1rem;
+}
+
 .inventory-item img {
     height: 100px;
     object-fit: contain;
@@ -18,36 +22,32 @@ div.inventory-item {
 <p>This is a visual index of all {!! $species->displayName !!}-specific traits. Click a trait to view more info on it!</p>
 
 @foreach($features as $categoryId=>$categoryFeatures)
-    <div class="card mb-3 inventory-category">
-        <h5 class="card-header inventory-header">
-            {!! isset($categories[$categoryId]) ? '<a href="'.$categories[$categoryId]->searchUrl.'">'.$categories[$categoryId]->name.'</a>' : 'Miscellaneous' !!}
-        </h5>
-        <div class="card-body inventory-body">
-            @if($categories[$categoryId]->description)
-            <div class="row mb-5" style="border-bottom: 1px solid #F7F7F7;">
-                <div class="col-12">
-                    {!! $categories[$categoryId]->description !!}
-                </div>
-            </div>
-            @endif
-            @foreach($categoryFeatures->chunk(4) as $chunk)
-                <div class="row mb-3 no-gutters">
-                    @foreach($chunk as $featureId=>$feature)
-                        <div class="col-sm-3 col-6 text-center align-self-center inventory-item">
-                            @if($feature->first()->has_image)
-                                <a href="{{ $feature->first()->url }}">
-                                    <img class="my-1" src="{{ $feature->first()->imageUrl }}" alt="{{ $feature->first()->name }}" />
-                                </a>
-                            @endif
-                            <p class="trait" data-id="{{ $feature->first()->id }}">
-                                {!! $feature->first()->displayName !!}
-                            </p>
-                        </div>
-                    @endforeach
+<h5 class="card-header inventory-header mb-3">
+    {!! isset($categories[$categoryId]) ? '<a href="'.$categories[$categoryId]->searchUrl.'">'.$categories[$categoryId]->name.'</a>' : 'Miscellaneous' !!}
+</h5>
+    @if($categories[$categoryId]->description)
+    <div class="row mb-4">
+        <div class="col-12">
+            {!! $categories[$categoryId]->description !!}
+        </div>
+    </div>
+    @endif
+    @foreach($categoryFeatures->chunk(4) as $chunk)
+        <div class="row mb-3 no-gutters">
+            @foreach($chunk as $featureId=>$feature)
+                <div class="col-sm-3 col-6 text-center align-self-center inventory-item">
+                    @if($feature->first()->has_image)
+                        <a href="{{ $feature->first()->url }}">
+                            <img class="my-1" src="{{ $feature->first()->imageUrl }}" alt="{{ $feature->first()->name }}" />
+                        </a>
+                    @endif
+                    <p class="trait" data-id="{{ $feature->first()->id }}">
+                        {!! $feature->first()->displayName !!}
+                    </p>
                 </div>
             @endforeach
         </div>
-    </div>
+    @endforeach
 @endforeach
 
 @endsection
