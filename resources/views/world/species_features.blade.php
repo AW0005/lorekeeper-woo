@@ -61,9 +61,13 @@ as you have the trait item for it, you are always welcome to re-design your AW00
 always keep access to the prior traits they had as well.</p>
 
 @foreach($features as $categoryId=>$categoryFeatures)
-<h4 id="{{$categories[$categoryId]->name}}" class="card-header inventory-header mb-3">
-    {!! isset($categories[$categoryId]) ? '<a href="'.$categories[$categoryId]->searchUrl.'">'.$categories[$categoryId]->name.'</a>' : 'Miscellaneous' !!}
-</h4>
+<a data-toggle="collapse" href="#category-{{ $categoryId }}" aria-expanded="true">
+    <h4 id="{{$categories[$categoryId]->name}}" class="card-header inventory-header mb-3">
+        {!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}
+        <i class="fas fa-angle-down float-right"></i>
+    </h4>
+</a>
+<div class="collapse show" id="category-{{ $categoryId }}">
     @if($categories[$categoryId]->description)
     <div class="row mb-4">
         <div class="col-12">
@@ -89,6 +93,7 @@ always keep access to the prior traits they had as well.</p>
             @endforeach
         </div>
     @endforeach
+    </div>
 @endforeach
 
 @endsection
