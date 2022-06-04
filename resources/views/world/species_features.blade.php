@@ -26,7 +26,15 @@ div.inventory-item {
 {!! breadcrumbs(['World' => 'world', 'Species' => 'world/species', $species->name => $species->url, 'Traits' => 'world/species/'.$species->id.'traits']) !!}
 <h1>{{ $species->name }} Traits</h1>
 
-<p>This is a visual index of all {!! $species->displayName !!}-specific traits. Click a trait to view more info on it!</p>
+<p><b>Clicking specific traits can show more info!</b></p>
+<p>AW0005 are digital kemonomimi sentient AIs!</p>
+<p>Today there are primarily two subtypes:
+<ol><li><b>AW0001</b> - A Wolf Based AI and the first generation, and an affinity for music.</li>
+<li><b>BNNUY02</b> - A Bunny Based AI made to be more humanoid with an affinity for plants.</li>
+</ol>
+There are traits that are reserved for usage on a particular subtype - unless you've got an upgrade item that allows otherwise!
+You can see this denoted below by the parenthesis.
+</p>
 
 @foreach($features as $categoryId=>$categoryFeatures)
 <h5 class="card-header inventory-header mb-3">
