@@ -60,6 +60,7 @@ You can see this denoted below by the parenthesis.
                         {!! $feature->first()->displayName !!}
                     </p>
                 </div>
+                @if($categories[$categoryId]->name === 'CTRLs' && $feature->first()->name === '5 CTRLs') <hr /> @endif
             @endforeach
         </div>
     @endforeach
