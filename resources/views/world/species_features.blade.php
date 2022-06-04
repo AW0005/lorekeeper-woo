@@ -26,6 +26,10 @@ div.inventory-item {
     margin-bottom: 15px;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 a.badge {
     font-size: 88%;
 }
