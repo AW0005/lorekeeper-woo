@@ -20,7 +20,7 @@ div.inventory-item {
     object-fit: contain;
 }
 
-hr {
+hr.row {
     flex: 1 1 90%;
     margin: 0px 50px;
     margin-bottom: 15px;
