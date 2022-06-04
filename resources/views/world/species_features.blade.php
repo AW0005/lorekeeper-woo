@@ -19,6 +19,12 @@ div.inventory-item {
     max-width: 100%;
     object-fit: contain;
 }
+
+hr {
+    flex: 1 1 90%;
+    margin: 0px 50px;
+    margin-bottom: 15px;
+}
 </style>
 @section('title') {{ $species->name }} Traits @endsection
 
@@ -61,6 +67,7 @@ You can see this denoted below by the parenthesis.
                     </p>
                 </div>
                 @if($categories[$categoryId]->name === 'CTRLs' && $feature->first()->name === '5 CTRLs') <hr /> @endif
+                @if($categories[$categoryId]->name === 'Cooling Pockets' && $feature->first()->name === 'Whole Body') <hr /> @endif
             @endforeach
         </div>
     @endforeach
