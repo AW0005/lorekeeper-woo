@@ -42,13 +42,13 @@ div.inventory-item {
     @foreach($categoryFeatures->chunk(4) as $chunk)
         <div class="row mb-3">
             @foreach($chunk as $featureId=>$feature)
-                <div class="col-sm-3 col-6 text-center align-self-center inventory-item">
+                <div class="col-sm-3 col-6 text-center align-self-center inventory-item"  data-id="{{ $feature->first()->id }}">
                     @if($feature->first()->has_image)
                         <a href="{{ $feature->first()->url }}">
                             <img class="my-1" src="{{ $feature->first()->imageUrl }}" alt="{{ $feature->first()->name }}" />
                         </a>
                     @endif
-                    <p class="trait" data-id="{{ $feature->first()->id }}">
+                    <p class="trait">
                         {!! $feature->first()->displayName !!}
                     </p>
                 </div>
