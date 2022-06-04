@@ -31,11 +31,11 @@ div.inventory-item {
             </div>
             @endif
             @foreach($categoryFeatures->chunk(4) as $chunk)
-                <div class="row mb-3">
+                <div class="row mb-3 no-gutters">
                     @foreach($chunk as $featureId=>$feature)
                         <div class="col-sm-3 col-6 text-center align-self-center inventory-item">
                             @if($feature->first()->has_image)
-                                <a class="badge" href="{{ $feature->first()->url }}">
+                                <a href="{{ $feature->first()->url }}">
                                     <img class="my-1" src="{{ $feature->first()->imageUrl }}" alt="{{ $feature->first()->name }}" />
                                 </a>
                             @endif
