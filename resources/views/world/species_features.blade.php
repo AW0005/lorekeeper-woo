@@ -62,7 +62,7 @@ div.inventory-item {
 @section('scripts')
 <script>
     $(document).ready(function() {
-        $('.trait').on('click', function(e) {
+        $('.inventory-item').on('click', function(e) {
             e.preventDefault();
 
             loadModal("{{ url('world/species/'.$species->id.'/trait') }}/" + $(this).data('id'), 'Trait Detail');
