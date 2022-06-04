@@ -26,7 +26,7 @@ div.inventory-item {
     margin-bottom: 15px;
 }
 
-.badge {
+a.badge {
     font-size: 88%;
 }
 </style>
