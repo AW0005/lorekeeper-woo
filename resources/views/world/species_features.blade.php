@@ -32,20 +32,38 @@ div.inventory-item {
 {!! breadcrumbs(['World' => 'world', 'Species' => 'world/species', $species->name => $species->url, 'Traits' => 'world/species/'.$species->id.'traits']) !!}
 <h1>{{ $species->name }} Traits</h1>
 
-<p><b>Clicking specific traits can show more info!</b></p>
-<p>AW0005 are digital kemonomimi sentient AIs!</p>
-<p>Today there are primarily two subtypes:
-<ol><li><b>AW0001</b> - A Wolf Based AI and the first generation, and an affinity for music.</li>
-<li><b>BNNUY02</b> - A Bunny Based AI made to be more humanoid with an affinity for plants.</li>
-</ol>
-There are traits that are reserved for usage on a particular subtype - unless you've got an upgrade item that allows otherwise!
-You can see this denoted below by the parenthesis.
+<p><b>Clicking specific traits can show more info!</b> <a class="badge badge-primary ml-3" href="#CTRLs">Jump to Traits <i class="fas fa-caret-down"></i></a></p>
+
+<p>AW0005 are digital kemonomimi sentient AIs!<br/>
+The company AW0005 has tried to embrace the digital and malleable nature of the AIs forms by providing
+ways to have traits that defy what can be achieved in reality. One of their most recent crowning achievements
+has been the development of Fully Synthetic legs and Digital Projections inside of Cooling Pockets.
 </p>
 
+<h5>SubTypes</h5>
+<p>Different AI subtypes have been developed over the years, each with it's own unique traits!<br/>
+Today there are primarily two subtypes:
+<ol><li><b>AW0001</b> - A <b>Wolf</b> Based AI and the first generation, and an affinity for <b>music</b>.</li>
+<li><b>BNNUY02</b> - A <b>Bunny</b> Based AI made to be more humanoid with an affinity for <b>plants</b>.</li>
+</ol>
+While each subtype by default only come with traits designed for them,  you can buy an upgrade item to allow for usage of other subtype traits!<br/>
+You can see this denoted below by the parenthesis.</p>
+
+<h5>Required Traits</h5>
+<p>
+All AW0005 are required to have at least one trait from each of the below categories <i>except</i> for optional!
+</p>
+
+<h5>Re-Designs</h5>
+<p>Since they're forms are able to be augmented, it's not uncommen for an AW0005 to change up their
+looks by acquiring new traits, or even have multiple forms with different traits! This means as long
+as you have the trait item for it, you are always welcome to re-design your AW0005, and they will
+always keep access to the prior traits they had as well.</p>
+
 @foreach($features as $categoryId=>$categoryFeatures)
-<h5 class="card-header inventory-header mb-3">
+<h4 id="{{$categories[$categoryId]->name}}" class="card-header inventory-header mb-3">
     {!! isset($categories[$categoryId]) ? '<a href="'.$categories[$categoryId]->searchUrl.'">'.$categories[$categoryId]->name.'</a>' : 'Miscellaneous' !!}
-</h5>
+</h4>
     @if($categories[$categoryId]->description)
     <div class="row mb-4">
         <div class="col-12">

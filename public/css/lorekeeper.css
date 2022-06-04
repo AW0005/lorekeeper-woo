@@ -154,6 +154,14 @@ div.toggle.btn {
     background-color: var(--coal);
 }
 
+.badge-primary[href]:focus,
+.badge-primary[href]:hover {
+    background-color: var(--coal) !important;
+    filter: brightness(150%) !important;
+
+    cursor: pointer;
+}
+
 .badge-success {
     background-color: var(--green);
 }
