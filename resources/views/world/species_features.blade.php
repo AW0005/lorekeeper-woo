@@ -1,5 +1,9 @@
 @extends('world.layout')
 <style>
+div.inventory-item {
+    align-self: flex-end !important;
+}
+
 .inventory-item img {
     height: 100px;
     object-fit: contain;
