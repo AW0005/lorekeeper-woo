@@ -31,10 +31,22 @@ div.inventory-item {
 @section('content')
 {!! breadcrumbs(['World' => 'world', 'Species' => 'world/species', $species->name => $species->url, 'Traits' => 'world/species/'.$species->id.'traits']) !!}
 <h1>{{ $species->name }} Traits</h1>
+<p class="mb-2">
+<b>Clicking specific traits can show more info!</b>
+</p>
+<a class="badge badge-primary ml-3" href="#CTRLs">CTRLs <i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary ml-3" href="#Cooling Pockets">Cooling Pockets<i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary ml-3" href="#Thermosensors">Thermosensors<i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary ml-3" href="#Head">Head<i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary ml-3" href="#Ears">Ears<i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary ml-3" href="#Eyes">Eyes<i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary ml-3" href="#Tail">Tail<i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary ml-3" href="#Legs">Legs<i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary ml-3" href="#Optional Mods">Optional Mods<i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary ml-3" href="#Android">Android<i class="fas fa-caret-down"></i></a>
 
-<p><b>Clicking specific traits can show more info!</b> <a class="badge badge-primary ml-3" href="#CTRLs">Jump to Traits <i class="fas fa-caret-down"></i></a></p>
 
-<p>AW0005 are digital kemonomimi sentient AIs!<br/>
+<p class="mt-3">AW0005 are digital kemonomimi sentient AIs!<br/>
 The company AW0005 has tried to embrace the digital and malleable nature of the AIs forms by providing
 ways to have traits that defy what can be achieved in reality. One of their most recent crowning achievements
 has been the development of Fully Synthetic legs and Digital Projections inside of Cooling Pockets.
