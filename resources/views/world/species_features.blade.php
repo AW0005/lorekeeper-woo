@@ -42,7 +42,7 @@ a.badge {
 <p class="mb-2">
 <b>Clicking specific traits can show more info!</b>
 </p>
-<div class="d-flex justify-content-between">
+<div class="d-flex flex-wrap justify-content-center" style="gap: 7.2px;">
 <a class="badge badge-primary" href="#CTRLs">CTRLs <i class="fas fa-caret-down"></i></a>
 <a class="badge badge-primary" href="#Cooling Pockets">Cooling Pockets <i class="fas fa-caret-down"></i></a>
 <a class="badge badge-primary" href="#Thermosensors">Thermosensors <i class="fas fa-caret-down"></i></a>
