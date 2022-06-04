@@ -25,6 +25,10 @@ div.inventory-item {
     margin: 0px 50px;
     margin-bottom: 15px;
 }
+
+.badge {
+    font-size: 88%;
+}
 </style>
 @section('title') {{ $species->name }} Traits @endsection
 
@@ -34,17 +38,18 @@ div.inventory-item {
 <p class="mb-2">
 <b>Clicking specific traits can show more info!</b>
 </p>
-<a class="badge badge-primary ml-3" href="#CTRLs">CTRLs <i class="fas fa-caret-down"></i></a>
-<a class="badge badge-primary ml-3" href="#Cooling Pockets">Cooling Pockets<i class="fas fa-caret-down"></i></a>
-<a class="badge badge-primary ml-3" href="#Thermosensors">Thermosensors<i class="fas fa-caret-down"></i></a>
-<a class="badge badge-primary ml-3" href="#Head">Head<i class="fas fa-caret-down"></i></a>
-<a class="badge badge-primary ml-3" href="#Ears">Ears<i class="fas fa-caret-down"></i></a>
-<a class="badge badge-primary ml-3" href="#Eyes">Eyes<i class="fas fa-caret-down"></i></a>
-<a class="badge badge-primary ml-3" href="#Tail">Tail<i class="fas fa-caret-down"></i></a>
-<a class="badge badge-primary ml-3" href="#Legs">Legs<i class="fas fa-caret-down"></i></a>
-<a class="badge badge-primary ml-3" href="#Optional Mods">Optional Mods<i class="fas fa-caret-down"></i></a>
-<a class="badge badge-primary ml-3" href="#Android">Android<i class="fas fa-caret-down"></i></a>
-
+<div class="d-flex justify-content-between">
+<a class="badge badge-primary" href="#CTRLs">CTRLs <i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary" href="#Cooling Pockets">Cooling Pockets <i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary" href="#Thermosensors">Thermosensors <i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary" href="#Head">Head <i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary" href="#Ears">Ears <i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary" href="#Eyes">Eyes <i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary" href="#Tail">Tail <i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary" href="#Legs">Legs <i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary" href="#Optional Mods">Optional Mods <i class="fas fa-caret-down"></i></a>
+<a class="badge badge-primary" href="#Android">Android <i class="fas fa-caret-down"></i></a>
+</div>
 
 <p class="mt-3">AW0005 are digital kemonomimi sentient AIs!<br/>
 The company AW0005 has tried to embrace the digital and malleable nature of the AIs forms by providing
