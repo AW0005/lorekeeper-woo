@@ -5,6 +5,11 @@ div.inventory-item {
     padding: 0px 5px;
 }
 
+.trait {
+    flex: 1 1 41px;
+    margin-top: 3px;
+}
+
 .card-body {
     padding: 1rem;
 }
