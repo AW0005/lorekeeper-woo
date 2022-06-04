@@ -2,6 +2,7 @@
 <style>
 div.inventory-item {
     align-self: flex-end !important;
+    padding: 0px 5px;
 }
 
 .card-body {
@@ -10,6 +11,7 @@ div.inventory-item {
 
 .inventory-item img {
     height: 100px;
+    max-width: 100%;
     object-fit: contain;
 }
 </style>
@@ -33,7 +35,7 @@ div.inventory-item {
     </div>
     @endif
     @foreach($categoryFeatures->chunk(4) as $chunk)
-        <div class="row mb-3 no-gutters">
+        <div class="row mb-3">
             @foreach($chunk as $featureId=>$feature)
                 <div class="col-sm-3 col-6 text-center align-self-center inventory-item">
                     @if($feature->first()->has_image)
