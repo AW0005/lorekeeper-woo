@@ -52,6 +52,7 @@ span.badge {
 @section('content')
 {!! breadcrumbs(['World' => 'world', 'Species' => 'world/species', $species->name => $species->url, 'Traits' => 'world/species/'.$species->id.'traits']) !!}
 <h1>{{ $species->name }} Traits</h1>
+<p style="color: red"><b>WIP::</b> This page is still partially in progress as we're working on new images for the traits!</p>
 <p class="mb-2">
 <b>Clicking specific traits can show more info!</b>
 </p>
