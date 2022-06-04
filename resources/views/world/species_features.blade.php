@@ -30,7 +30,7 @@ html {
     scroll-behavior: smooth;
 }
 
-a.badge {
+a.badge, span.badge {
     font-size: 88%;
 }
 </style>
@@ -80,6 +80,16 @@ All AW0005 are required to have at least one trait from each of the below catego
 looks by acquiring new traits, or even have multiple forms with different traits! This means as long
 as you have the trait item for it, you are always welcome to re-design your AW0005, and they will
 always keep access to the prior traits they had as well.</p>
+
+<h5>Rarities</h5>
+<p>AW0005 have 4 rarities for traits that come with color designations:</h5>
+<div class="d-flex flex-wrap justify-content-center pb-3" style="gap: 7.2px;">
+    @foreach($rarities as $rarity)
+    @if($rarity->name !== 'Voided')
+    <span class="badge badge-primary" style="background: #{{ $rarity->color }};">{!! $rarity->name !!}</span>
+    @endif
+    @endforeach
+</div>
 
 @foreach($features as $categoryId=>$categoryFeatures)
 <a data-toggle="collapse" href="#category-{{ $categoryId }}" aria-expanded="true">
