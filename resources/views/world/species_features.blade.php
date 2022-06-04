@@ -2,7 +2,7 @@
 <style>
 div.inventory-item {
     align-self: flex-end !important;
-    padding: 0px 8px;
+    padding: 0px 12px;
 }
 
 div.inventory-item:not(:last-of-type)::after {
