@@ -1,5 +1,10 @@
 @extends('world.layout')
-
+<style>
+.inventory-item img {
+    height: 100px;
+    object-fit: contain;
+}
+</style>
 @section('title') {{ $species->name }} Traits @endsection
 
 @section('content')
@@ -26,7 +31,7 @@
                     @foreach($chunk as $featureId=>$feature)
                         <div class="col-sm-3 col-6 text-center align-self-center inventory-item">
                             @if($feature->first()->has_image)
-                                <a class="badge" style="border-radius:.5em; {{ $feature->first()->rarity->color ? 'background-color:#'.$feature->first()->rarity->color : '' }}" href="{{ $feature->first()->url }}">
+                                <a class="badge" href="{{ $feature->first()->url }}">
                                     <img class="my-1" src="{{ $feature->first()->imageUrl }}" alt="{{ $feature->first()->name }}" />
                                 </a>
                             @endif
