@@ -5,6 +5,15 @@ div.inventory-item {
     padding: 0px 5px;
 }
 
+div.inventory-item:not(:last-of-type)::after {
+    content: '';
+    height: 50%;
+    position: absolute;
+    right: 0;
+    top: 25%;
+    border-right: 1px solid #dfdfdf;
+}
+
 .trait {
     flex: 1 1 41px;
     margin-top: 3px;
