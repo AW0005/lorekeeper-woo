@@ -23,7 +23,7 @@
     #backToTop {
         color: #eee;
         cursor: pointer;
-        padding: 0.25em 0.75em;
+        padding: 0.5em 0.75em;
         position: fixed;
         bottom: 1em;
         right: 0.75em;
