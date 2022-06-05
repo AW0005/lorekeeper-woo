@@ -1,52 +1,5 @@
 @extends('world.layout')
-<style>
-div.inventory-item {
-    align-self: flex-end !important;
-    padding: 0px 12px;
-}
 
-div.inventory-item:not(:last-of-type)::after {
-    content: '';
-    height: 50%;
-    position: absolute;
-    right: 0;
-    top: 25%;
-    border-right: 1px solid #dfdfdf;
-}
-
-.trait {
-    flex: 1 1 41px;
-    margin-top: 3px;
-}
-
-.card-body {
-    padding: 1rem;
-}
-
-.inventory-item img {
-    height: 100px;
-    max-width: 100%;
-    object-fit: contain;
-}
-
-.row hr {
-    flex: 1 1 90%;
-    margin: 0px 50px;
-    margin-bottom: 15px;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-a.badge {
-    font-size: 88%;
-}
-
-span.badge {
-    font-size: 100%;
-}
-</style>
 @section('title') {{ $species->name }} Traits @endsection
 
 @section('content')
@@ -154,4 +107,52 @@ always keep access to the prior traits they had as well.</p>
     });
 
 </script>
+<style>
+div.inventory-item {
+    align-self: flex-end !important;
+    padding: 0px 12px;
+}
+
+div.inventory-item:not(:last-of-type)::after {
+    content: '';
+    height: 50%;
+    position: absolute;
+    right: 0;
+    top: 25%;
+    border-right: 1px solid #dfdfdf;
+}
+
+.trait {
+    flex: 1 1 41px;
+    margin-top: 3px;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.inventory-item img {
+    height: 100px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.row hr {
+    flex: 1 1 90%;
+    margin: 0px 50px;
+    margin-bottom: 15px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+a.badge {
+    font-size: 88%;
+}
+
+span.badge {
+    font-size: 100%;
+}
+</style>
 @endsection
