@@ -54,7 +54,7 @@ span.badge {
 <h1>{{ $species->name }} Traits</h1>
 <p style="color: red"><b>WIP::</b> This page is still partially in progress as we're working on new images for the traits!</p>
 <p class="mb-2">
-<b>Clicking specific traits can show more info!</b>
+<b>Clicking on trait images will show more info!</b>
 </p>
 <div class="d-flex flex-wrap justify-content-center" style="gap: 7.2px;">
 <a class="badge badge-primary" href="#CTRLs">CTRLs <i class="fas fa-caret-down"></i></a>
