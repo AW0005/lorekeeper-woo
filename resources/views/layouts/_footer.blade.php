@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand-md navbar-light">
     <ul class="navbar-nav ml-auto mr-auto">
         <li class="nav-item"><a href="{{ url('info/welcome') }}" class="nav-link">About</a></li>
+        <li class="nav-item"><a href="{{ url('info/affiliates') }}" class="nav-link">Affiliates</a></li>
         <li class="nav-item"><a href="{{ url('info/terms') }}" class="nav-link">Terms</a></li>
         <li class="nav-item"><a href="{{ url('info/privacy') }}" class="nav-link">Privacy</a></li>
         <li class="nav-item"><a href="{{ url('reports/bug-reports') }}" class="nav-link">Bug Reports</a></li>
