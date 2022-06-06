@@ -323,6 +323,7 @@ img {
     image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
     image-rendering: crisp-edges;
     -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+    max-width: 100%; /* because lorekeeper is terrible at sizing images */
 }
 
 table thead {
