@@ -18,6 +18,7 @@ use App\Models\Currency\Currency;
 use App\Models\Item\ItemCategory;
 use App\Models\SitePage;
 use App\Models\User\UserItem;
+use App\Models\Item\ItemLog;
 
 class ShopController extends Controller
 {
@@ -166,9 +167,28 @@ class ShopController extends Controller
 
         return view('shops.donation_shop', [
             'text' => SitePage::where('key', 'donation-shop')->first(),
+            'isShopPage' => true,
+            'shop' => (object)['id' => 'donation', 'name' => 'Donation Shop'],
             'categories' => $categories->keyBy('id'),
             'items' => $items,
             'shops' => Shop::where('is_active', 1)->orderBy('sort', 'DESC')->get()
+        ]);
+    }
+
+    /**
+     * Shows Donation Shop's Logs
+     *
+     * @param  int  $id
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getDonationLog()
+    {
+        $log = ItemLog::where('log_type', 'Collected from Donation Tree')->get();
+        return view('shops.shop_log', [
+            'shop' => (object)['id' => 'donation', 'name' => 'Donation Shop', 'url' => 'shops/donation-shop'],
+            'logs' => $log,
+            'isShopPage' => true,
+            'shops' => Shop::where('is_active', 1)->orderBy('sort', 'DESC')->get(),
         ]);
     }
 

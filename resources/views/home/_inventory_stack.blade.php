@@ -26,7 +26,7 @@
     <div class="card" style="border: 0px">
         <table class="table table-sm">
             <thead class="thead">
-                <tr class="d-flex">
+                <tr>
                     @if($user && !$readOnly && ($stack->first()->user_id == $user->id || $user->hasPower('edit_inventories')))
                         <th class="col-1"><input id="toggle-checks" type="checkbox" onclick="toggleChecks(this)"></th>
                         <th class="col-4">Source</th>
@@ -40,7 +40,7 @@
             </thead>
             <tbody>
                 @foreach($stack as $itemRow)
-                    <tr id ="itemRow{{ $itemRow->id }}" class="d-flex {{ $itemRow->isTransferrable ? '' : 'accountbound' }}">
+                    <tr id ="itemRow{{ $itemRow->id }}" class="{{ $itemRow->isTransferrable ? '' : 'accountbound' }}">
                         @if($user && !$readOnly && ($stack->first()->user_id == $user->id || $user->hasPower('edit_inventories')))
                             <td class="col-1">{!! Form::checkbox('ids[]', $itemRow->id, false, ['class' => 'item-check', 'onclick' => 'updateQuantities(this)']) !!}</td>
                             <td class="col-4">{!! array_key_exists('data', $itemRow->data) ? ($itemRow->data['data'] ? $itemRow->data['data'] : 'N/A') : 'N/A' !!}</td>

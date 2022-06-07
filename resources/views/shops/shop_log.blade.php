@@ -21,9 +21,10 @@
         <div class="d-flex row flex-wrap col-12 mt-1 pt-1 px-0 ubt-top">
         <div class="col-6 col-md-2">
             {!! $log->user ? $log->user->displayName : '' !!}
+            {!! $log->recipient ? $log->recipient->displayName : '' !!}
         </div>
         <div class="col-6 col-md-4">{!! $log->item ? $log->item->displayName : '(Deleted Item)' !!} (×{!! $log->quantity !!})</div>
-        <div class="col-6 col-md-2">{!! $log->currency && $log->cost ? $log->currency->display($log->cost) : '' !!}</div>
+        <div class="col-6 col-md-2">{!! $log->currency && $log->cost ? $log->currency->display($log->cost) : 'n/a' !!}</div>
         <div class="col-6 col-md-2">{!! $log->quantity !!}</div>
         <div class="col-6 col-md-2">{!! pretty_date($log->created_at) !!}</div>
         </div>

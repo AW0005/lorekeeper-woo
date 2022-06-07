@@ -144,6 +144,7 @@ Route::group(['prefix' => 'shops'], function() {
     // Shop Log
     Route::group(['middleware' => 'admin'], function() {
         Route::get('/{id}/log', 'ShopController@getShopLog')->where(['id' => '[0-9]+']);
+        Route::get('/donation/log', 'ShopController@getDonationLog');
     });
 });
 
