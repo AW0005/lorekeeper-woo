@@ -12,9 +12,9 @@
 <div class="row ml-md-2 mb-4">
   <div class="d-flex row flex-wrap col-12 mt-1 pt-1 px-0 ubt-bottom">
     <div class="col-6 col-md-2 font-weight-bold">Sender</div>
-    <div class="col-6 col-md-2 font-weight-bold">Item</div>
+    <div class="col-6 col-md-4 font-weight-bold">Item</div>
     <div class="col-6 col-md-2 font-weight-bold">Cost</div>
-    <div class="col-6 col-md-4 font-weight-bold">Quantity</div>
+    <div class="col-6 col-md-2 font-weight-bold">Quantity</div>
     <div class="col-6 col-md-2 font-weight-bold">Date</div>
   </div>
     @foreach($logs as $log)
@@ -22,9 +22,9 @@
         <div class="col-6 col-md-2">
             {!! $log->user ? $log->user->displayName : '' !!}
         </div>
-        <div class="col-6 col-md-2">{!! $log->item ? $log->item->displayName : '(Deleted Item)' !!} (×{!! $log->quantity !!})</div>
+        <div class="col-6 col-md-4">{!! $log->item ? $log->item->displayName : '(Deleted Item)' !!} (×{!! $log->quantity !!})</div>
         <div class="col-6 col-md-2">{!! $log->currency && $log->cost ? $log->currency->display($log->cost) : '' !!}</div>
-        <div class="col-6 col-md-4">{!! $log->quantity !!}</div>
+        <div class="col-6 col-md-2">{!! $log->quantity !!}</div>
         <div class="col-6 col-md-2">{!! pretty_date($log->created_at) !!}</div>
         </div>
     @endforeach
