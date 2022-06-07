@@ -140,6 +140,11 @@ Route::group(['prefix' => 'shops'], function() {
     Route::get('{id}/{stockId}', 'ShopController@getShopStock')->where(['id' => '[0-9]+', 'stockId' => '[0-9]+']);
     Route::get('donation-shop', 'ShopController@getDonationShop');
     Route::get('donation-shop/{id}', 'ShopController@getDonationShopStock')->where(['id' => '[0-9]+']);
+
+    // Shop Log
+    Route::group(['middleware' => 'admin'], function() {
+        Route::get('/{id}/log', 'ShopController@getShopLog')->where(['id' => '[0-9]+']);
+    });
 });
 
 /**************************************************************************************************

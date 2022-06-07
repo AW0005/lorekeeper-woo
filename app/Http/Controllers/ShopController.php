@@ -38,7 +38,7 @@ class ShopController extends Controller
     public function getIndex()
     {
         return view('shops.index', [
-            'shops' => Shop::where('is_active', 1)->orderBy('sort', 'DESC')->get()
+            'shops' => Shop::where('is_active', 1)->orderBy('sort', 'DESC')->get(),
             ]);
     }
 
@@ -56,12 +56,34 @@ class ShopController extends Controller
         $items = count($categories) ? $shop->displayStock()->orderByRaw('FIELD(item_category_id,'.implode(',', $categories->pluck('id')->toArray()).')')->orderBy('pivot_cost')->get()->groupBy('item_category_id') : $shop->displayStock()->orderBy('pivot_cost')->get()->groupBy('item_category_id');
         return view('shops.shop', [
             'shop' => $shop,
+            'isShopPage' => true,
             'categories' => $categories->keyBy('id'),
             'items' => $items,
             'shops' => Shop::where('is_active', 1)->orderBy('sort', 'DESC')->get(),
             'currencies' => Currency::whereIn('id', ShopStock::where('shop_id', $shop->id)->pluck('currency_id')->toArray())->get()->keyBy('id')
         ]);
     }
+
+    /**
+     * Shows a shop's log.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getShopLog($id)
+    {
+        $shop = Shop::where('id', $id)->first();
+        if(!$shop) abort(404);
+        $log = ShopLog::where('shop_id', $id)->get();
+        return view('shops.shop_log', [
+            'shop' => $shop,
+            'logs' => $log,
+            'isShopPage' => true,
+            'shops' => Shop::where('is_active', 1)->orderBy('sort', 'DESC')->get(),
+            'currencies' => Currency::whereIn('id', ShopStock::where('shop_id', $shop->id)->pluck('currency_id')->toArray())->get()->keyBy('id')
+        ]);
+    }
+
 
     /**
      * Gets the shop stock modal.
