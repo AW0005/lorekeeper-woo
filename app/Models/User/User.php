@@ -422,7 +422,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getDonationShopCooldownAttribute()
     {
         // Fetch log for most recent collection
-        $log = ItemLog::where('recipient_id', $this->id)->where('log_type', 'Collected from Donation Shop')->orderBy('id', 'DESC')->first();
+        $log = ItemLog::where('recipient_id', $this->id)->where('log_type', 'Collected from Donation Tree')->orderBy('id', 'DESC')->first();
         // If there is no log, by default, the cooldown is null
         if(!$log) return null;
         // If the cooldown would already be up, it is null
