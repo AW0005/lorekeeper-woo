@@ -12,7 +12,8 @@
     </div>
     <div class="form-group">
         {!! Form::label('Year') !!}
-        {!! Form::text('year', date("Y"), ['class' => 'form-control mr-2', 'id' => 'year']) !!}
+        {{$request->character->year}}
+        {!! Form::text('year', $request->character->year ? $request->character->year : date("Y"), ['class' => 'form-control mr-2', 'id' => 'year']) !!}
     </div>
     <div class="form-group">
         {!! Form::label('Number') !!} {!! add_help('This number helps to identify the character and should preferably be unique either within the category, or among all characters.') !!}
