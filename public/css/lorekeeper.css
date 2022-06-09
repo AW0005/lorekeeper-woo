@@ -324,6 +324,7 @@ img {
     image-rendering: crisp-edges;
     -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
     max-width: 100%; /* because lorekeeper is terrible at sizing images */
+    width: auto; /* So we don't stretch images */
 }
 
 table thead {
