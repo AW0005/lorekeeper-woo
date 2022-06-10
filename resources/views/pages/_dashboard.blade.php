@@ -9,10 +9,6 @@
     .compact .row {
         margin-bottom: 10px;
     }
-
-    [data-original-title="Tangyuan"] {
-        image-rendering: pixelated;
-    }
 </style>
 
 <div class="row" style="justify-content: space-between; align-items: flex-end;">
