@@ -4,9 +4,9 @@
 
 @section('profile-content')
 @if($character->is_myo_slot)
-{!! breadcrumbs(['MYO Slot Masterlist' => 'myos', $character->fullName => $character->url, 'Awards' => $character->url.'/awards', 'Logs' => $character->url.'/award-logs']) !!}
+{!! breadcrumbs(['MYO Slot Masterlist' => 'myos', $character->fullName => $character->url, 'Badges' => $character->url.'/awards', 'Logs' => $character->url.'/award-logs']) !!}
 @else
-{!! breadcrumbs([($character->category->masterlist_sub_id ? $character->category->sublist->name.' Masterlist' : 'Character masterlist') => ($character->category->masterlist_sub_id ? 'sublist/'.$character->category->sublist->key : 'masterlist' ), $character->fullName => $character->url, 'Awards' => $character->url.'/awards', 'Logs' => $character->url.'/award-logs']) !!}
+{!! breadcrumbs([($character->category->masterlist_sub_id ? $character->category->sublist->name.' Masterlist' : 'Character masterlist') => ($character->category->masterlist_sub_id ? 'sublist/'.$character->category->sublist->key : 'masterlist' ), $character->fullName => $character->url, 'Badges' => $character->url.'/awards', 'Logs' => $character->url.'/award-logs']) !!}
 @endif
 
 @include('character._header', ['character' => $character])
