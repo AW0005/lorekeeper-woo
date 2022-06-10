@@ -9,6 +9,10 @@
     .compact .row {
         margin-bottom: 10px;
     }
+
+    [data-original-title="Tangyuan"] {
+        image-rendering: pixelated;
+    }
 </style>
 
 <div class="row" style="justify-content: space-between; align-items: flex-end;">
@@ -26,7 +30,7 @@
     @if(count($awards))
         <div class="row no-gutters">
             @foreach($awards as $item)
-                <div class="col-sm-1 col-2 p-1">
+                <div class="col-sm-1 col-2 p-1 d-flex align-items-center">
                     @if($item->imageUrl)
                         <a href="{{ $item->url }}" class="h6 mb-0"><img src="{{ $item->imageUrl }}"  style="max-width: 100%" data-toggle="tooltip" title="{{ $item->name }}" alt="{{ $item->name }}"/></a>
                     @else
