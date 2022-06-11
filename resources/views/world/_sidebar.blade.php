@@ -1,8 +1,10 @@
 <ul>
     <li class="sidebar-header"><a href="{{ url('world') }}" class="card-link">Lore</a></li>
     <li class="sidebar-section">
-        <div class="sidebar-section-header">Trait Guides</div>
+        <div class="sidebar-section-header">Guides</div>
+        <div class="sidebar-item"><a href="{{ url('world/species-overview') }}" class="{{ set_active('world/species-overview') }}">AW0005 Overview</a></div>
         <div class="sidebar-item"><a href="{{ url('world/species/1/traits') }}" class="{{ set_active('world/species/1/traits') }}">AW0005 Trait Guide</a></div>
+        <div class="sidebar-item"><a href="{{ url('world/myo-overview') }}" class="{{ set_active('world/myo-overview') }}">All About MYOs</a></div>
         <!-- <div class="sidebar-item"><a href="{{ url('world/species/2/traits') }}" class="{{ set_active('world/species/2/traits') }}">Holos Trait Guide</a></div> -->
         <div class="sidebar-item"><a href="{{ url('world/traits') }}" class="{{ set_active('world/traits*') }}">Search Traits</a></div>
     </li>

@@ -218,6 +218,12 @@ class WorldController extends Controller
         ]);
     }
 
+    public function getInfo($name)
+    {
+        $page = str_replace('-', '_', $name);
+        return view('world.info.'.$page, []);
+    }
+
     /**
      * Shows a species' visual trait list.
      *
@@ -249,7 +255,7 @@ class WorldController extends Controller
                 ->get()
                 ->groupBy(['feature_category_id', 'id']);
 
-        return view('world.species_features', [
+        return view('world.info.species_features', [
             'species' => $species,
             'categories' => $categories->keyBy('id'),
             'rarities' => $rarities->keyBy('id'),

@@ -3,12 +3,7 @@
 @section('title') {{ $species->name }} Traits @endsection
 
 @section('content')
-{!! breadcrumbs(['World' => 'world', 'Species' => 'world/species', $species->name => $species->url, 'Traits' => 'world/species/'.$species->id.'traits']) !!}
-<h1>{{ $species->name }} Traits</h1>
-<p style="color: red"><b>WIP::</b> This page is still partially in progress as we're working on new images for the traits!</p>
-<p class="mb-2">
-<b>Clicking on trait images will show more info!</b>
-</p>
+{!! breadcrumbs(['Lore' => 'world', 'Species' => 'world/species', $species->name => $species->url, 'Traits' => 'world/species/'.$species->id.'traits']) !!}
 <div class="d-flex flex-wrap justify-content-center" style="gap: 7.2px;">
 <a class="badge badge-primary" href="#CTRLs">CTRLs <i class="fas fa-caret-down"></i></a>
 <a class="badge badge-primary" href="#Cooling Pockets">Cooling Pockets <i class="fas fa-caret-down"></i></a>
@@ -21,35 +16,20 @@
 <a class="badge badge-primary" href="#Optional Mods">Optional Mods <i class="fas fa-caret-down"></i></a>
 <a class="badge badge-primary" href="#Android">Android <i class="fas fa-caret-down"></i></a>
 </div>
+<center>
+<h1 class="mt-4 mb-0">{{ $species->name }} Traits</h1>
+<p class="mt-0" style="color: red"><b>WIP::</b> This page is still partially in progress as we're working on new images for the traits!</p>
 
-<p class="mt-3">AW0005 are digital kemonomimi sentient AIs!<br/>
-The company AW0005 has tried to embrace the digital and malleable nature of the AIs forms by providing
-ways to have traits that defy what can be achieved in reality. One of their most recent crowning achievements
-has been the development of Fully Synthetic legs and Digital Projections inside of Cooling Pockets.
+<p class="mt-3">AW0005 are kemonomimi sentient AIs!<br/>
+<a class="text-primary" href="{{ url('/world/species-overview') }}">Click here for an overview of the species!</a>
 </p>
 
-<h5>SubTypes</h5>
-<p>Different AI subtypes have been developed over the years, each with it's own unique traits!<br/>
-Today there are primarily two subtypes:
-<ol><li><b>AW0001</b> - A <b>Wolf</b> Based AI and the first generation, and an affinity for <b>music</b>.</li>
-<li><b>BNNUY02</b> - A <b>Bunny</b> Based AI made to be more humanoid with an affinity for <b>plants</b>.</li>
-</ol>
-While each subtype by default only come with traits designed for them,  you can buy an upgrade item to allow for usage of other subtype traits!<br/>
-You can see this denoted below by the parenthesis.</p>
-
-<h5>Required Traits</h5>
+<h5 class="mb-0">Required Traits</h5>
 <p>
-All AW0005 are required to have at least one trait from each of the below categories <i>except</i> for optional!
+One trait from each of the below categories <i>except</i> for optional!
 </p>
 
-<h5>Re-Designs</h5>
-<p>Since they're forms are able to be augmented, it's not uncommen for an AW0005 to change up their
-looks by acquiring new traits, or even have multiple forms with different traits! This means as long
-as you have the trait item for it, you are always welcome to re-design your AW0005, and they will
-always keep access to the prior traits they had as well.</p>
-
-<h5>Rarities</h5>
-<p>AW0005 have 4 rarities for traits that come with color designations:</h5>
+<h5 class="mb-1">Rarities</h5>
 <div class="d-flex flex-wrap justify-content-center pb-3" style="gap: 7.2px;">
     @foreach($rarities as $rarity)
     @if($rarity->name !== 'Voided')
@@ -58,6 +38,10 @@ always keep access to the prior traits they had as well.</p>
     @endforeach
 </div>
 
+<p class="mb-1 mt-3">
+<b>Clicking on trait images will show more info!</b>
+</p>
+</center>
 @foreach($features as $categoryId=>$categoryFeatures)
 <a data-toggle="collapse" href="#category-{{ $categoryId }}" aria-expanded="true">
     <h4 id="{{$categories[$categoryId]->name}}" class="card-header inventory-header mb-3">
