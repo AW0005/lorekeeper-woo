@@ -1,6 +1,6 @@
 <script>
 $( document ).ready(function() {
-    const features = <?php if(isset($features)) echo json_encode($features) ?>;
+    const features = <?php echo isset($features) ? json_encode($features) : 'undefined' ?>;
     const species_id = <?php echo (null !== old('species_id') ? old('species_id') : '0') ?>;
 
     const getFeatureOptions = (species) => {
@@ -94,6 +94,7 @@ $( document ).ready(function() {
         addArtistRow($(this));
     });
     function addArtistRow($trigger) {
+        console.log('here');
         var $clone = $('.artist-row').clone();
         $('#artistList').append($clone);
         $clone.removeClass('hide artist-row');
