@@ -31,7 +31,7 @@
     </div>
 @endif
 
-@if($parent->parent)
+@if($parent)
     <hr />
 
     <h5 class="text-center">Bound To {!! add_help('This character or add-on is bound to another character which controls the ownership.') !!}</h5>
@@ -52,22 +52,26 @@
     <h5 class="text-center">Binding {!! add_help('This character is in possession of the following add-ons or characters and controls their ownership.') !!}</h5>
     <div class="row justify-content-center text-center">
     @foreach($children as $link)
-        <div class="col-md-3">
-            <a href="{{ $link->child->url }}"><img src="{{ $link->child->image->thumbnailUrl }}" class="img-thumbnail" /></a><br />
-            <a href="{{ $link->child->url }}" class="h5 mb-0">@if(!$link->child->is_visible) <i class="fas fa-eye-slash"></i> @endif {{ $link->child->fullName }}</a>
-        <div class="small">
-            {!! $link->child->image->species_id ? $link->child->image->species->displayName : 'No Species' !!} ・ {!! $link->child->image->rarity_id ? $link->child->image->rarity->displayName : 'No Rarity' !!} ・ {!! $link->child->displayOwner !!}
-        @if($link->child->character_category_id == 6)
-            <?php $features = $link->child->image->features()->with('feature.category')->get(); ?>
-            @if($features->count())
-                @foreach($features as $feature)
-                    <div>@if($feature->feature->feature_category_id) <strong>{!! $feature->feature->category->displayName !!}:</strong> @endif {!! $feature->feature->displayName !!} @if($feature->data) ({{ $feature->data }}) @endif</div>
-                @endforeach
+        @if($link->child)
+            <div class="col-md-3">
+                <a href="{{ $link->child->url }}"><img src="{{ $link->child->image->thumbnailUrl }}" class="img-thumbnail" /></a><br />
+                <a href="{{ $link->child->url }}" class="h5 mb-0">@if(!$link->child->is_visible) <i class="fas fa-eye-slash"></i> @endif {{ $link->child->fullName }}</a>
+            <div class="small">
+                {!! $link->child->image->species_id ? $link->child->image->species->displayName : 'No Species' !!} ・ {!! $link->child->image->rarity_id ? $link->child->image->rarity->displayName : 'No Rarity' !!} ・ {!! $link->child->displayOwner !!}
+            @if($link->child->character_category_id == 6)
+                <?php $features = $link->child->image->features()->with('feature.category')->get(); ?>
+                @if($features->count())
+                    @foreach($features as $feature)
+                        <div>@if($feature->feature->feature_category_id) <strong>{!! $feature->feature->category->displayName !!}:</strong> @endif {!! $feature->feature->displayName !!} @if($feature->data) ({{ $feature->data }}) @endif</div>
+                    @endforeach
+                @endif
             @endif
-        @endif
 
-        </div>
-        </div>
+            </div>
+            </div>
+        @else
+            {{ $character->id }}
+        @endif
     @endforeach
     </div>
 @endif
