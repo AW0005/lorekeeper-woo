@@ -70,7 +70,9 @@
             </div>
             </div>
         @else
-            {{ json_encode($link) }}
+            <div class="col-md-3">
+                Deleted Bound Character
+            </div>
         @endif
     @endforeach
     </div>
