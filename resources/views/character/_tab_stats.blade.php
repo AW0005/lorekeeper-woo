@@ -70,7 +70,7 @@
             </div>
             </div>
         @else
-            {{ $character->id }}
+            {{ json_encode($link) }}
         @endif
     @endforeach
     </div>
