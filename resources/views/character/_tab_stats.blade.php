@@ -31,7 +31,7 @@
     </div>
 @endif
 
-@if($parent)
+@if($parent->parent)
     <hr />
 
     <h5 class="text-center">Bound To {!! add_help('This character or add-on is bound to another character which controls the ownership.') !!}</h5>
