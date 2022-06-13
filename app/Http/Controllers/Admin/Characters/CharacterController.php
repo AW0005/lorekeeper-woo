@@ -100,8 +100,7 @@ class CharacterController extends Controller
         $data = $request->only([
             'user_id', 'owner_url', 'character_category_id', 'number', 'year', 'slug', 'profile_link',
             'description', 'is_visible', 'is_giftable', 'is_tradeable', 'is_sellable',
-            'sale_value', 'transferrable_at', 'use_cropper',
-            'x0', 'x1', 'y0', 'y1',
+            'sale_value', 'transferrable_at',
             'designer_id', 'designer_url', 'designer_type',
             'artist_id', 'artist_url', 'artist_type',
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data',
@@ -131,8 +130,7 @@ class CharacterController extends Controller
         $data = $request->only([
             'user_id', 'owner_url', 'name',
             'description', 'is_giftable', 'is_tradeable', 'is_sellable',
-            'sale_value', 'transferrable_at', 'use_cropper',
-            'x0', 'x1', 'y0', 'y1',
+            'sale_value', 'transferrable_at',
             'designer_id', 'designer_url', 'designer_type',
             'artist_id', 'artist_url', 'artist_type',
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data',

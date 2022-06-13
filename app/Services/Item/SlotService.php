@@ -133,13 +133,6 @@ class SlotService extends Service
                         $characterData['name'] = isset($characterData['name']) ? $characterData['name'] : "Slot";
                         $characterData['transferrable_at'] = null;
                         $characterData['is_myo_slot'] = 1;
-                        //this uses your default MYO slot image from the CharacterManager
-                        //see wiki page for documentation on adding a default image switch
-                        $characterData['use_cropper'] = 0;
-                        $characterData['x0'] = null;
-                        $characterData['x1'] = null;
-                        $characterData['y0'] = null;
-                        $characterData['y1'] = null;
                         $characterData['image'] = null;
                         $characterData['thumbnail'] = null;
                         $characterData['artist_id'][0] = null;
