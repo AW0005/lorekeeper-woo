@@ -183,7 +183,7 @@ class ShopController extends Controller
      */
     public function getDonationLog()
     {
-        $log = ItemLog::where('log_type', 'Collected from Donation Tree')->get();
+        $log = ItemLog::whereIn('log_type', ['Collected from Donation Tree', 'Donated By User'])->get();
         return view('shops.shop_log', [
             'shop' => (object)['id' => 'donation', 'name' => 'Donation Shop', 'url' => 'shops/donation-shop'],
             'logs' => $log,
