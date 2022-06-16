@@ -1363,7 +1363,7 @@ class CharacterManager extends Service
      * @param  \App\Models\User\User            $user
      * @return  bool
      */
-    public function deleteCharacter($character, $user)
+    public function deleteCharacter($character, $user, $message)
     {
         DB::beginTransaction();
 
@@ -1388,6 +1388,9 @@ class CharacterManager extends Service
             // Delete associated design updates
             // Design updates use soft deletes
             CharacterDesignUpdate::where('character_id', $character->id)->delete();
+
+            // Log that we deleted the character so it's known for later
+            $this->createLog($user->id, null, $character->user_id, ($character->user_id ? null : $character->owner_url), $character->id, $character->is_myo_slot ? 'MYO Deleted' : 'Character Deleted', $message, 'user');
 
             // Delete character
             // This is a soft delete, so the character still kind of exists
