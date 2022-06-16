@@ -29,9 +29,12 @@ class DesignController extends Controller
         if($type == 'myo-approvals') $requests = $requests->myos();
         else $requests = $requests->characters();
 
+        if($status !== 'pending') $requests->orderBy('updated_at', 'DESC');
+
         return view('admin.designs.index', [
             'requests' => $requests->paginate(30)->appends($request->query()),
-            'isMyo' => ($type == 'myo-approvals')
+            'isMyo' => ($type == 'myo-approvals'),
+            'status' => $status
         ]);
     }
 
