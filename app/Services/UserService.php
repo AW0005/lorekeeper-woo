@@ -212,6 +212,7 @@ class UserService extends Service
         try {
             if(!$user->is_banned) {
                 // New ban (not just editing the reason), clear all their engagements
+                if(!logAdminAction($staff, 'Banned User', 'Banned '.$user->displayname)) throw new \Exception("Failed to log admin action.");
 
                 // 1. Character transfers
                 $characterManager = new CharacterManager;
@@ -231,7 +232,7 @@ class UserService extends Service
                 $galleryManager = new GalleryManager;
                 $gallerySubmissions = GallerySubmission::where('user_id', $user->id)->where('status', 'Pending')->get();
                 foreach($gallerySubmissions as $submission) {
-                    $galleryManager->rejectSubmission($submission);
+                    $galleryManager->rejectSubmission($submission, $staff);
                     $galleryManager->postStaffComments($submission->id, ['staff_comments' => 'User has been banned from site activity.'], $staff);
                 }
                 $gallerySubmissions = GallerySubmission::where('user_id', $user->id)->where('status', 'Accepted')->get();
@@ -289,6 +290,8 @@ class UserService extends Service
         DB::beginTransaction();
 
         try {
+            if(!logAdminAction($staff, 'Unbanned User', 'Unbanned '.$user->displayname)) throw new \Exception("Failed to log admin action.");
+            
             if($user->is_banned) {
                 $user->is_banned = 0;
                 $user->save();

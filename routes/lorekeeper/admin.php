@@ -10,6 +10,7 @@
 */
 
 Route::get('/', 'HomeController@getIndex');
+Route::get('/logs', 'HomeController@getLogs');
 
 Route::group(['prefix' => 'logs'], function() {
     Route::group(['middleware' => 'admin'], function() {

@@ -1,50 +1,31 @@
 @extends('admin.layout')
 
-@section('admin-title') Log of Logs @endsection
-
-@section('scripts')
-<style>
-table tr td { border: none !important; }
-table tr { border-bottom: 1px solid #ccc }
-
-tr > td:first-child,
-tr > td:last-child {
-    white-space: nowrap;
-}
-</style>
-@endsection
+@section('admin-title') Logs @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Log of Logs' => 'logs']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', 'Logs' => 'admin/logs']) !!}
 
-<h1>Log of Logs</h1>
+<h1>Admin Logs</h1>
+
 {!! $logs->render() !!}
-<table class="mb-2">
+<table class="table table-sm">
     <thead>
-        <tr>
-            <th>Log Date</th>
-            <th>Sender</th>
-            <th></th>
-            <th>Recipient</th>
-            <th>Log</th>
-            <th>Character / Item</th>
-        </tr>
+        <th>Staff</th>
+        <th>Action</th>
+        <th>Action Details</th>
+        <th>Date</th>
     </thead>
     <tbody>
-    @foreach($logs as $log)
+        @foreach($logs as $log)
         <tr>
-            <td>{!! pretty_date($log->created_at) !!}</td>
-            <td>
-                {!! $log->user ? $log->user->displayName : '' !!}
-                {!! $log->sender ? $log->sender->displayName : '' !!}
-            </td>
-            <td><i class="fas fa-long-arrow-alt-right"></i></td>
-            <td>{!! $log->recipient ? $log->recipient->displayName : '' !!}</td>
-            <td>{!! $log->log ? $log->log : $log->type !!}</td>
-            <td>{!! $log->character ? $log->character->displayName : ($log->item ? $log->item->displayName.' (×'.$log->quantity.')' : 'n/a') !!}</td>
+            <td>{!! $log->user->displayName !!}</td>
+            <td>{!! $log->action !!}</td>
+            <td>{!! $log->action_details !!}</td>
+            <td>{!! format_date($log->created_at) !!} ({!! pretty_date($log->created_at) !!})</td>
         </tr>
-    @endforeach
+        @endforeach
     </tbody>
 </table>
 {!! $logs->render() !!}
+
 @endsection

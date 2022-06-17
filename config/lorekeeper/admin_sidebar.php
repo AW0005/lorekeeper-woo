@@ -22,6 +22,10 @@ return [
                 'url' => 'admin/users/ranks'
             ],
             [
+                'name' => 'Admin Logs',
+                'url' => 'admin/logs'
+            ],
+            [
                 'name' => 'Log of Logs',
                 'url' => 'admin/logs'
             ]
