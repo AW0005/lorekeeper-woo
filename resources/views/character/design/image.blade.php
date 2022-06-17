@@ -10,7 +10,7 @@
 <h2>Masterlist Image</h2>
 
 @php
-$isDraft = $request->status == 'draft' || $request->status == 'pending';
+$isDraft = $request->status == 'Draft' || $request->status == 'Pending';
 @endphp
 
 @if($request->has_image)
