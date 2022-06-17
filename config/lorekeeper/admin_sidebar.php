@@ -31,7 +31,7 @@ return [
             ],
             [
                 'name' => 'Staff Reward Settings',
-                'url' => 'admin/users/staff-reward-settings'
+                'url' => 'admin/\staff-reward-settings'
             ],
         ]
     ],
