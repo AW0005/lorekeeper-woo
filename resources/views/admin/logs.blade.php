@@ -22,9 +22,9 @@
         <div class="col-6 col-md-2">{!! pretty_date($log->created_at) !!}</div>
         <div class="col-6 col-md-2">
             {!! $log->user ? $log->user->displayName : '' !!}
-            {!! $log->sender ? $log->sender->displayName.' <i style="color: green;" class="fas fa-plus-circle"></i>' : '' !!}
+            {!! $log->sender ? $log->sender->displayName.' <i style="color: red;" class="fas fa-minus-circle"></i>' : '' !!}
         </div>
-        <div class="col-6 col-md-2">{!! $log->recipient ? $log->recipient->displayName.' <i style="color: red;" class="fas fa-minus-circle"></i>' : '' !!}</div>
+        <div class="col-6 col-md-2">{!! $log->recipient ? $log->recipient->displayName.' <i style="color: green;" class="fas fa-plus-circle"></i>' : '' !!}</div>
         <div class="col-6 col-md-4">{!! $log->log !!}</div>
         <div class="col-6 col-md-2">{!! $log->character ? $log->character->displayName : 'n/a' !!}</div>
         {{-- <div class="col-6 col-md-2">{!! $log->quantity !!}</div> --}}
