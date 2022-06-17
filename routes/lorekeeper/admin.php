@@ -11,10 +11,11 @@
 
 Route::get('/', 'HomeController@getIndex');
 
-
 Route::group(['middleware' => 'admin'], function() {
     Route::get('/logs', 'LogsController@getIndex');
     Route::get('/logoflogs', 'LogsController@getLogofLogs');
+    Route::get('staff-reward-settings', 'HomeController@getStaffRewardSettings');
+    Route::post('staff-reward-settings/{key}', 'HomeController@postEditStaffRewardSetting');
 });
 
 Route::group(['prefix' => 'users', 'namespace' => 'Users'], function() {

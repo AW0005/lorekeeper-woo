@@ -29,6 +29,10 @@ return [
                 'name' => 'Admin Logs',
                 'url' => 'admin/logs'
             ],
+            [
+                'name' => 'Staff Reward Settings',
+                'url' => 'admin/users/staff-reward-settings'
+            ],
         ]
     ],
     // Hiding in favor of the admin home page.
