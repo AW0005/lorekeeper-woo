@@ -29,7 +29,8 @@ class LogsController extends Controller
         $logs = $logs->concat(CurrencyLog::whereDate('created_at', '>', $oneMonth)->get());
         $logs = $logs->concat(ItemLog::whereDate('created_at', '>', $oneMonth)->get());
         $logs = $logs->concat(AwardLog::whereDate('created_at', '>', $oneMonth)->get());
-        $logs = $logs->concat(ShopLog::whereDate('created_at', '>', $oneMonth)->get());
+        // Redundant with Item and Currency Logs
+        // $logs = $logs->concat(ShopLog::whereDate('created_at', '>', $oneMonth)->get());
         $logs = $logs->concat(UserUpdateLog::whereDate('created_at', '>', $oneMonth)->get());
 
         return view('admin.logs', [
