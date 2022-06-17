@@ -1,7 +1,7 @@
 <ul>
     <li class="sidebar-header"><a href="{{ url('shops') }}" class="card-link">Shops</a></li>
 
-@if(Auth::user()->isAdmin && isset($isShopPage))
+@if(Auth::check() && Auth::user()->isAdmin && isset($isShopPage))
     <li class="sidebar-section">
         <div class="sidebar-item"><a href="{{ url('shops/'.$shop->id.'/log') }}" class="{{ set_active('shops/'.$shop->id.'/log') }}">{{ $shop->name }} Logs</a></div>
     </li>

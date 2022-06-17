@@ -19,6 +19,7 @@ use App\Models\Feature\Feature;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Trade;
 use App\Models\User\UserItem;
+use App\Models\User\UserCharacterLog;
 
 use App\Services\AwardCaseManager;
 use App\Services\CharacterManager;
@@ -422,7 +423,10 @@ class CharacterController extends Controller
         $this->character = Character::where('slug', $slug)->first();
         if(!$this->character) abort(404);
 
-        if ($service->deleteCharacter($this->character, Auth::user())) {
+        $data = $request->only([
+            'message'
+        ]);
+        if ($service->deleteCharacter($this->character, Auth::user(), $data['message'])) {
             flash('Character deleted successfully.')->success();
             return redirect()->to('masterlist');
         }
@@ -445,7 +449,10 @@ class CharacterController extends Controller
         $this->character = Character::where('is_myo_slot', 1)->where('id', $id)->first();
         if(!$this->character) abort(404);
 
-        if ($service->deleteCharacter($this->character, Auth::user())) {
+        $data = $request->only([
+            'message'
+        ]);
+        if ($service->deleteCharacter($this->character, Auth::user(), $data['message'])) {
             flash('Character deleted successfully.')->success();
             return redirect()->to('myos');
         }

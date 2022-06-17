@@ -32,15 +32,15 @@ class UserCharacterLog extends Model
     public $timestamps = true;
 
     /**********************************************************************************************
-    
+
         RELATIONS
 
     **********************************************************************************************/
-    
+
     /**
      * Get the user who initiated the logged action.
      */
-    public function sender() 
+    public function sender()
     {
         return $this->belongsTo('App\Models\User\User', 'sender_id');
     }
@@ -48,7 +48,7 @@ class UserCharacterLog extends Model
     /**
      * Get the user who received the logged action.
      */
-    public function recipient() 
+    public function recipient()
     {
         return $this->belongsTo('App\Models\User\User', 'recipient_id');
     }
@@ -56,13 +56,13 @@ class UserCharacterLog extends Model
     /**
      * Get the character that is the target of the action.
      */
-    public function character() 
+    public function character()
     {
-        return $this->belongsTo('App\Models\Character\Character');
+        return $this->belongsTo('App\Models\Character\Character')->withTrashed();
     }
 
     /**********************************************************************************************
-    
+
         ACCESSORS
 
     **********************************************************************************************/
@@ -76,7 +76,7 @@ class UserCharacterLog extends Model
     {
         return prettyProfileLink($this->sender_url);
     }
-    
+
     /**
      * Displays the recipient's alias, linked to their profile.
      *
