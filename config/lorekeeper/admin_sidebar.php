@@ -22,13 +22,13 @@ return [
                 'url' => 'admin/users/ranks'
             ],
             [
+                'name' => 'Log of Logs',
+                'url' => 'admin/logoflogs'
+            ],
+            [
                 'name' => 'Admin Logs',
                 'url' => 'admin/logs'
             ],
-            [
-                'name' => 'Log of Logs',
-                'url' => 'admin/logs'
-            ]
         ]
     ],
     // Hiding in favor of the admin home page.

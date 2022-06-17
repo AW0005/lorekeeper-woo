@@ -10,12 +10,11 @@
 */
 
 Route::get('/', 'HomeController@getIndex');
-Route::get('/logs', 'HomeController@getLogs');
 
-Route::group(['prefix' => 'logs'], function() {
-    Route::group(['middleware' => 'admin'], function() {
-        Route::get('/', 'LogsController@getIndex');
-    });
+
+Route::group(['middleware' => 'admin'], function() {
+    Route::get('/logs', 'LogsController@getIndex');
+    Route::get('/logoflogs', 'LogsController@getLogofLogs');
 });
 
 Route::group(['prefix' => 'users', 'namespace' => 'Users'], function() {
