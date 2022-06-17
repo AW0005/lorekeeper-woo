@@ -27,7 +27,7 @@ tr > td:last-child {
             <th></th>
             <th>Recipient</th>
             <th>Log</th>
-            <th>Character</th>
+            <th>Character / Item</th>
         </tr>
     </thead>
     <tbody>
@@ -41,7 +41,7 @@ tr > td:last-child {
             <td><i class="fas fa-long-arrow-alt-right"></i></td>
             <td>{!! $log->recipient ? $log->recipient->displayName : '' !!}</td>
             <td>{!! $log->log ? $log->log : $log->type !!}</td>
-            <td>{!! $log->character ? $log->character->displayName : 'n/a' !!}</td>
+            <td>{!! $log->character ? $log->character->displayName : $log->item ? $log->item->displayName : 'n/a' !!}</td>
         </tr>
     @endforeach
     </tbody>
