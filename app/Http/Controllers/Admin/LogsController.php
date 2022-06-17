@@ -29,13 +29,15 @@ class LogsController extends Controller
         $logs = $logs->concat(CurrencyLog::whereDate('created_at', '>', $oneMonth)->get());
         $logs = $logs->concat(ItemLog::whereDate('created_at', '>', $oneMonth)->get());
         $logs = $logs->concat(AwardLog::whereDate('created_at', '>', $oneMonth)->get());
-        // Redundant with the ItemLog
         $logs = $logs->concat(ShopLog::whereDate('created_at', '>', $oneMonth)->get());
         $logs = $logs->concat(UserUpdateLog::whereDate('created_at', '>', $oneMonth)->get());
 
         // dd($logs->sortByDesc('created_at'));
         return view('admin.logs', [
-            'logs' => $logs->sortByDesc('created_at')->paginate(20)
+            'logs' => $logs->unique(function($item) {
+                // de-dupes for logs that would show up in multiple logs
+                return $item->created_at.$item->log;
+            })->sortByDesc('created_at')->paginate(20)
         ]);
     }
 }
