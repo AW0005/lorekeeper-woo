@@ -53,9 +53,9 @@
     @if(!$isClaims)
       <div class="col-12 col-md-2 font-weight-bold">Prompt</div>
     @endif
-    <div class="col-6 {{ !$isClaims ? 'col-md-2' : 'col-md-3' }} font-weight-bold">User</div>
-    <div class="col-6 {{ !$isClaims ? 'col-md-3' : 'col-md-4' }} font-weight-bold">Link</div>
-    <div class="col-6 col-md-3 font-weight-bold">Submitted</div>
+    <div class="col-6 col-md-2 font-weight-bold">User</div>
+    <div class="col-6 col-md-3 font-weight-bold">Link</div>
+    <div class="col-6 col-md-2 font-weight-bold">Submitted</div>
     <div class="col-6 col-md-1 font-weight-bold">Status</div>
   </div>
 
@@ -64,11 +64,11 @@
       @if(!$isClaims)
         <div class="col-12 col-md-2">{!! $submission->prompt->displayName !!}</div>
       @endif
-      <div class="col-6 {{ !$isClaims ? 'col-md-2' : 'col-md-3' }}">{!! $submission->user->displayName !!}</div>
-      <div class="col-6 {{ !$isClaims ? 'col-md-3' : 'col-md-4' }}">
+      <div class="col-6 col-md-2">{!! $submission->user->displayName !!}</div>
+      <div class="col-6 col-md-3">
         <span class="ubt-texthide"><a href="{{ $submission->url }}">{{ $submission->url }}</a></span>
       </div>
-      <div class="col-6 col-md-3">{!! pretty_date($submission->created_at) !!}</div>
+      <div class="col-6 col-md-2">{!! pretty_date($submission->created_at) !!}</div>
       <div class="col-3 col-md-1">
         <span class="badge badge-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : 'danger') }} badge-lg">{{ $submission->status }}</span>
       </div>
