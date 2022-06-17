@@ -9,6 +9,10 @@
 
 <h2>Masterlist Image</h2>
 
+@php
+$isDraft = $request->status == 'draft';
+@endphp
+
 @if($request->has_image)
     <div class="card mb-3">
         <div class="card-body bg-secondary text-white">
@@ -16,13 +20,13 @@
                 <div class="col-md-6">
                     <h3 class="text-center">Main Image</h3>
                     <div class="text-center">
-                        <a href="{{ $request->imageUrl }}"><img src="{{ $request->imageUrl }}" class="mw-100" alt="Request {{ $request->id }}" /></a>
+                        <a href="{{ $isDraft ? $request->imageUrl : $request->character->image->fullsizeUrl }}"><img src="{{ $isDraft ? $request->imageUrl : $request->character->image->fullsizeUrl }}" class="mw-100" alt="Request {{ $request->id }}" /></a>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <h3 class="text-center">Thumbnail Image</h3>
                     <div class="text-center">
-                        <a href="{{ $request->thumbnailUrl }}"><img src="{{ $request->thumbnailUrl }}" class="mw-100" alt="Thumbnail for request {{ $request->id }}" /></a>
+                        <a href="{{ $isDraft ? $request->thumbnailUrl : $request->character->image->thumbnailUrl }}"><img src="{{ $isDraft ? $request->thumbnailUrl : $request->character->image->thumbnailUrl }}" class="mw-100" alt="Thumbnail for request {{ $request->id }}" /></a>
                     </div>
                 </div>
             </div>

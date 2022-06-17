@@ -24,7 +24,7 @@ class CharacterDesignUpdate extends Model
         'use_cropper', 'x0', 'x1', 'y0', 'y1',
         'hash', 'species_id', 'subtype_id', 'rarity_id',
         'has_comments', 'has_image', 'has_addons', 'has_features',
-        'submitted_at', 'update_type', 'fullsize_hash', 
+        'submitted_at', 'update_type', 'fullsize_hash',
         'approval_votes', 'rejection_votes'
     ];
 
