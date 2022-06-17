@@ -33,7 +33,7 @@ class LogsController extends Controller
         $logs = $logs->concat(ShopLog::whereDate('created_at', '>', $oneMonth)->get());
         $logs = $logs->concat(UserUpdateLog::whereDate('created_at', '>', $oneMonth)->get());
 
-        dd($logs->sortByDesc('created_at'));
+        // dd($logs->sortByDesc('created_at'));
         return view('admin.logs', [
             'logs' => $logs->sortByDesc('created_at')->paginate(20)
         ]);
