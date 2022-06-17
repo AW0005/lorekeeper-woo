@@ -1,6 +1,7 @@
 <?php namespace App\Services;
 
 use App;
+use App\Models\AdminLog;
 use Auth;
 use DB;
 use File;
@@ -236,5 +237,24 @@ abstract class Service {
     public function deleteImage($dir, $name)
     {
         unlink($dir . '/' . $name);
+    }
+
+    /**
+     * Creates an admin log entry after an action is performed.
+     *
+     * @param  string  $action
+     * @param  object  $user
+     * @param  string  $action
+     */
+    public function logAdminAction($user, $action, $action_details)
+    {
+        $log = AdminLog::create([
+            'user_id' => $user->id,
+            'action' => $action,
+            'action_details' => $action_details,
+        ]);
+
+        if($log) return true;
+        else return false;
     }
 }

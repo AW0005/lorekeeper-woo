@@ -325,7 +325,7 @@ class SubmissionManager extends Service
                 'submission_id' => $submission->id,
             ]);
 
-            if(!logAdminAction($user, 'Submission Rejected', 'Rejected submission <a href="'.$submission->viewurl.'">#'.$submission->id.'</a>')) throw new \Exception("Failed to log admin action.");
+            if(!$this->logAdminAction($user, 'Submission Rejected', 'Rejected submission <a href="'.$submission->viewurl.'">#'.$submission->id.'</a>')) throw new \Exception("Failed to log admin action.");
 
             return $this->commitReturn($submission);
         } catch(\Exception $e) {
@@ -493,7 +493,7 @@ class SubmissionManager extends Service
                 'submission_id' => $submission->id,
             ]);
 
-            if(!logAdminAction($user, 'Submission Approved', 'Approved submission <a href="'.$submission->viewurl.'">#'.$submission->id.'</a>')) throw new \Exception("Failed to log admin action.");
+            if(!$this->logAdminAction($user, 'Submission Approved', 'Approved submission <a href="'.$submission->viewurl.'">#'.$submission->id.'</a>')) throw new \Exception("Failed to log admin action.");
 
             return $this->commitReturn($submission);
         } catch(\Exception $e) {
