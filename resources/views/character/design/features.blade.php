@@ -9,7 +9,7 @@
 
 <h2>Traits</h2>
 
-@if(($request->status == 'Draft' || $request->status == 'Pending') && $request->user_id == Auth::user()->id)
+@if($request->status == 'Draft' && $request->user_id == Auth::user()->id)
     <p>Select the traits for the {{ $request->character->is_myo_slot ? 'created' : 'updated' }} character. @if($request->character->is_myo_slot) Some traits may have been restricted for you - you cannot change them. @endif Staff will not be able to modify these traits for you during approval, so if in doubt, please communicate with them beforehand to make sure that your design is acceptable.</p>
     {!! Form::open(['url' => 'designs/'.$request->id.'/traits']) !!}
         <div class="form-group">
@@ -104,7 +104,16 @@
     </div>
     <h5>Traits</h5>
     <div>
-        @foreach($request->character->image->features as $feature)
+@php
+$isDraft = $request->status == 'Draft' || $request->status == 'Pending';
+@endphp
+
+        @if($request->character && $request->character->is_myo_slot && $request->character->image->features)
+            @foreach($request->character->image->features as $feature)
+                <div>@if($feature->feature->feature_category_id) <strong>{!! $feature->feature->category->displayName !!}:</strong> @endif {!! $feature->feature->displayName !!} @if($feature->data) ({{ $feature->data }}) @endif <span class="text-danger">*Required</span></div>
+            @endforeach
+        @endif
+        @foreach($isDraft ? $request->features : $request->character->image->features as $feature)
             <div>@if($feature->feature->feature_category_id) <strong>{!! $feature->feature->category->displayName !!}:</strong> @endif {!! $feature->feature->displayName !!} @if($feature->data) ({{ $feature->data }}) @endif</div>
         @endforeach
     </div>
