@@ -11,6 +11,12 @@
 
 Route::get('/', 'HomeController@getIndex');
 
+Route::group(['prefix' => 'logs'], function() {
+    Route::group(['middleware' => 'admin'], function() {
+        Route::get('/', 'LogsController@getIndex');
+    });
+});
+
 Route::group(['prefix' => 'users', 'namespace' => 'Users'], function() {
 
     # USER LIST

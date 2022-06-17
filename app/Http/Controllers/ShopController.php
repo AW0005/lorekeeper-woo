@@ -75,7 +75,7 @@ class ShopController extends Controller
     {
         $shop = Shop::where('id', $id)->first();
         if(!$shop) abort(404);
-        $log = ShopLog::where('shop_id', $id)->get();
+        $log = ShopLog::where('shop_id', $id)->get()->paginate(20);
         return view('shops.shop_log', [
             'shop' => $shop,
             'logs' => $log,
@@ -186,7 +186,7 @@ class ShopController extends Controller
         $log = ItemLog::whereIn('log_type', ['Collected from Donation Tree', 'Donated By User'])->get();
         return view('shops.shop_log', [
             'shop' => (object)['id' => 'donation', 'name' => 'Donation Shop', 'url' => 'shops/donation-shop'],
-            'logs' => $log,
+            'logs' => $log->paginate(20),
             'isShopPage' => true,
             'shops' => Shop::where('is_active', 1)->orderBy('sort', 'DESC')->get(),
         ]);
