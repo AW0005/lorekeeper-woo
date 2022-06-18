@@ -51,7 +51,9 @@ Holo's do not have traits limited by rarity, so it's just a matter of which type
 <div class="d-flex" style="gap: 20px">
     <img src="https://aw0005.com/images/data/items/7-image.png" />
     <p><a class="text-primary" href="{{ url('/shops/1') }}">Alba's Shop</a> sells an item called the MYO Upgrade. This item can be used on <b>any</b>
-    Common MYO to make it a Standard MYO, regardless of how it was acquired</p>
+    Common MYO to make it a Standard MYO, regardless of how it was acquired<br/><br/>
+
+    She also sells an item called the Holo Upgrade, that similarly allows for upgrading a HoloBOT slot, or an existing HoloBOT to a HoloBUDDY.</p>
 </div><br />
 <h3 id="get" class="mt-5">How do I get them?</h3>
 <h5>Member MYOs (MBR)</h5>
