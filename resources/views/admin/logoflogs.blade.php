@@ -19,6 +19,7 @@ tr > td:last-child {
 
 <h1>Log of Logs</h1>
 {!! $logs->render() !!}
+<div style="overflow: auto; width: 100%;">
 <table class="mb-2">
     <thead>
         <tr>
@@ -46,5 +47,6 @@ tr > td:last-child {
     @endforeach
     </tbody>
 </table>
+</div>
 {!! $logs->render() !!}
 @endsection
