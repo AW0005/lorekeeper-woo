@@ -50,6 +50,10 @@ return [
     'manage_reports' => [
         'name' => 'Manage Reports',
         'description' => 'Allow rank to view the reports queue.'
+    ],
+    'on_call' => [
+        'name' => 'On Call',
+        'description' => 'Paired with Staff Rewards to reward Staff that has an on-call position'
     ]
 
 
