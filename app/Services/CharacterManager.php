@@ -182,7 +182,9 @@ class CharacterManager extends Service
             }
 
             // We don't check if this happens because slots can trigger this
-            $this->logAdminAction($user, 'Created Character', 'Created '.$character->displayName);
+            if(!$this->logAdminAction($user, 'Created Character', 'Created '.$character->displayName)) {
+                throw new \Exception('Failed to log admin action.');
+            }
 
             return $this->commitReturn($character);
         } catch(\Exception $e) {
