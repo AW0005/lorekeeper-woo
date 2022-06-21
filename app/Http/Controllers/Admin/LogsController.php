@@ -51,7 +51,7 @@ class LogsController extends Controller
         return view('admin.logoflogs', [
             'logs' => $logs->unique(function($item) {
                 // de-dupes for logs that would show up in multiple logs
-                return $item->created_at.$item->log.($item->item ? $item->item->name : '').($item->recipient->name ? $item->recipient->name : '');
+                return $item->created_at.$item->log.($item->item ? $item->item->name : '').($item->recipient ? $item->recipient->name : '');
             })->sortByDesc('created_at')->paginate(20)
         ]);
     }
