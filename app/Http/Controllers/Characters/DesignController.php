@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Characters;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 use DB;
 use Auth;
 use Settings;
+use Config;
+
 use App\Models\Item\Item;
 use App\Models\User\User;
 use App\Models\User\UserItem;
@@ -18,6 +21,7 @@ use App\Models\Rarity;
 use App\Models\Feature\Feature;
 use App\Models\Item\ItemCategory;
 use App\Services\CharacterManager;
+use App\Models\Character\CharacterImage;
 
 use App\Http\Controllers\Controller;
 
@@ -105,7 +109,11 @@ class DesignController extends Controller
         $r = CharacterDesignUpdate::find($id);
         if(!$r || ($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters'))) abort(404);
 
-        $image = $r->images->where('is_android', 0)->first();
+        $image = $r->image;
+        if($r->status === 'Draft' && !isset($image)) {
+            $image = $this->instantiateImage($r);
+        }
+
         return view('character.design.form', [
             'request' => $r,
             'image' => isset($image) ? $image : $r,
@@ -115,6 +123,48 @@ class DesignController extends Controller
             'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'features' => Feature::getFeaturesByCategory(true)
         ]);
+    }
+
+
+    /**
+     * This should only ever get hit if we have a deprecated in-progress design update
+     * that needs to be moved onto the new setup.
+     */
+    private function instantiateImage($request) {
+        $image = CharacterImage::create([
+            'character_id' => $request->id,
+            'is_visible' => 1,
+            'hash' => $request->hash,
+            'fullsize_hash' => $request->fullsize_hash ? $request->fullsize_hash : randomString(15),
+            'extension' => Config::get('lorekeeper.settings.masterlist_image_format'),
+
+            'species_id' => $request->species_id,
+            'subtype_id' => ($request->character->is_myo_slot && isset($request->character->image->subtype_id)) ? $request->character->image->subtype_id : $request->subtype_id,
+            'rarity_id' => $request->rarity_id,
+            'sort' => 0,
+            'is_design_update' => 1,
+        ]);
+
+        if(File::exists($request->imagePath . '/' . $request->imageFileName)){
+            // Move the pre-existing image file to the new image
+            File::move($request->imagePath . '/' . $request->imageFileName, $image->imagePath . '/' . $image->imageFileName);
+            File::move($request->thumbnailPath . '/' . $request->thumbnailFileName, $image->thumbnailPath . '/' . $image->thumbnailFileName);
+        }
+
+        if(count($request->rawFeatures) > 0) {
+            // Move pre-existing features
+            $request->rawFeatures()->update(['character_image_id' => $image->id]);
+        }
+
+        // Shift the image credits over to the new image
+        if(count($request->designers) > 0) {
+            $request->designers()->update(['character_image_id' => $image->id, 'character_type' => 'Character']);
+        }
+        if(count($request->artists)) {
+            $request->artists()->update(['character_image_id' => $image->id, 'character_type' => 'Character']);
+        }
+
+        return $image;
     }
 
     /**

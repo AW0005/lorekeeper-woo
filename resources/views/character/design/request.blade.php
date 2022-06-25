@@ -9,33 +9,33 @@
 
 @if($request->status == 'Draft')
     <p>
-        This request has not been submitted to the approval queue yet. 
+        This request has not been submitted to the approval queue yet.
         @if($request->user_id == Auth::user()->id)
             Staff members are able to view this page when provided with a direct link. Click on any of the tabs to edit the section.
-        @else 
+        @else
             As a staff member with the ability to edit the masterlist, you can view the details of the request by clicking the tabs.
         @endif
     </p>
     @if($request->user_id == Auth::user()->id)
-        @if($request->isComplete)
+        @if($request->isComplete && isset($request->image))
             <div class="text-right">
-                <button class="btn btn-outline-danger delete-button">Delete Request</button> 
+                <button class="btn btn-outline-danger delete-button">Delete Request</button>
                 <a href="#" class="btn btn-outline-primary submit-button">Submit Request</a>
             </div>
         @else
             <p class="text-danger">Not all sections have been completed yet. Please visit the necessary tab(s) and click Save to update them, even if no modifications to the information are needed.</p>
             <div class="text-right">
-                <button class="btn btn-outline-danger delete-button">Delete Request</button>  
+                <button class="btn btn-outline-danger delete-button">Delete Request</button>
                 <button class="btn btn-outline-primary" disabled>Submit Request</button>
             </div>
         @endif
     @endif
 @elseif($request->status == 'Pending')
     <p>
-        This request is in the approval queue. 
+        This request is in the approval queue.
         @if(!Auth::user()->hasPower('manage_characters'))
             Please wait for it to be processed.
-        @else 
+        @else
             As a staff member with the ability to edit the masterlist, you can view the details of the request, but can only edit certain parts of it.
         @endif
     </p>

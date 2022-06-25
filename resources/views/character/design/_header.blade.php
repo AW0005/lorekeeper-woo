@@ -82,7 +82,7 @@
 
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
-        <a class="nav-link {{ set_active('designs/' . $request->id) }}" href="{{ url('designs/' . $request->id) }}">@if($request->is_complete)<i class="text-success fas fa-check-circle fa-fw mr-2"></i> @endif Status</a>
+        <a class="nav-link {{ set_active('designs/' . $request->id) }}" href="{{ url('designs/' . $request->id) }}">@if($request->is_complete && isset($request->image))<i class="text-success fas fa-check-circle fa-fw mr-2"></i> @endif Status</a>
     </li>
     <li class="nav-item">
         <a class="nav-link {{ set_active('designs/' . $request->id . '/comments') }}" href="{{ url('designs/' . $request->id . '/comments') }}"><i class="text-{{ $request->has_comments ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Comments</a>
@@ -91,7 +91,7 @@
         <a class="nav-link {{ set_active('designs/' . $request->id . '/addons') }}" href="{{ url('designs/' . $request->id . '/addons') }}"><i class="text-{{ $request->has_addons ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Add-ons</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ set_active('designs/' . $request->id . '/digital-form') }}" href="{{ url('designs/' . $request->id . '/digital-form') }}"><i class="text-{{ $request->has_image && $request->has_features ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Digital Form</a>
+        <a class="nav-link {{ set_active('designs/' . $request->id . '/digital-form') }}" href="{{ url('designs/' . $request->id . '/digital-form') }}"><i class="text-{{ $request->has_image && $request->has_features && isset($request->image) ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Digital Form</a>
     </li>
     @if($request->hasAndroidItem)
     <li class="nav-item">

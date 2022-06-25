@@ -15,6 +15,7 @@ class AddIsAndroidToCharacterImages extends Migration
     {
         Schema::table('character_images', function (Blueprint $table) {
             $table->boolean('is_android')->default(0);
+            $table->boolean('is_design_update')->default(0);
         });
     }
 
@@ -27,6 +28,7 @@ class AddIsAndroidToCharacterImages extends Migration
     {
         Schema::table('character_images', function (Blueprint $table) {
             $table->dropColumn('is_android');
+            $table->dropColumn('is_design_update');
         });
     }
 }

@@ -9,7 +9,7 @@ use App\Models\Currency\Currency;
 use App\Models\Feature\FeatureCategory;
 use App\Models\User\UserItem;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 
 class CharacterDesignUpdate extends Model
 {
@@ -88,9 +88,17 @@ class CharacterDesignUpdate extends Model
     /**
      * Get all images associated with the design update.
      */
-    public function images($user = null)
+    public function image()
     {
-        return $this->hasMany('App\Models\Character\CharacterImage', 'character_id')->images($user);
+        return $this->hasOne('App\Models\Character\CharacterImage', 'character_id')->images()->where('is_design_update', 1)->where('is_android', 0);
+    }
+
+    /**
+     * Get all android images associated with the design update.
+     */
+    public function androidImage()
+    {
+        return $this->hasOne('App\Models\Character\CharacterImage', 'character_id')->images()->where('is_design_update', 1)->where('is_android', 1);
     }
 
     /**
@@ -368,10 +376,10 @@ class CharacterDesignUpdate extends Model
         $hasAndroidItem = isset($inventoryItem) ? $inventoryItem->item->name === 'Android' : false;
         if(!isset($hasAndroidItem)) return false;
 
-        $androidImage = $this->images->where('is_android', 1)->first();
+        $androidImage = $this->androidImage;
         if(!isset($androidImage)) return false;
 
-        $hasSavedImage = File::exists($androidImage->imageUrl);
+        $hasSavedImage = File::exists($androidImage->imagePath . '/' . $androidImage->imageFileName);
         if(!$hasSavedImage) return false;
     }
 

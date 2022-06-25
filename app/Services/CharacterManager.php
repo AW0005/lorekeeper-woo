@@ -1825,22 +1825,7 @@ is_object($sender) ? $sender->id : null,
         DB::beginTransaction();
 
         try {
-            $image = $request->images->where('is_android', 0)->first();
-
-            if(!isset($image)) {
-                $image = CharacterImage::create([
-                    'character_id' => $request->id,
-                    'is_visible' => 1,
-                    'hash' => $request->hash,
-                    'fullsize_hash' => $request->fullsize_hash ? $request->fullsize_hash : randomString(15),
-                    'extension' => Config::get('lorekeeper.settings.masterlist_image_format'),
-
-                    'species_id' => $request->species_id,
-                    'subtype_id' => ($request->character->is_myo_slot && isset($request->character->image->subtype_id)) ? $request->character->image->subtype_id : $request->subtype_id,
-                    'rarity_id' => $request->rarity_id,
-                    'sort' => 0,
-                ]);
-            }
+            $image = $request->image;
 
             if(!$isAdmin || ($isAdmin && isset($data['modify_thumbnail']))) {
                 $imageData = [];
@@ -1994,12 +1979,7 @@ is_object($sender) ? $sender->id : null,
             if(!$species) throw new \Exception("Invalid species selected.");
             if($subtype && $subtype->species_id != $species->id) throw new \Exception("Subtype does not match the species.");
 
-            $image = $request->images->where('is_android', 0)->first();
-
-            // START:
-            // Right now if a Draft was in-progress with image / traits it doesn't transfer well
-            // I need to properly test that and get that working because we do have some in drafts on the site
-            // and I don't want those to get lost.
+            $image = $request->image;
 
             // Clear old features
             $image->updateFeatures()->delete();
@@ -2118,8 +2098,8 @@ is_object($sender) ? $sender->id : null,
                 }
             }
 
-            $image = $request->images->where('is_android', 0)->first();
-            $image->update(['character_id' => $request->character_id]);
+            $image = $request->image;
+            $image->update(['character_id' => $request->character_id, 'is_design_update' => 0]);
 
             // Add the compulsory features
             if($request->character->is_myo_slot) {
