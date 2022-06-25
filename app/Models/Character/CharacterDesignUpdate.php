@@ -7,7 +7,9 @@ use DB;
 use App\Models\Model;
 use App\Models\Currency\Currency;
 use App\Models\Feature\FeatureCategory;
+use App\Models\User\UserItem;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Filesystem\Filesystem;
 
 class CharacterDesignUpdate extends Model
 {
@@ -24,7 +26,7 @@ class CharacterDesignUpdate extends Model
         'use_cropper', 'x0', 'x1', 'y0', 'y1',
         'hash', 'species_id', 'subtype_id', 'rarity_id',
         'has_comments', 'has_image', 'has_addons', 'has_features',
-        'submitted_at', 'update_type', 'fullsize_hash', 
+        'submitted_at', 'update_type', 'fullsize_hash',
         'approval_votes', 'rejection_votes'
     ];
 
@@ -81,6 +83,14 @@ class CharacterDesignUpdate extends Model
     public function user()
     {
         return $this->belongsTo('App\Models\User\User', 'user_id');
+    }
+
+    /**
+     * Get all images associated with the design update.
+     */
+    public function images($user = null)
+    {
+        return $this->hasMany('App\Models\Character\CharacterImage', 'character_id')->images($user);
     }
 
     /**
@@ -220,6 +230,15 @@ class CharacterDesignUpdate extends Model
     }
 
     /**
+     * Get whether the user has attached the android item
+    */
+    public function gethasAndroidItemAttribute()
+    {
+        $inventoryItem = UserItem::whereIn('id', array_keys($this->inventory))->first();
+        return isset($inventoryItem) ? $inventoryItem->item->name === 'Android' : false;
+    }
+
+    /**
      * Get the user-owned currencies attached to this update request.
      *
      * @return array
@@ -337,6 +356,23 @@ class CharacterDesignUpdate extends Model
     public function getVoteDataAttribute()
     {
         return collect(json_decode($this->attributes['vote_data'], true));
+    }
+
+
+    /**
+     * Get whether the android tab is completed
+    */
+    public function getHasAndroidDataAttribute()
+    {
+        $inventoryItem = UserItem::whereIn('id', array_keys($this->inventory))->first();
+        $hasAndroidItem = isset($inventoryItem) ? $inventoryItem->item->name === 'Android' : false;
+        if(!isset($hasAndroidItem)) return false;
+
+        $androidImage = $this->images->where('is_android', 1)->first();
+        if(!isset($androidImage)) return false;
+
+        $hasSavedImage = File::exists($androidImage->imageUrl);
+        if(!$hasSavedImage) return false;
     }
 
     /**********************************************************************************************

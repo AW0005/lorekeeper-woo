@@ -88,12 +88,14 @@
         <a class="nav-link {{ set_active('designs/' . $request->id . '/comments') }}" href="{{ url('designs/' . $request->id . '/comments') }}"><i class="text-{{ $request->has_comments ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Comments</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ set_active('designs/' . $request->id . '/image') }}" href="{{ url('designs/' . $request->id . '/image') }}"><i class="text-{{ $request->has_image ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Masterlist Image</a>
-    </li>
-    <li class="nav-item">
         <a class="nav-link {{ set_active('designs/' . $request->id . '/addons') }}" href="{{ url('designs/' . $request->id . '/addons') }}"><i class="text-{{ $request->has_addons ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Add-ons</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ set_active('designs/' . $request->id . '/traits') }}" href="{{ url('designs/' . $request->id . '/traits') }}"><i class="text-{{ $request->has_features ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Traits</a>
+        <a class="nav-link {{ set_active('designs/' . $request->id . '/digital-form') }}" href="{{ url('designs/' . $request->id . '/digital-form') }}"><i class="text-{{ $request->has_image && $request->has_features ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Digital Form</a>
     </li>
+    @if($request->hasAndroidItem)
+    <li class="nav-item">
+        <a class="nav-link {{ set_active('designs/' . $request->id . '/form') }}" href="{{ url('designs/' . $request->id . '/android-form') }}"><i class="text-{{ $request->hasAndroidData ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Android Form</a>
+    </li>
+    @endif
 </ul>

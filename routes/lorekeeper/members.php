@@ -174,8 +174,8 @@ Route::group(['prefix' => 'designs', 'namespace' => 'Characters'], function() {
     Route::get('{id}/comments', 'DesignController@getComments');
     Route::post('{id}/comments', 'DesignController@postComments');
 
-    Route::get('{id}/image', 'DesignController@getImage');
-    Route::post('{id}/image', 'DesignController@postImage');
+    Route::get('{id}/digital-form', 'DesignController@getForm');
+    Route::post('{id}/digital-form', 'DesignController@postForm');
 
     Route::get('{id}/addons', 'DesignController@getAddons');
     Route::post('{id}/addons', 'DesignController@postAddons');

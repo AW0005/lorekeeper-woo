@@ -100,13 +100,20 @@ class DesignController extends Controller
      * @param  int  $id
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getImage($id)
+    public function getForm($id)
     {
         $r = CharacterDesignUpdate::find($id);
         if(!$r || ($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters'))) abort(404);
-        return view('character.design.image', [
+
+        $image = $r->images->where('is_android', 0)->first();
+        return view('character.design.form', [
             'request' => $r,
+            'image' => isset($image) ? $image : $r,
             'users' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'subtypes' => ['0' => 'No Subtype'] + Subtype::where('species_id','=',$r->species_id)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'features' => Feature::getFeaturesByCategory(true)
         ]);
     }
 
@@ -118,7 +125,7 @@ class DesignController extends Controller
      * @param  int                            $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postImage(Request $request, CharacterManager $service, $id)
+    public function postForm(Request $request, CharacterManager $service, $id)
     {
         $r = CharacterDesignUpdate::find($id);
         if(!$r) abort(404);
@@ -127,7 +134,9 @@ class DesignController extends Controller
 
         $useAdmin = ($r->status != 'Draft' || $r->user_id != Auth::user()->id) && Auth::user()->hasPower('manage_characters');
         if($service->saveRequestImage($request->all(), $r, $useAdmin)) {
-            flash('Request edited successfully.')->success();
+            if($service->saveRequestFeatures($request->all(), $r)) {
+                flash('Request edited successfully.')->success();
+            }
         }
         else {
             foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
@@ -183,62 +192,18 @@ class DesignController extends Controller
     }
 
     /**
-     * Shows a design update request's features section.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function getFeatures($id)
-    {
-        $r = CharacterDesignUpdate::find($id);
-        if(!$r || ($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters'))) abort(404);
-
-        return view('character.design.features', [
-            'request' => $r,
-            'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes' => ['0' => 'No Subtype'] + Subtype::where('species_id','=',$r->species_id)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'features' => Feature::getFeaturesByCategory(true)
-        ]);
-    }
-
-    /**
      * Shows the edit image subtype portion of the modal
      *
      * @param  Request  $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getFeaturesSubtype(Request $request) {
-
-      $species = $request->input('species');
-      $id = $request->input('id');
-      return view('character.design._features_subtype', [
-          'subtypes' => ['0' => 'Select Subtype'] + Subtype::where('species_id','=',$species)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-          'subtype' => $id
-      ]);
-    }
-
-    /**
-     * Edits a design update request's features section.
-     *
-     * @param  \Illuminate\Http\Request       $request
-     * @param  App\Services\CharacterManager  $service
-     * @param  int                            $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function postFeatures(Request $request, CharacterManager $service, $id)
-    {
-        $r = CharacterDesignUpdate::find($id);
-        if(!$r) abort(404);
-        if($r->user_id != Auth::user()->id) abort(404);
-
-        if($service->saveRequestFeatures($request->all(), $r)) {
-            flash('Request edited successfully.')->success();
-        }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
-        return redirect()->back();
+        $species = $request->input('species');
+        $id = $request->input('id');
+        return view('character.design._features_subtype', [
+            'subtypes' => ['0' => 'Select Subtype'] + Subtype::where('species_id','=',$species)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'subtype' => $id
+        ]);
     }
 
     /**

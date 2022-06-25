@@ -138,7 +138,7 @@ return [
     */
     'watermark_masterlist_images' => 1,
     'masterlist_image_dimension' => 1000,
-    'masterlist_image_format' => null,
+    'masterlist_image_format' => 'png',
     'masterlist_image_background' => null,
 
     /*
