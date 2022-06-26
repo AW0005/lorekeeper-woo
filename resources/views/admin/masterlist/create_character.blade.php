@@ -187,10 +187,10 @@
             <a href="#" class="add-artist btn btn-link mb-2" data-toggle="tooltip" title="Add another artist">+</a>
         </div>
     </div>
-    <div class="form-group">
+    {{-- <div class="form-group">
         {!! Form::label('Image Notes (Optional)') !!} {!! add_help('This section is for making additional notes about the image.') !!}
         {!! Form::textarea('image_description', old('image_description'), ['class' => 'form-control wysiwyg']) !!}
-    </div>
+    </div> --}}
     @endif
 
     @if(!$isMyo)<h3 class="mt-4">Traits</h3>@else<h3 class="mt-4">MYO Limitations</h3>@endif

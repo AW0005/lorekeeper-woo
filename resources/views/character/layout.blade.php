@@ -12,6 +12,81 @@
 
 @section('scripts')
 @parent
+<style>
+    .tags {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .tags .badge {
+        padding: 4px 5px;
+    }
+    .tags .badge a {
+        color: white !important;
+        padding: 5px;
+    }
+
+    .tags > i {
+        font-size: 8px;
+        padding: 0px 5px;
+        vertical-align: middle;
+    }
+
+    .tags a {
+        font-weight: bold;
+    }
+
+    ol.breadcrumb {
+        margin-bottom: 0;
+    }
+
+    div.toggle.btn {
+        min-width: 95px !important;
+    }
+
+    .character-bio {
+        overflow: hidden;
+    }
+
+    .character-bio .tab-content {
+        height: calc(100% - 38px);
+    }
+
+    .character-bio .tab-content > div {
+        height: 100%
+    }
+
+    .traits {
+        height: calc(100% - 77px);
+    }
+
+    .traits > div {
+        height: 100%;
+        overflow: auto;
+    }
+
+    .nav-item > a {
+        border: 5px solid transparent;
+    }
+
+    .form-type {
+        font-size: 10px;
+        text-transform: none;
+        background-color: white;
+        position: absolute;
+        bottom: -5px;
+        left: 10px;
+        right: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        padding: 0;
+    }
+
+    .nav-item .form-type > a {
+        border: none;
+    }
+</style>
 <script>
     $( document ).ready(function(){
         $('.bookmark-button').on('click', function(e) {

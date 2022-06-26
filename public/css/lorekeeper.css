@@ -32,6 +32,12 @@
     filter: brightness(200%);
 }
 
+.square::before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
 /**************************************************************************************************
 
     Font definitions

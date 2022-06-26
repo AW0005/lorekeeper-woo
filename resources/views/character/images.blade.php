@@ -16,7 +16,7 @@
                 <div class="col-md-7">
                     <div class="text-center">
                         <a href="{{ $image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($image->imageDirectory.'/'.$image->fullsizeFileName)) ? $image->fullsizeUrl : $image->imageUrl }}" data-lightbox="entry" data-title="{{ $character->fullName }} [#{{ $image->id }}] {{ $image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($image->imageDirectory.'/'.$image->fullsizeFileName)) ? ' : Full-size Image' : ''}}">
-                            <img src="{{ $image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($image->imageDirectory.'/'.$image->fullsizeFileName)) ? $image->fullsizeUrl : $image->imageUrl }}" class="image" alt="{{ $image->character->fullName }}" />
+                            <img style="max-height: calc(100vh - 250px);" src="{{ $image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($image->imageDirectory.'/'.$image->fullsizeFileName)) ? $image->fullsizeUrl : $image->imageUrl }}" class="image" alt="{{ $image->character->fullName }}" />
                         </a>
                     </div>
                     @if($image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($image->imageDirectory.'/'.$image->fullsizeFileName)))
@@ -29,26 +29,15 @@
     @endforeach
 </div>
 <?php $canManage = Auth::check() && Auth::user()->hasPower('manage_characters'); ?>
-<h3>
-    Images
-    @if($canManage)
-        <a href="{{ url('admin/character/'.$character->slug.'/image') }}" class="float-right btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Add Image</a>
-    @endif
-</h3>
-
-<ul class="row nav image-nav mb-2" @if($canManage) id="sortable" @endif>
-    @foreach($character->images($user)->get() as $image)
-        <li class="col-md-3 col-6 text-center nav-item sort-item" data-id="{{ $image->id }}">
-            <a id="thumbnail-{{ $image->id }}" data-toggle="tab" href="#image-{{ $image->id }}" role="tab" class="{{ $image->id == $character->character_image_id ? 'active' : '' }}"><img src="{{ $image->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $image->character->fullName }}"/></a>
-        </li>
-    @endforeach
-</ul>
 @if($canManage)
+        <a href="{{ url('admin/character/'.$character->slug.'/image') }}" class="float-right btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Add Image</a>
+@endif
+{{-- @if($canManage)
     {!! Form::open(['url' => 'admin/character/' . $character->slug . '/images/sort', 'class' => 'text-right']) !!}
     {!! Form::hidden('sort', '', ['id' => 'sortableOrder']) !!}
     {!! Form::submit('Save Order', ['class' => 'btn btn-primary']) !!}
     {!! Form::close() !!}
-@endif
+@endif --}}
 
 @endsection
 @section('scripts')

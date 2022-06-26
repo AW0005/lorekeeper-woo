@@ -278,4 +278,9 @@ class CharacterImage extends Model
     {
         return asset($this->imageDirectory . '/' . $this->thumbnailFileName);
     }
+
+    public function getFormTypeAttribute()
+    {
+        return '<a href="'.url('world/forms-overview').'">'.($this->is_android ? 'Android' : 'Digital').'</a>';
+    }
 }

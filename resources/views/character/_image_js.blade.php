@@ -1,5 +1,16 @@
 <script>
     $(document).ready(function() {
+        $('.tab-trigger').on('click', function(e) {
+            e.preventDefault();
+            console.log(e.currentTarget);
+            const tab = $(e.currentTarget.getAttribute('href'));
+            const oldTab = tab.siblings('.active');
+            oldTab.removeClass('active');
+            oldTab.removeClass('show');
+            tab.addClass('active');
+            tab.addClass('show');
+        })
+
         $('.edit-features').on('click', function(e) {
             e.preventDefault();
             loadModal("{{ url('admin/character/image') }}/"+$(this).data('id')+"/traits", 'Edit Traits');

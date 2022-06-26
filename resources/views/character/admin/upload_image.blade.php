@@ -74,10 +74,10 @@
     </div>
 </div>
 
-<div class="form-group">
+{{-- <div class="form-group">
     {!! Form::label('Image Notes (Optional)') !!} {!! add_help('This section is for making additional notes about the image.') !!}
     {!! Form::textarea('image_description', old('image_description'), ['class' => 'form-control wysiwyg']) !!}
-</div>
+</div> --}}
 
 <h3>
     {{-- <div class="float-right"><a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" title="This will fill the below fields with the same data as the character's current image. Note that this will overwrite any changes made below.">Fill Data</a></div> --}}

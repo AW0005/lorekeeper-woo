@@ -7,6 +7,19 @@
 
 @include('character.design._header', ['request' => $request])
 
+
+{{--
+TODO:
+TODO:
+TODO:
+TODO:
+
+Design Updates that are adding a new form will NEED to mark which features / traits
+are already on any of the old forms, for ease of approval
+since only *new* features will require trait items
+
+--}}
+
 <h2>Masterlist Image</h2>
 {!! Form::open(['url' => 'designs/'.$request->id.($image->is_android ? '/android-form' : '/digital-form'), 'files' => true]) !!}
 @if($has_image)
