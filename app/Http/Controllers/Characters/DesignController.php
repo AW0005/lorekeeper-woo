@@ -116,7 +116,36 @@ class DesignController extends Controller
 
         return view('character.design.form', [
             'request' => $r,
-            'image' => isset($image) ? $image : $r,
+            'image' => isset($image) ? $image : $r->character->images->where('is_android', 0)->first(),
+            'has_image' => isset($image) ? File::exists($image->imagePath . '/' . $image->imageFileName) : $r->status == 'Approved',
+            'users' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'subtypes' => ['0' => 'No Subtype'] + Subtype::where('species_id','=',$r->species_id)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'features' => Feature::getFeaturesByCategory(true)
+        ]);
+    }
+
+    /**
+     * Shows a design update android form section.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getAndroidForm($id)
+    {
+        $r = CharacterDesignUpdate::find($id);
+        if(!$r || ($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters'))) abort(404);
+
+        $image = $r->androidImage;
+        if($r->status === 'Draft' && !isset($image)) {
+            $image = $this->instantiateImage($r, 1);
+        }
+
+        return view('character.design.form', [
+            'request' => $r,
+            'image' => isset($image) ? $image : $r->character->images->where('is_android', 1)->first(),
+            'has_image' => isset($image) ? File::exists($image->imagePath . '/' . $image->imageFileName) : $r->status == 'Approved',
             'users' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes' => ['0' => 'No Subtype'] + Subtype::where('species_id','=',$r->species_id)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
@@ -130,7 +159,7 @@ class DesignController extends Controller
      * This should only ever get hit if we have a deprecated in-progress design update
      * that needs to be moved onto the new setup.
      */
-    private function instantiateImage($request) {
+    private function instantiateImage($request, $isAndroid = 0) {
         $image = CharacterImage::create([
             'character_id' => $request->id,
             'is_visible' => 1,
@@ -143,6 +172,7 @@ class DesignController extends Controller
             'rarity_id' => $request->rarity_id,
             'sort' => 0,
             'is_design_update' => 1,
+            'is_android' => $isAndroid,
         ]);
 
         if(File::exists($request->imagePath . '/' . $request->imageFileName)){
@@ -160,7 +190,7 @@ class DesignController extends Controller
         if(count($request->designers) > 0) {
             $request->designers()->update(['character_image_id' => $image->id, 'character_type' => 'Character']);
         }
-        if(count($request->artists)) {
+        if(count($request->artists) > 0) {
             $request->artists()->update(['character_image_id' => $image->id, 'character_type' => 'Character']);
         }
 
@@ -183,8 +213,35 @@ class DesignController extends Controller
         $request->validate(CharacterDesignUpdate::$imageRules);
 
         $useAdmin = ($r->status != 'Draft' || $r->user_id != Auth::user()->id) && Auth::user()->hasPower('manage_characters');
-        if($service->saveRequestImage($request->all(), $r, $useAdmin)) {
-            if($service->saveRequestFeatures($request->all(), $r)) {
+        if($service->saveRequestImage($request->all(), $r, $r->image, $useAdmin)) {
+            if($service->saveRequestFeatures($request->all(), $r, $r->image)) {
+                flash('Request edited successfully.')->success();
+            }
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Edits a design update request's image upload section.
+     *
+     * @param  \Illuminate\Http\Request       $request
+     * @param  App\Services\CharacterManager  $service
+     * @param  int                            $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postAndroidForm(Request $request, CharacterManager $service, $id)
+    {
+        $r = CharacterDesignUpdate::find($id);
+        if(!$r) abort(404);
+        if($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters')) abort(404);
+        $request->validate(CharacterDesignUpdate::$imageRules);
+
+        $useAdmin = ($r->status != 'Draft' || $r->user_id != Auth::user()->id) && Auth::user()->hasPower('manage_characters');
+        if($service->saveRequestImage($request->all(), $r, $r->androidImage, $useAdmin)) {
+            if($service->saveRequestFeatures($request->all(), $r, $r->androidImage)) {
                 flash('Request edited successfully.')->success();
             }
         }

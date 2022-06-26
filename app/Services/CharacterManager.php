@@ -1820,13 +1820,11 @@ is_object($sender) ? $sender->id : null,
      * @param  bool                                         $isAdmin
      * @return  bool
      */
-    public function saveRequestImage($data, $request, $isAdmin = false)
+    public function saveRequestImage($data, $request, $image, $isAdmin = false)
     {
         DB::beginTransaction();
 
         try {
-            $image = $request->image;
-
             if(!$isAdmin || ($isAdmin && isset($data['modify_thumbnail']))) {
                 $imageData = [];
                 if(!$isAdmin && isset($data['image'])) {
@@ -1958,7 +1956,7 @@ is_object($sender) ? $sender->id : null,
      * @param  \App\Models\Character\CharacterDesignUpdate  $request
      * @return  bool
      */
-    public function saveRequestFeatures($data, $request)
+    public function saveRequestFeatures($data, $request, $image)
     {
         DB::beginTransaction();
 
@@ -1978,8 +1976,6 @@ is_object($sender) ? $sender->id : null,
             if(!$rarity) throw new \Exception("Invalid rarity selected.");
             if(!$species) throw new \Exception("Invalid species selected.");
             if($subtype && $subtype->species_id != $species->id) throw new \Exception("Subtype does not match the species.");
-
-            $image = $request->image;
 
             // Clear old features
             $image->updateFeatures()->delete();
@@ -2099,19 +2095,24 @@ is_object($sender) ? $sender->id : null,
             }
 
             $image = $request->image;
+            $androidImage = $request->androidImage;
             $image->update(['character_id' => $request->character_id, 'is_design_update' => 0]);
+            $androidImage->update(['character_id' => $request->character_id, 'is_design_update' => 0]);
 
             // Add the compulsory features
             if($request->character->is_myo_slot) {
                 $features = $request->character->image->features;
                 CharacterUtility::handleCharacterFeatures($image->id, $features->pluck('id'), $features->pluck('data'));
+                CharacterUtility::handleCharacterFeatures($androidImage->id, $features->pluck('id'), $features->pluck('data'));
             }
 
             // Shift the image features over to the new image
             $image->updateFeatures()->update(['character_type' => 'Character']);
+            $androidImage->updateFeatures()->update(['character_type' => 'Character']);
 
             // Process and save the image
             $this->processImage($image);
+            $this->processImage($androidImage);
 
             // Set character data and other info such as cooldown time, resell cost and terms etc.
             // since those might be updated with the new design update
@@ -2137,6 +2138,11 @@ is_object($sender) ? $sender->id : null,
                 $request->character->image->save();
             }
 
+            // Note old image to delete it
+            if ($request->character->is_myo_slot) {
+                $oldImage = $request->character->image;
+            }
+
             // Set new image if desired
             if(isset($data['set_active']))
             {
@@ -2145,7 +2151,7 @@ is_object($sender) ? $sender->id : null,
 
             // Final recheck and setting of update type, as insurance
             if($request->character->is_myo_slot)
-            $request->update_type = 'MYO';
+                $request->update_type = 'MYO';
             else $request->update_type = 'Character';
             $request->save();
 
@@ -2161,6 +2167,17 @@ is_object($sender) ? $sender->id : null,
                 $request->character->is_myo_slot = 0;
                 $request->user->settings->is_fto = 0;
                 $request->user->settings->save();
+
+                if(isset($oldImage)) {
+                    // Not sure why it's like this but ok
+                    $characterManager = new CharacterManager;
+                    if (!$characterManager->deleteImage($oldImage, $user, true)) {
+                        foreach ($characterManager->errors()->getMessages()['error'] as $error) {
+                            flash($error)->error();
+                        }
+                        throw new \Exception('Failed to delete MYO image.');
+                    }
+                }
             }
             $request->character->save();
 

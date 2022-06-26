@@ -91,11 +91,11 @@
         <a class="nav-link {{ set_active('designs/' . $request->id . '/addons') }}" href="{{ url('designs/' . $request->id . '/addons') }}"><i class="text-{{ $request->has_addons ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Add-ons</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ set_active('designs/' . $request->id . '/digital-form') }}" href="{{ url('designs/' . $request->id . '/digital-form') }}"><i class="text-{{ $request->has_image && $request->has_features && isset($request->image) ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Digital Form</a>
+        <a class="nav-link {{ set_active('designs/' . $request->id . '/digital-form') }}" href="{{ url('designs/' . $request->id . '/digital-form') }}"><i class="text-{{ ($request->has_image && $request->has_features && isset($request->image)) || $request->status == 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Digital Form</a>
     </li>
     @if($request->hasAndroidItem)
     <li class="nav-item">
-        <a class="nav-link {{ set_active('designs/' . $request->id . '/form') }}" href="{{ url('designs/' . $request->id . '/android-form') }}"><i class="text-{{ $request->hasAndroidData ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Android Form</a>
+        <a class="nav-link {{ set_active('designs/' . $request->id . '/android-form') }}" href="{{ url('designs/' . $request->id . '/android-form') }}"><i class="text-{{ $request->hasAndroidData || $request->status == 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Android Form</a>
     </li>
     @endif
 </ul>

@@ -8,13 +8,13 @@
 @include('character.design._header', ['request' => $request])
 
 <h2>Masterlist Image</h2>
-{!! Form::open(['url' => 'designs/'.$request->id.'/digital-form', 'files' => true]) !!}
-@if($request->has_image)
+{!! Form::open(['url' => 'designs/'.$request->id.($image->is_android ? '/android-form' : '/digital-form'), 'files' => true]) !!}
+@if($has_image)
     <div class="row mb-2">
         <div class="col-6">
             <div class="p-3 text-center bg-secondary text-white">
-                <a href="{{ $request->status !== 'Approved' ? $image->imageUrl : $request->character->image->fullsizeUrl }}">
-                    <img style="max-height: 200px;" src="{{ $request->status !== 'Approved' ?  $image->thumbnailUrl : $request->character->image->thumbnailUrl }}" alt="Thumbnail for request {{ $request->id }}" />
+                <a href="{{ $request->status !== 'Approved' ? $image->imageUrl : $image->fullsizeUrl }}">
+                    <img style="max-height: 200px;" src="{{ $image->thumbnailUrl }}" alt="Thumbnail for request {{ $request->id }}" />
                 </a>
             </div>
         </div>
@@ -26,7 +26,7 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-6 col-4"><h5>Design</h5></div>
                         <div class="col-lg-8 col-md-6 col-8">
-                            @foreach(($request->status !== 'Approved' ? $image->designers : $request->character->image->designers) as $designer)
+                            @foreach($image->designers as $designer)
                                 <div>{!! $designer->displayLink() !!}</div>
                             @endforeach
                         </div>
@@ -34,7 +34,7 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-6 col-4"><h5>Art</h5></div>
                         <div class="col-lg-8 col-md-6 col-8">
-                            @foreach(($request->status !== 'Approved' ? $image->artists : $request->character->image->artists) as $artist)
+                            @foreach($image->artists as $artist)
                                 <div>{!! $artist->displayLink() !!}</div>
                             @endforeach
                         </div>
@@ -250,7 +250,7 @@
                 <div>@if($feature->feature->feature_category_id) <strong>{!! $feature->feature->category->displayName !!}:</strong> @endif {!! $feature->feature->displayName !!} @if($feature->data) ({{ $feature->data }}) @endif <span class="text-danger">*Required</span></div>
             @endforeach
         @endif
-        @foreach(($request->status !== 'Approved' ? $image->updateFeatures : $request->character->image->features) as $feature)
+        @foreach(($request->status !== 'Approved' ? $image->updateFeatures : $image->features) as $feature)
             <div>@if($feature->feature->feature_category_id) <strong>{!! $feature->feature->category->displayName !!}:</strong> @endif {!! $feature->feature->displayName !!} @if($feature->data) ({{ $feature->data }}) @endif</div>
         @endforeach
     </div>

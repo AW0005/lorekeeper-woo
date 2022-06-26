@@ -381,6 +381,8 @@ class CharacterDesignUpdate extends Model
 
         $hasSavedImage = File::exists($androidImage->imagePath . '/' . $androidImage->imageFileName);
         if(!$hasSavedImage) return false;
+
+        return true;
     }
 
     /**********************************************************************************************

@@ -177,6 +177,9 @@ Route::group(['prefix' => 'designs', 'namespace' => 'Characters'], function() {
     Route::get('{id}/digital-form', 'DesignController@getForm');
     Route::post('{id}/digital-form', 'DesignController@postForm');
 
+    Route::get('{id}/android-form', 'DesignController@getAndroidForm');
+    Route::post('{id}/android-form', 'DesignController@postAndroidForm');
+
     Route::get('{id}/addons', 'DesignController@getAddons');
     Route::post('{id}/addons', 'DesignController@postAddons');
 
