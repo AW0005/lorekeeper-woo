@@ -28,7 +28,7 @@
     }
 
     .tags > i {
-        font-size: 8px;
+        font-size: 10px;
         padding: 0px 5px;
         vertical-align: middle;
     }
@@ -46,23 +46,15 @@
     }
 
     .character-bio {
-        overflow: hidden;
+        min-height: 0;
     }
 
-    .character-bio .tab-content {
-        height: calc(100% - 38px);
-    }
-
-    .character-bio .tab-content > div {
-        height: 100%
+    .character-bio > .tab-pane {
+        height: 100%;
     }
 
     .traits {
         height: calc(100% - 77px);
-    }
-
-    .traits > div {
-        height: 100%;
         overflow: auto;
     }
 

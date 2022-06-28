@@ -298,7 +298,7 @@ class CharacterManager extends Service
             if(!$isMyo) $this->processImage($image);
 
             // Attach features
-            CharacterUtility::handleCharacterFeatures($image->id, $data['feature_id'], $data['feature_data']);
+            if(!$isMyo) CharacterUtility::handleCharacterFeatures($image->id, $data['feature_id'], $data['feature_data']);
 
 
             return $image;
