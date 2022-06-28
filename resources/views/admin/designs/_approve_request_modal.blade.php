@@ -1,20 +1,26 @@
 <p>This will accept the approval request, creating an update for the character and consuming the items and/or currency attached to this request. You will not be able to edit the traits for the character, so if those require any corrections, please cancel the request and ask the user to make changes.</p>
 {!! Form::open(['url' => 'admin/designs/edit/'.$request->id.'/approve']) !!}
     <h3>Basic Information</h3>
-    <div class="form-group">
-        {!! Form::label('Character Category') !!}
-        <select name="character_category_id" id="category" class="form-control" placeholder="Select Category">
-            <option value="" data-code="">Select Category</option>
-            @foreach($categories as $category)
-                <option value="{{ $category->id }}" data-code="{{ $category->code }}" {{ $request->character->character_category_id == $category->id ? 'selected' : '' }}>{{ $category->name }} ({{ $category->code }})</option>
-            @endforeach
-        </select>
+    <div class="row">
+        <div class="col-6 form-group">
+            {!! Form::label('Character Category') !!}
+            <select name="character_category_id" id="category" class="form-control" placeholder="Select Category">
+                <option value="" data-code="">Select Category</option>
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}" data-code="{{ $category->code }}" {{ $request->character->character_category_id == $category->id ? 'selected' : '' }}>{{ $category->name }} ({{ $category->code }})</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-6 form-group">
+            {!! Form::label('Character Code') !!} {!! add_help('This code identifies the character itself. You don\'t have to use the automatically generated code, but this must be unique among all characters (as it\'s used to generate the character\'s page URL).') !!}
+            {!! Form::text('slug', $request->character->is_myo_slot ? null : $request->character->slug, ['class' => 'form-control', 'id' => 'code', 'readonly' => true]) !!}
+        </div>
     </div>
-    <div class="form-group">
+    <div class="form-group hide">
         {!! Form::label('Year') !!}
         {!! Form::text('year', $request->character->is_myo_slot ? date("Y") : $request->character->year, ['class' => 'form-control mr-2', 'id' => 'year']) !!}
     </div>
-    <div class="form-group">
+    <div class="form-group hide">
         {!! Form::label('Number') !!} {!! add_help('This number helps to identify the character and should preferably be unique either within the category, or among all characters.') !!}
         <div class="d-flex">
             {!! Form::text('number', $request->character->number, ['class' => 'form-control mr-2', 'id' => 'number']) !!}
@@ -22,18 +28,39 @@
         </div>
     </div>
 
-    <div class="form-group">
-        {!! Form::label('Character Code') !!} {!! add_help('This code identifies the character itself. You don\'t have to use the automatically generated code, but this must be unique among all characters (as it\'s used to generate the character\'s page URL).') !!}
-        {!! Form::text('slug', $request->character->slug, ['class' => 'form-control', 'id' => 'code']) !!}
+    @if($request->hasHolobotData)
+    <div class="row">
+        <div class="col-6 form-group">
+                {!! Form::label('Holobot Category') !!}
+                <select name="holobot_category_id" id="holocategory" class="form-control" placeholder="Select Category">
+                    <option value="" data-code="">Select Category</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" data-code="{{ $category->code }}">{{ $category->name }} ({{ $category->code }})</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-6 form-group">
+                {!! Form::label('Holobot Code') !!}
+                {!! Form::text('holobot_slug', $request->character->is_myo_slot ? null : $request->character->slug, ['class' => 'form-control', 'id' => 'holocode', 'readonly' => true]) !!}
+            </div>
+        </div>
     </div>
+    <div class="form-group hide">
+        {!! Form::label('Number') !!} {!! add_help('This number helps to identify the character and should preferably be unique either within the category, or among all characters.') !!}
+        <div class="d-flex">
+            {!! Form::text('holobot_number', $request->character->number, ['class' => 'form-control mr-2', 'id' => 'holonumber']) !!}
+            <a href="#" id="pull-number" class="btn btn-primary" data-toggle="tooltip" title="This will find the highest number assigned to a character currently and add 1 to it. It can be adjusted to pull the highest number in the category or the highest overall number - this setting is in the code.">Pull #</a>
+        </div>
+    </div>
+    @endif
 
-    <div class="form-group">
+    <div class="form-group hide">
         {!! Form::label('Description (Optional)') !!} {!! add_help('This section is for making additional notes about the character and is separate from the character\'s profile (this is not editable by the user).') !!}
         {!! Form::textarea('description', $request->character->description, ['class' => 'form-control wysiwyg']) !!}
     </div>
 
 
-    <h3>Transfer Information</h3>
+    <h3 class="mt-4">Transfer Information</h3>
     <style>
         div.toggle {
             width: 125px !important;
@@ -64,16 +91,18 @@
         {!! Form::text('transferrable_at', $request->character->transferrable_at, ['class' => 'form-control', 'id' => 'datepicker']) !!}
     </div>
 
-    <h3>Image Settings</h3>
 
-    <div class="form-group">
-        {!! Form::checkbox('set_active', 1, true, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('set_active', 'Set Active Image', ['class' => 'form-check-label ml-3']) !!}  {!! add_help('This will set the new approved image as the character\'s masterlist image.') !!}
-    </div>
-    <div class="form-group">
-        {!! Form::checkbox('invalidate_old', 1, true, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('invalidate_old', 'Invalidate Old Image', ['class' => 'form-check-label ml-3']) !!}  {!! add_help('This will mark the last image attached to the character as an invalid reference.') !!}
-    </div>
+    @if($request->character->is_myo)
+        <h3>Image Settings</h3>
+        <div class="form-group">
+            {!! Form::checkbox('set_active', 1, true, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+            {!! Form::label('set_active', 'Set Active Image', ['class' => 'form-check-label ml-3']) !!}  {!! add_help('This will set the new approved image as the character\'s masterlist image.') !!}
+        </div>
+        <div class="form-group">
+            {!! Form::checkbox('invalidate_old', 1, true, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+            {!! Form::label('invalidate_old', 'Invalidate Old Image', ['class' => 'form-check-label ml-3']) !!}  {!! add_help('This will mark the last image attached to the character as an invalid reference.') !!}
+        </div>
+    @endif
 
     <div class="text-right">
         {!! Form::submit('Approve Request', ['class' => 'btn btn-success']) !!}

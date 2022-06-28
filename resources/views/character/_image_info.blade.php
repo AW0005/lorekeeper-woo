@@ -37,7 +37,7 @@
             {{-- Basic info  --}}
             <div class="tab-pane fade show active" id="info-{{ $image->id }}">
                 <div class="tags justify-content-center pb-2" style="font-size: unset;">
-                    <span data-toggle="tooltip" title="Subtype">{!! $image->subtype->displayName !!}</span> <i class="fas fa-grip-lines-vertical"></i>
+                    @if($image->subtype) <span data-toggle="tooltip" title="Subtype">{!! $image->subtype->displayName !!}</span> <i class="fas fa-grip-lines-vertical"></i> @endif
                     <span data-toggle="tooltip" title="Rarity">{!! $image->rarity->displayName !!}</span> <i class="fas fa-grip-lines-vertical"></i>
                     <span data-toggle="tooltip" title="Form Type">{!! $image->formType !!}</span>
                 </div>

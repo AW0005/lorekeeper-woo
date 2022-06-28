@@ -2046,7 +2046,7 @@ is_object($sender) ? $sender->id : null,
             if(!isset($data['number'])) throw new \Exception("Please enter a character number.");
             if(!isset($data['year'])) throw new \Exception("Please enter a character year.");
             if(!isset($data['slug']) || Character::where('slug', $data['slug'])->where('id', '!=', $request->character_id)->exists()) throw new \Exception("Please enter a unique character code.");
-
+            if(!isset($data['holobot_slug']) || Character::where('slug', $data['holobot_slug'])->where('id', '!=', $request->character_id)->exists()) throw new \Exception("Please enter a unique character code.");
             // Remove any added items/currency
             // Currency has already been removed, so no action required
             // However logs need to be added for each of these
@@ -2093,6 +2093,34 @@ is_object($sender) ? $sender->id : null,
                         throw new \Exception("Failed to create log for character currency.");
                 }
             }
+
+            if($request->holobotImage) {
+                $holobotImage = $request->holobotImage;
+                $holobot = Character::create([
+                    'character_image_id' => $holobotImage->id,
+                    'character_category_id' => $data['holobot_category_id'],
+                    'rarity_id' => $request->holobotImage->rarity->id,
+                    'user_id' => $request->character->user->id,
+                    'number' => $data['holobot_number'],
+                    'year' => $data['year'],
+                    'slug' => $data['holobot_slug'],
+                    'is_visible' => 1,
+                    'is_myo_slot' => 0
+                ]);
+                $holobot->profile()->create([]);
+
+                // Shift things over to the new character
+                $holobotImage->update(['character_id' => $holobot->id, 'is_design_update' => 0]);
+                $holobotImage->updateFeatures()->update(['character_type' => 'Character']);
+                $this->processImage($holobotImage);
+
+                // Bind the holobot to the main character
+                CharacterLink::create([
+                    'parent_id' => $request->character->id,
+                    'child_id' => $holobot->id
+                ]);
+            }
+
 
             $image = $request->image;
             $androidImage = $request->androidImage;
@@ -2144,7 +2172,7 @@ is_object($sender) ? $sender->id : null,
             }
 
             // Set new image if desired
-            if(isset($data['set_active']))
+            if(isset($data['set_active']) || $request->character->is_myo_slot)
             {
                 $request->character->character_image_id = $image->id;
             }
@@ -2154,6 +2182,7 @@ is_object($sender) ? $sender->id : null,
                 $request->update_type = 'MYO';
             else $request->update_type = 'Character';
             $request->save();
+            $request->character->save();
 
             // Add a log for the character and user
             $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, $request->update_type == 'MYO' ? 'MYO Design Approved' : 'Character Design Updated', '[#'.$image->id.']', 'character');

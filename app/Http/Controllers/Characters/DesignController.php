@@ -22,6 +22,7 @@ use App\Models\Feature\Feature;
 use App\Models\Item\ItemCategory;
 use App\Services\CharacterManager;
 use App\Models\Character\CharacterImage;
+use App\Models\Character\CharacterLink;
 
 use App\Http\Controllers\Controller;
 
@@ -154,12 +155,34 @@ class DesignController extends Controller
         ]);
     }
 
+    public function getHolobot($id)
+    {
+        $r = CharacterDesignUpdate::find($id);
+        if(!$r || ($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters'))) abort(404);
+
+        $image = $r->holobotImage;
+        if($r->status === 'Draft' && !isset($image)) {
+            $image = $this->instantiateImage($r, 0, true);
+        }
+
+        return view('character.design.form', [
+            'request' => $r,
+            'image' => isset($image) ? $image : CharacterLink::where('parent_id', $r->character->id)->first()->child->image,
+            'has_image' => isset($image) ? File::exists($image->imagePath . '/' . $image->imageFileName) : $r->status == 'Approved',
+            'users' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'subtypes' => ['0' => 'No Subtype'] + Subtype::where('species_id','=',2)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'features' => Feature::getFeaturesByCategory(true)
+        ]);
+    }
+
 
     /**
      * This should only ever get hit if we have a deprecated in-progress design update
      * that needs to be moved onto the new setup.
      */
-    private function instantiateImage($request, $isAndroid = 0) {
+    private function instantiateImage($request, $isAndroid = 0, $isHolobot = false) {
         $image = CharacterImage::create([
             'character_id' => $request->id,
             'is_visible' => 1,
@@ -167,9 +190,12 @@ class DesignController extends Controller
             'fullsize_hash' => $request->fullsize_hash ? $request->fullsize_hash : randomString(15),
             'extension' => Config::get('lorekeeper.settings.masterlist_image_format'),
 
-            'species_id' => $request->species_id,
-            'subtype_id' => ($request->character->is_myo_slot && isset($request->character->image->subtype_id)) ? $request->character->image->subtype_id : $request->subtype_id,
-            'rarity_id' => $request->rarity_id,
+            // HoloBOTs are Holos, Bots, and Common, always
+            'species_id' => $isHolobot ? 2 : $request->species_id,
+            'subtype_id' => $isHolobot ?  3
+                : (($request->character->is_myo_slot && isset($request->character->image->subtype_id))
+                    ? $request->character->image->subtype_id : $request->subtype_id),
+            'rarity_id' => $isHolobot ? 1 : $request->rarity_id,
             'sort' => 0,
             'is_design_update' => 1,
             'is_android' => $isAndroid,
@@ -242,6 +268,25 @@ class DesignController extends Controller
         $useAdmin = ($r->status != 'Draft' || $r->user_id != Auth::user()->id) && Auth::user()->hasPower('manage_characters');
         if($service->saveRequestImage($request->all(), $r, $r->androidImage, $useAdmin)) {
             if($service->saveRequestFeatures($request->all(), $r, $r->androidImage)) {
+                flash('Request edited successfully.')->success();
+            }
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
+    public function postHolobot(Request $request, CharacterManager $service, $id)
+    {
+        $r = CharacterDesignUpdate::find($id);
+        if(!$r) abort(404);
+        if($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters')) abort(404);
+        $request->validate(CharacterDesignUpdate::$imageRules);
+
+        $useAdmin = ($r->status != 'Draft' || $r->user_id != Auth::user()->id) && Auth::user()->hasPower('manage_characters');
+        if($service->saveRequestImage($request->all(), $r, $r->holobotImage, $useAdmin)) {
+            if($service->saveRequestFeatures($request->all(), $r, $r->holobotImage)) {
                 flash('Request edited successfully.')->success();
             }
         }

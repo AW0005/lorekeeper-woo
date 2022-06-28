@@ -74,7 +74,9 @@ class CharacterUtility extends Service
         self::convertAliasToUser($data['designer_id'], $data['designer_url']);
         self::convertAliasToUser($data['artist_id'], $data['artist_url']);
 
-
+        // initialize this if it doens't exist to avoid bugs without killing the code completely
+        if(!isset($data['designer_type'])) $data['designer_type'] = [];
+        if(!isset($data['artist_type'])) $data['artist_type'] = [];
         // Attach artists/designers
         self::attachCredits($imageId, $data['designer_id'], $data['designer_url'], $data['designer_type']);
         self::attachCredits($imageId, $data['artist_id'], $data['artist_url'], $data['artist_type'], 'Artist');

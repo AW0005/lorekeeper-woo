@@ -180,6 +180,9 @@ Route::group(['prefix' => 'designs', 'namespace' => 'Characters'], function() {
     Route::get('{id}/android-form', 'DesignController@getAndroidForm');
     Route::post('{id}/android-form', 'DesignController@postAndroidForm');
 
+    Route::get('{id}/holobot', 'DesignController@getHolobot');
+    Route::post('{id}/holobot', 'DesignController@postHolobot');
+
     Route::get('{id}/addons', 'DesignController@getAddons');
     Route::post('{id}/addons', 'DesignController@postAddons');
 

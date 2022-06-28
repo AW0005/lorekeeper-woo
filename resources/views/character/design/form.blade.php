@@ -21,7 +21,10 @@ since only *new* features will require trait items
 --}}
 
 <h2>Masterlist Image</h2>
-{!! Form::open(['url' => 'designs/'.$request->id.($image->is_android ? '/android-form' : '/digital-form'), 'files' => true]) !!}
+@if($request -> status != 'Approved')
+{!! Form::open(['url' => 'designs/'.$request->id.($image->is_android ? '/android-form' : ($image->species_id == 2 ? '/holobot' : '/digital-form')), 'files' => true]) !!}
+@endif
+
 @if($has_image)
     <div class="row mb-2">
         <div class="col-6">
@@ -168,7 +171,7 @@ since only *new* features will require trait items
         <div class="form-group">
             {!! Form::label('species_id', 'Species') !!}
             @if(!$request->character->is_myoSlot || ($request->character->is_myo_slot && $request->character->image->species_id))
-                <div class="alert alert-secondary">{!! $request->character->image->species->displayName !!}</div>
+                <div class="alert alert-secondary">{!! $image->species->displayName !!}</div>
             @else
                 {!! Form::select('species_id', $specieses, $image->species_id, ['class' => 'form-control', 'id' => 'species']) !!}
             @endif
@@ -189,11 +192,11 @@ since only *new* features will require trait items
 
         <div class="form-group">
             {!! Form::label('rarity_id', 'Character Rarity') !!}
-            @if($request->character->is_myo_slot && $request->character->image->rarity_id)
+            {{-- @if($request->character->is_myo_slot && $request->character->image->rarity_id)
                 <div class="alert alert-secondary">{!! $request->character->image->rarity->displayName !!}</div>
-            @else
+            @else --}}
                 {!! Form::select('rarity_id', $rarities, $image->rarity_id, ['class' => 'form-control', 'id' => 'rarity']) !!}
-            @endif
+            {{-- @endif --}}
         </div>
 
         <div class="form-group">

@@ -5,7 +5,7 @@
             <div style="margin-top: -5px;">Owned by {!! $character->displayOwner !!}</div>
         </div>
         <div class="tags">
-            @if(Config::get('lorekeeper.extensions.character_TH_profile_link') && $character->profile->link)
+            @if(Config::get('lorekeeper.extensions.character_TH_profile_link') && $character->profile && $character->profile->link)
                 <a class="badge badge-lg btn-primary" data-character-id="{{ $character->id }}" href="{{ $character->profile->link }}"><i class="fas fa-home"></i> Off-Site Profile</a>
             @endif
         </div>

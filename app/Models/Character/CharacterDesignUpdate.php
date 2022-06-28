@@ -90,7 +90,7 @@ class CharacterDesignUpdate extends Model
      */
     public function image()
     {
-        return $this->hasOne('App\Models\Character\CharacterImage', 'character_id')->images()->where('is_design_update', 1)->where('is_android', 0);
+        return $this->hasOne('App\Models\Character\CharacterImage', 'character_id')->images()->where('is_design_update', 1)->where('species_id', 1)->where('is_android', 0);
     }
 
     /**
@@ -98,7 +98,15 @@ class CharacterDesignUpdate extends Model
      */
     public function androidImage()
     {
-        return $this->hasOne('App\Models\Character\CharacterImage', 'character_id')->images()->where('is_design_update', 1)->where('is_android', 1);
+        return $this->hasOne('App\Models\Character\CharacterImage', 'character_id')->images()->where('is_design_update', 1)->where('species_id', 1)->where('is_android', 1);
+    }
+
+    /**
+     * Get the associated holobot image
+     */
+    public function holobotImage()
+    {
+        return $this->hasOne('App\Models\Character\CharacterImage', 'character_id')->images()->where('is_design_update', 1)->where('species_id', 2);
     }
 
     /**
@@ -380,6 +388,24 @@ class CharacterDesignUpdate extends Model
         if(!isset($androidImage)) return false;
 
         $hasSavedImage = File::exists($androidImage->imagePath . '/' . $androidImage->imageFileName);
+        if(!$hasSavedImage) return false;
+
+        return true;
+    }
+
+    /**
+     * Get whether the holobot tab is completed
+    */
+    public function getHasHolobotDataAttribute()
+    {
+        $inventoryItem = UserItem::whereIn('id', array_keys($this->inventory))->first();
+        $hasAndroidItem = isset($inventoryItem) ? $inventoryItem->item->name === 'Android' : false;
+        if(!isset($hasAndroidItem)) return false;
+
+        $holobotImage = $this->holobotImage;
+        if(!isset($holobotImage)) return false;
+
+        $hasSavedImage = File::exists($holobotImage->imagePath . '/' . $holobotImage->imageFileName);
         if(!$hasSavedImage) return false;
 
         return true;

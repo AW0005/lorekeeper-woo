@@ -97,5 +97,8 @@
     <li class="nav-item">
         <a class="nav-link {{ set_active('designs/' . $request->id . '/android-form') }}" href="{{ url('designs/' . $request->id . '/android-form') }}"><i class="text-{{ $request->hasAndroidData || $request->status == 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Android Form</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link {{ set_active('designs/' . $request->id . '/holobot') }}" href="{{ url('designs/' . $request->id . '/holobot') }}"><i class="text-{{ $request->hasHolobotData || $request->status == 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> HoloBOT</a>
+    </li>
     @endif
 </ul>
