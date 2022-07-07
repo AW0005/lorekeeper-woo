@@ -831,10 +831,6 @@ main > .row {
     margin-bottom: 0px;
     margin-right: 10px;
 }
-.masterlist-search-field input[type="text"],
-.masterlist-search-field select {
-    width: 300px;
-}
 
 /* ADMIN ****************************************************************************************/
 

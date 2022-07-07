@@ -190,9 +190,13 @@ class BrowseController extends Controller
         }
 
         // Search only main images
-        if(!$request->get('search_images')) {
-            $imageQuery->whereIn('id', $query->pluck('character_image_id')->toArray());
-        }
+        // if(!$request->get('search_images')) {
+        //     $imageQuery->whereIn('id', $query->pluck('character_image_id')->toArray());
+        // }
+
+        if($request->get('multiple_forms')) $query->whereHas('images', function($q) {
+            $q->havingRaw('COUNT(*) > 1');
+        });
 
         // Searching on image properties
         if($request->get('species_id')) $imageQuery->where('species_id', $request->get('species_id'));
