@@ -261,8 +261,16 @@
                 <div>@if($feature->feature->feature_category_id) <strong>{!! $feature->feature->category->displayName !!}:</strong> @endif {!! $feature->feature->displayName !!} @if($feature->data) ({{ $feature->data }}) @endif <span class="text-danger">*Required</span></div>
             @endforeach
         @endif
+        @php
+            if($request->character->features && $request->status === 'Pending' && $request->update_type !== 'MYO') {
+                $existingFeatures = $request->character->features;
+            }
+        @endphp
         @foreach(($request->status !== 'Approved' ? $image->updateFeatures : $image->features) as $feature)
-            <div>@if($feature->feature->feature_category_id) <strong>{!! $feature->feature->category->displayName !!}:</strong> @endif {!! $feature->feature->displayName !!} @if($feature->data) ({{ $feature->data }}) @endif</div>
+            <div>
+                @if($feature->feature->feature_category_id) <strong>{!! $feature->feature->category->displayName !!}:</strong> @endif {!! $feature->feature->displayName !!} @if($feature->data) ({{ $feature->data }}) @endif
+                @if(isset($existingFeatures) && $existingFeatures->where('feature_id', $feature->feature->id)->first() !== null) <span class="text-danger">*Pre-Existing Trait</span> @endif
+            </div>
         @endforeach
     </div>
 @endif

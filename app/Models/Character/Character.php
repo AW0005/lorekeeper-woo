@@ -156,6 +156,14 @@ class Character extends Model
     }
 
     /**
+     * Get all features associated with the character's Images.
+     */
+    public function features()
+    {
+        return $this->hasManyThrough(CharacterFeature::class, CharacterImage::class, 'character_id', 'character_image_id');
+    }
+
+    /**
      * Get the user-editable profile data of the character.
      */
     public function profile()
