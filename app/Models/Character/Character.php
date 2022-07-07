@@ -2,17 +2,13 @@
 
 namespace App\Models\Character;
 
-use Config;
-use DB;
 use Carbon\Carbon;
-use Notifications;
+use Illuminate\Support\Facades\Notification;
 use App\Models\Model;
 
 use App\Models\User\User;
 use App\Models\User\UserCharacterLog;
 
-use App\Models\Character\Character;
-use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Character\CharacterBookmark;
 
@@ -20,10 +16,7 @@ use App\Models\Character\CharacterCurrency;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
 
-use App\Models\Character\CharacterItem;
-use App\Models\Item\Item;
 use App\Models\Item\ItemLog;
-use App\Models\Award\Award;
 use App\Models\Award\AwardLog;
 
 use App\Models\Submission\Submission;
@@ -569,7 +562,7 @@ class Character extends Model
             // This may have to be redone more efficiently in the case of large numbers of bookmarkers,
             // but since we're not expecting many users on the site to begin with it should be fine
             foreach($bookmarkers as $bookmarker)
-                Notifications::create($type, $bookmarker, [
+                Notification::create($type, $bookmarker, [
                     'character_url' => $this->url,
                     'character_name' => $this->fullName
                 ]);

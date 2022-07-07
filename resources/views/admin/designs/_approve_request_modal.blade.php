@@ -1,6 +1,7 @@
 <p>This will accept the approval request, creating an update for the character and consuming the items and/or currency attached to this request. You will not be able to edit the traits for the character, so if those require any corrections, please cancel the request and ask the user to make changes.</p>
 {!! Form::open(['url' => 'admin/designs/edit/'.$request->id.'/approve']) !!}
     <h3>Basic Information</h3>
+    @if($request->update_type === 'MYO')
     <div class="row">
         <div class="col-6 form-group">
             {!! Form::label('Character Category') !!}
@@ -27,8 +28,15 @@
             <a href="#" id="pull-number" class="btn btn-primary" data-toggle="tooltip" title="This will find the highest number assigned to a character currently and add 1 to it. It can be adjusted to pull the highest number in the category or the highest overall number - this setting is in the code.">Pull #</a>
         </div>
     </div>
+    @else
+    <div class="alert alert-secondary">{!! $request->character->slug !!}</div>
+    <div class="form-group hide">
+        {!! Form::label('Year') !!}
+        {!! Form::text('year', $request->character->is_myo_slot ? date("Y") : $request->character->year, ['class' => 'form-control mr-2', 'id' => 'year']) !!}
+    </div>
+    @endif
 
-    @if($request->hasHolobotData)
+    @if($request->character->image->species_id === 1 && $request->hasHolobotData)
     <div class="row">
         <div class="col-6 form-group">
                 {!! Form::label('Holobot Category') !!}
@@ -41,7 +49,7 @@
             </div>
             <div class="col-6 form-group">
                 {!! Form::label('Holobot Code') !!}
-                {!! Form::text('holobot_slug', $request->character->is_myo_slot ? null : $request->character->slug, ['class' => 'form-control', 'id' => 'holocode', 'readonly' => true]) !!}
+                {!! Form::text('holobot_slug', null, ['class' => 'form-control', 'id' => 'holocode', 'readonly' => true]) !!}
             </div>
         </div>
     </div>

@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Characters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
-use DB;
-use Auth;
-use Settings;
-use Config;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 use App\Models\Item\Item;
 use App\Models\User\User;
@@ -99,20 +97,17 @@ class DesignController extends Controller
         return redirect()->back();
     }
 
+
     /**
-     * Shows a design update request's image section.
+     * Shows a design update request's form section.
      *
      * @param  int  $id
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getForm($id)
-    {
-        $r = CharacterDesignUpdate::find($id);
+    private function getGenericImageTab($r = null, $image = null, $post, $isAndroid = 0, $isHolobot = false) {
         if(!$r || ($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters'))) abort(404);
-
-        $image = $r->image;
         if($r->status === 'Draft' && !isset($image)) {
-            $image = $this->instantiateImage($r);
+            $image = $this->instantiateImage($r, $isAndroid, $isHolobot);
         }
 
         return view('character.design.form', [
@@ -121,179 +116,141 @@ class DesignController extends Controller
             'has_image' => isset($image) ? File::exists($image->imagePath . '/' . $image->imageFileName) : $r->status == 'Approved',
             'users' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes' => ['0' => 'No Subtype'] + Subtype::where('species_id','=',$r->species_id)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'subtypes' => ['0' => 'No Subtype'] + Subtype::where('species_id','=', $isHolobot ? 2 : $r->species_id)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'features' => Feature::getFeaturesByCategory(true)
+            'features' => Feature::getFeaturesByCategory(true),
+            'post' => $post
         ]);
     }
 
-    /**
-     * Shows a design update android form section.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function getAndroidForm($id)
-    {
-        $r = CharacterDesignUpdate::find($id);
-        if(!$r || ($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters'))) abort(404);
 
+    public function getForm($id) {
+        $r = CharacterDesignUpdate::find($id);
+        $image = $r->image;
+        return $this->getGenericImageTab($r, $image, 'digital-form');
+    }
+
+    public function getAndroidForm($id) {
+        $r = CharacterDesignUpdate::find($id);
         $image = $r->androidImage;
-        if($r->status === 'Draft' && !isset($image)) {
-            $image = $this->instantiateImage($r, 1);
-        }
-
-        return view('character.design.form', [
-            'request' => $r,
-            'image' => isset($image) ? $image : $r->character->images->where('is_android', 1)->first(),
-            'has_image' => isset($image) ? File::exists($image->imagePath . '/' . $image->imageFileName) : $r->status == 'Approved',
-            'users' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
-            'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes' => ['0' => 'No Subtype'] + Subtype::where('species_id','=',$r->species_id)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'features' => Feature::getFeaturesByCategory(true)
-        ]);
+        return $this->getGenericImageTab($r, $image, 'android-form', 1);
     }
 
-    public function getHolobot($id)
-    {
+    public function getHolobot($id) {
         $r = CharacterDesignUpdate::find($id);
-        if(!$r || ($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters'))) abort(404);
-
         $image = $r->holobotImage;
-        if($r->status === 'Draft' && !isset($image)) {
-            $image = $this->instantiateImage($r, 0, true);
-        }
-
-        return view('character.design.form', [
-            'request' => $r,
-            'image' => isset($image) ? $image : CharacterLink::where('parent_id', $r->character->id)->first()->child->image,
-            'has_image' => isset($image) ? File::exists($image->imagePath . '/' . $image->imageFileName) : $r->status == 'Approved',
-            'users' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
-            'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes' => ['0' => 'No Subtype'] + Subtype::where('species_id','=',2)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'rarities' => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'features' => Feature::getFeaturesByCategory(true)
-        ]);
+        return $this->getGenericImageTab($r, $image, 'holobot', 1, 3);
     }
 
+    public function getHolobuddy($id) {
+        $r = CharacterDesignUpdate::find($id);
+        $image = $r->holobuddyImage;
+        // the 4 is the holobuddy subtype
+        return $this->getGenericImageTab($r, $image, 'holobuddy', 1, 4);
+    }
 
-    /**
-     * This should only ever get hit if we have a deprecated in-progress design update
-     * that needs to be moved onto the new setup.
+    /** This has two main functions
+     * 1. If we hit are in a deprecated design request that needs to be moved to the new format
+     * 2. If we're in a New Form Request that's changed whether their using the android token or not
      */
-    private function instantiateImage($request, $isAndroid = 0, $isHolobot = false) {
-        $image = CharacterImage::create([
-            'character_id' => $request->id,
-            'is_visible' => 1,
-            'hash' => $request->hash,
-            'fullsize_hash' => $request->fullsize_hash ? $request->fullsize_hash : randomString(15),
-            'extension' => Config::get('lorekeeper.settings.masterlist_image_format'),
+    private function instantiateImage(CharacterDesignUpdate $request, $isAndroid, $isHolobot) {
+        // If this is a New Form Request, with a regular image already, and it needs to be an android or vice versa
+        if($request->update_type === 'New Form' && $request->image && $isAndroid) {
+            $image = $request->image;
+            $image->is_android = 1;
+            $image->save();
+        } else if($request->update_type === 'New Form' && $request->androidImage && !$isAndroid && !$isHolobot) {
+            $image = $request->androidImage;
+            $image->is_android = 0;
+            $image->save();
+        } else {
+            $image = CharacterImage::create([
+                'character_id' => $request->id,
+                'is_visible' => 1,
+                'hash' => $request->hash,
+                'fullsize_hash' => $request->fullsize_hash ? $request->fullsize_hash : randomString(15),
+                'extension' => Config::get('lorekeeper.settings.masterlist_image_format'),
 
-            // HoloBOTs are Holos, Bots, and Common, always
-            'species_id' => $isHolobot ? 2 : $request->species_id,
-            'subtype_id' => $isHolobot ?  3
-                : (($request->character->is_myo_slot && isset($request->character->image->subtype_id))
-                    ? $request->character->image->subtype_id : $request->subtype_id),
-            'rarity_id' => $isHolobot ? 1 : $request->rarity_id,
-            'sort' => 0,
-            'is_design_update' => 1,
-            'is_android' => $isAndroid,
-        ]);
+                // HoloBOTs are Holos, Bots, and Common, always
+                'species_id' => $isHolobot ? 2 : $request->species_id,
+                'subtype_id' => $isHolobot ? $isHolobot
+                    : (($request->character->is_myo_slot && isset($request->character->image->subtype_id))
+                        ? $request->character->image->subtype_id : $request->subtype_id),
+                'rarity_id' => $isHolobot === 4 ? 4 : $request->rarity_id,
+                'sort' => 0,
+                'is_design_update' => 1,
+                'is_android' => $isAndroid,
+            ]);
 
-        if(File::exists($request->imagePath . '/' . $request->imageFileName)){
-            // Move the pre-existing image file to the new image
-            File::move($request->imagePath . '/' . $request->imageFileName, $image->imagePath . '/' . $image->imageFileName);
-            File::move($request->thumbnailPath . '/' . $request->thumbnailFileName, $image->thumbnailPath . '/' . $image->thumbnailFileName);
-        }
+            if(File::exists($request->imagePath . '/' . $request->imageFileName)){
+                // Move the pre-existing image file to the new image
+                File::move($request->imagePath . '/' . $request->imageFileName, $image->imagePath . '/' . $image->imageFileName);
+                File::move($request->thumbnailPath . '/' . $request->thumbnailFileName, $image->thumbnailPath . '/' . $image->thumbnailFileName);
+            }
 
-        if(count($request->rawFeatures) > 0) {
-            // Move pre-existing features
-            $request->rawFeatures()->update(['character_image_id' => $image->id]);
-        }
+            if(count($request->rawFeatures) > 0) {
+                // Move pre-existing features
+                $request->rawFeatures()->update(['character_image_id' => $image->id]);
+            }
 
-        // Shift the image credits over to the new image
-        if(count($request->designers) > 0) {
-            $request->designers()->update(['character_image_id' => $image->id, 'character_type' => 'Character']);
-        }
-        if(count($request->artists) > 0) {
-            $request->artists()->update(['character_image_id' => $image->id, 'character_type' => 'Character']);
+            // Shift the image credits over to the new image
+            if(count($request->designers) > 0) {
+                $request->designers()->update(['character_image_id' => $image->id, 'character_type' => 'Character']);
+            }
+            if(count($request->artists) > 0) {
+                $request->artists()->update(['character_image_id' => $image->id, 'character_type' => 'Character']);
+            }
         }
 
         return $image;
     }
 
     /**
-     * Edits a design update request's image upload section.
+     * Edits a design update request's form upload section.
      *
      * @param  \Illuminate\Http\Request       $request
      * @param  App\Services\CharacterManager  $service
      * @param  int                            $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postForm(Request $request, CharacterManager $service, $id)
-    {
-        $r = CharacterDesignUpdate::find($id);
+    private function postGenericImageTab(Request $request, CharacterManager $service, $r = null, $image) {
         if(!$r) abort(404);
         if($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters')) abort(404);
-        $request->validate(CharacterDesignUpdate::$imageRules);
 
+        $request->validate(CharacterDesignUpdate::$imageRules);
         $useAdmin = ($r->status != 'Draft' || $r->user_id != Auth::user()->id) && Auth::user()->hasPower('manage_characters');
-        if($service->saveRequestImage($request->all(), $r, $r->image, $useAdmin)) {
-            if($service->saveRequestFeatures($request->all(), $r, $r->image)) {
-                flash('Request edited successfully.')->success();
-            }
-        }
-        else {
+
+        $savedRequestImage = $service->saveRequestImage($request->all(), $r, $image, $useAdmin);
+        $savedRequestFeatures = $service->saveRequestFeatures($request->all(), $r, $image);
+
+        if($savedRequestImage && $savedRequestFeatures)  {
+            flash('Request edited successfully.')->success();
+        } else {
             foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
         }
+
         return redirect()->back();
     }
 
-    /**
-     * Edits a design update request's image upload section.
-     *
-     * @param  \Illuminate\Http\Request       $request
-     * @param  App\Services\CharacterManager  $service
-     * @param  int                            $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function postAndroidForm(Request $request, CharacterManager $service, $id)
-    {
-        $r = CharacterDesignUpdate::find($id);
-        if(!$r) abort(404);
-        if($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters')) abort(404);
-        $request->validate(CharacterDesignUpdate::$imageRules);
 
-        $useAdmin = ($r->status != 'Draft' || $r->user_id != Auth::user()->id) && Auth::user()->hasPower('manage_characters');
-        if($service->saveRequestImage($request->all(), $r, $r->androidImage, $useAdmin)) {
-            if($service->saveRequestFeatures($request->all(), $r, $r->androidImage)) {
-                flash('Request edited successfully.')->success();
-            }
-        }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
-        return redirect()->back();
+    public function postForm(Request $request, CharacterManager $service, $id) {
+        $r = CharacterDesignUpdate::find($id);
+        return $this->postGenericImageTab($request, $service, $r, $r->image);
     }
 
-    public function postHolobot(Request $request, CharacterManager $service, $id)
-    {
+    public function postAndroidForm(Request $request, CharacterManager $service, $id) {
         $r = CharacterDesignUpdate::find($id);
-        if(!$r) abort(404);
-        if($r->user_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters')) abort(404);
-        $request->validate(CharacterDesignUpdate::$imageRules);
+        return $this->postGenericImageTab($request, $service, $r, $r->androidImage);
+    }
 
-        $useAdmin = ($r->status != 'Draft' || $r->user_id != Auth::user()->id) && Auth::user()->hasPower('manage_characters');
-        if($service->saveRequestImage($request->all(), $r, $r->holobotImage, $useAdmin)) {
-            if($service->saveRequestFeatures($request->all(), $r, $r->holobotImage)) {
-                flash('Request edited successfully.')->success();
-            }
-        }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
-        return redirect()->back();
+    public function postHolobot(Request $request, CharacterManager $service, $id) {
+        $r = CharacterDesignUpdate::find($id);
+        return $this->postGenericImageTab($request, $service, $r, $r->holobotImage);
+    }
+
+    public function postHolobuddy(Request $request, CharacterManager $service, $id) {
+        $r = CharacterDesignUpdate::find($id);
+        return $this->postGenericImageTab($request, $service, $r, $r->holobuddyImage);
     }
 
     /**

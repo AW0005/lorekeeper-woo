@@ -179,6 +179,9 @@ return [
         App\Providers\NotificationsProvider::class,
         App\Providers\CommentProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+
+        /* This is for ide support */
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
     ],
 
     /*

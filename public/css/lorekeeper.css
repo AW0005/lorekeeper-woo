@@ -471,9 +471,8 @@ main > .row {
     list-style-type: none;
     display: inline-block;
     padding-top: 30px;
-    padding-inline-start: 35px;
+    padding-inline-start: 22px;
     max-width: 190px;
-    width: 100%;
 }
 
 .sidebar ul li {
@@ -516,6 +515,22 @@ main > .row {
     font-family: neue-haas-grotesk-text, sans-serif;
     color: rgba(0, 0, 0, 0.5);
 }
+
+.sidebar .sidebar-item:not(:last-child)::after {
+    content: "";
+    height: 1px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    width: 100%;
+    display: block;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(238, 238, 238, 1) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+}
+
 .sidebar a:hover {
     color: #16181b;
     background-color: #f8f9fa;

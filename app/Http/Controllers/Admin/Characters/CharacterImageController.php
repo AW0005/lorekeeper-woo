@@ -120,7 +120,7 @@ class CharacterImageController extends Controller
      */
     public function postEditImageFeatures(Request $request, CharacterManager $service, $id)
     {
-        $data = $request->only(['species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data']);
+        $data = $request->only(['species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data', 'is_android']);
         $image = CharacterImage::find($id);
         if(!$image) abort(404);
         if($service->updateImageFeatures($data, $image, Auth::user())) {

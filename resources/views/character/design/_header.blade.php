@@ -80,6 +80,45 @@
     </div></div>
 @endif
 
+@php
+$isNewForm = $request->update_type === 'New Form';
+$isHolo = $request->character->image->species_id === 2;
+$isMYORequest = $request->update_type === 'MYO';
+$hasAndroidItem = $request->hasAndroidItem;
+$hasBuddyUpgrade = $request->hasBuddyItem;
+
+// Don't show digital form if it's a holo
+// Show digital form if it's a MYO Request
+// Show digital form if it's a form add request and they haven't attached the android item
+// TODO: Will need to be allowed for Holo once I'm ready for the pet updates
+$showDigitalForm = (!$isHolo && (($isMYORequest) || ($isNewForm && !$hasAndroidItem))) || (!$isNewForm && !$isMYORequest && $request->hasDigitalData);
+// Show Android if it's not a holo and they have attached the android item
+$showAndroidForm = (!$isHolo && $hasAndroidItem) || (!$isNewForm && !$isMYORequest && $request->hasAndroidData);
+// Show holo if this is a holo myo or if they've attached an android item or if it's a new form and they didn't attach the buddy upgrade item
+$showHolobotTab = ($isHolo && $isMYORequest) || ($isHolo && $isNewForm && !$hasBuddyUpgrade) || $hasAndroidItem  || (!$isNewForm && !$isMYORequest && $request->hasHolobotData);
+// Show holo-buddy tab if this is an epic holo myo or has the buddy upgrade item
+$showHolobuddyTab = ($isHolo && ($request->character->image->rarity->name === 'Epic' || $hasBuddyUpgrade))  || (!$isNewForm && !$isMYORequest && $request->hasHolobuddyData);
+
+global $isComplete;
+
+// Figuring out whether we allow submission or not
+$isComplete =
+    $request->has_comments && $request->has_addons && (
+        // if it'a regular myo request
+        (!$isHolo && $isMYORequest && $request->hasDigitalData && (!$hasAndroidItem || $request->hasAndroidData && $request->hasHolobotData))
+        // if it's a holo myo
+        || ($isHolo && $isMYORequest && $request->hasHolobotData && (!$showHolobuddyTab || $request->hasHolobuddyData))
+        // regular new form
+        || (!$isHolo && $isNewForm && (!$hasAndroidItem && $request->hasDigitalData || ($hasAndroidItem && $request->hasAndroidData && $request->hasHolobotData))
+        // holo new form
+        || ($isHolo && $isNewForm && (!$hasBuddyUpgrade && $request->hasHolobotData || ($hasBuddyUpgrade && $request->hasHolobuddyData)))
+        // regular form update
+        || (!$isHolo && !$isNewForm && !$isMYORequest && $request->hasDigitalData || $request->hasAndroidData))
+        // holo form update
+        || ($isHolo && !$isNewForm && !$isMYORequest && ($request->hasHolobotData || $request->hasHolobuddyData))
+    );
+@endphp
+
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
         <a class="nav-link {{ set_active('designs/' . $request->id) }}" href="{{ url('designs/' . $request->id) }}">@if($request->is_complete && isset($request->image))<i class="text-success fas fa-check-circle fa-fw mr-2"></i> @endif Status</a>
@@ -90,15 +129,27 @@
     <li class="nav-item">
         <a class="nav-link {{ set_active('designs/' . $request->id . '/addons') }}" href="{{ url('designs/' . $request->id . '/addons') }}"><i class="text-{{ $request->has_addons ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Add-ons</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link {{ set_active('designs/' . $request->id . '/digital-form') }}" href="{{ url('designs/' . $request->id . '/digital-form') }}"><i class="text-{{ ($request->has_image && $request->has_features && isset($request->image)) || $request->status == 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Digital Form</a>
-    </li>
-    @if($request->hasAndroidItem)
-    <li class="nav-item">
-        <a class="nav-link {{ set_active('designs/' . $request->id . '/android-form') }}" href="{{ url('designs/' . $request->id . '/android-form') }}"><i class="text-{{ $request->hasAndroidData || $request->status == 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Android Form</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {{ set_active('designs/' . $request->id . '/holobot') }}" href="{{ url('designs/' . $request->id . '/holobot') }}"><i class="text-{{ $request->hasHolobotData || $request->status == 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> HoloBOT</a>
-    </li>
+    @if($showDigitalForm)
+        <li class="nav-item">
+            <a class="nav-link {{ set_active('designs/' . $request->id . '/digital-form') }}" href="{{ url('designs/' . $request->id . '/digital-form') }}">
+                <i class="text-{{ $request->hasDigitalData || $request->status === 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i>
+                Digital Form
+            </a>
+        </li>
+    @endif
+    @if($showAndroidForm)
+        <li class="nav-item">
+            <a class="nav-link {{ set_active('designs/' . $request->id . '/android-form') }}" href="{{ url('designs/' . $request->id . '/android-form') }}"><i class="text-{{ $request->hasAndroidData || $request->status == 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> Android Form</a>
+        </li>
+    @endif
+    @if($showHolobotTab)
+        <li class="nav-item">
+            <a class="nav-link {{ set_active('designs/' . $request->id . '/holobot') }}" href="{{ url('designs/' . $request->id . '/holobot') }}"><i class="text-{{ $request->hasHolobotData || $request->status == 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> HoloBOT</a>
+        </li>
+    @endif
+    @if($showHolobuddyTab)
+        <li class="nav-item">
+            <a class="nav-link {{ set_active('designs/' . $request->id . '/holobuddy') }}" href="{{ url('designs/' . $request->id . '/holobuddy') }}"><i class="text-{{ $request->hasHolobuddyData || $request->status == 'Approved' ? 'success far fa-circle' : 'danger fas fa-times'  }} fa-fw mr-2"></i> HoloBUDDY</a>
+        </li>
     @endif
 </ul>

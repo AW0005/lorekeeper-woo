@@ -5,6 +5,11 @@
 @section('design-content')
 {!! breadcrumbs(['Design Approvals' => 'designs', 'Request (#' . $request->id . ')' => 'designs/' . $request->id]) !!}
 
+@php
+    global $isComplete;
+    if(!isset($isComplete)) $isComplete = 0;
+@endphp
+
 @include('character.design._header', ['request' => $request])
 
 @if($request->status == 'Draft')
@@ -17,7 +22,7 @@
         @endif
     </p>
     @if($request->user_id == Auth::user()->id)
-        @if($request->isComplete && isset($request->image))
+        @if($isComplete)
             <div class="text-right">
                 <button class="btn btn-outline-danger delete-button">Delete Request</button>
                 <a href="#" class="btn btn-outline-primary submit-button">Submit Request</a>
@@ -67,11 +72,14 @@
 
 @section('scripts')
 <script>
+const isComplete = <?php echo((float)$isComplete) ?>;
 $(document).ready(function() {
     @if($request->user_id == Auth::user()->id && $request->status == 'Draft')
         $('.submit-button').on('click', function(e) {
             e.preventDefault();
-            loadModal("{{ url('designs/'.$request->id.'/confirm/') }}", 'Confirm Submission');
+            if(isComplete === 1) {
+                loadModal("{{ url('designs/'.$request->id.'/confirm/') }}", 'Confirm Submission');
+            }
         });
         $('.delete-button').on('click', function(e) {
             e.preventDefault();

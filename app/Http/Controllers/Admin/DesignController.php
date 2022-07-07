@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Auth;
-use Config;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 use App\Models\Character\CharacterDesignUpdate;
@@ -61,12 +60,28 @@ class DesignController extends Controller
         if($action == 'cancel' && $service->cancelRequest($request->only(['staff_comments', 'preserve_queue']), $r, Auth::user())) {
             flash('Request cancelled successfully.')->success();
         }
-        elseif($action == 'approve' && $service->approveRequest($request->only([
+        elseif($action == 'approve') {
+            $data = $request->only([
                 'character_category_id', 'year', 'number', 'slug', 'description',
                 'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
                 'transferrable_at', 'set_active', 'invalidate_old', 'holobot_category_id', 'holobot_slug', 'holobot_number'
-            ]), $r, Auth::user())) {
-            flash('Request approved successfully.')->success();
+            ]);
+
+            // Regular MYOs
+            if($r->update_type === 'MYO' && $r->character->image->species_id !== 2 && $service->approveMYORequest($data, $r, Auth::user())) {
+                flash('Request approved successfully.')->success();
+            // HoloBOT MYOs
+            } else if($r->update_type === 'MYO' && $r->character->image->species_id === 2 && $service->approveHoloMYORequest($data, $r, Auth::user())) {
+                flash('Request approved successfully.')->success();
+            // New Form (Holo or Regular)
+            } else if($r->update_type === 'New Form' && $r->character->image->species_id !== 2 && $service->approveFormRequest($data, $r, Auth::user())) {
+                flash('Request approved successfully.')->success();
+            } else if($r->update_type === 'New Form' && $r->character->image->species_id === 2 && $service->approveHoloFormRequest($data, $r, Auth::user())) {
+                flash('Request approved successfully.')->success();
+            // New Form (Holo or Regular)
+            } else if($r->update_type === 'Character' && $service->approveFormUpdateRequest($data, $r, Auth::user())) {
+                flash('Request approved successfully.')->success();
+            }
         }
         elseif($action == 'reject' && $service->rejectRequest($request->only(['staff_comments']), $r, Auth::user())) {
             flash('Request rejected successfully.')->success();

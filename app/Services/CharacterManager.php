@@ -4,15 +4,15 @@ use App\Services\Service;
 
 use Carbon\Carbon;
 
-use DB;
-use Config;
-use Image;
-use Notifications;
-use Settings;
-use File;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
+use App\Facades\Notifications;
+use App\Facades\Settings;
+
 
 use App\Services\CurrencyManager;
-use App\Services\InventoryManager;
 use App\Services\Utilities\CharacterUtility;
 
 use Illuminate\Support\Arr;
@@ -22,16 +22,15 @@ use App\Models\Character\Character;
 use App\Models\Character\CharacterCurrency;
 use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterImage;
+use App\Models\Character\CharacterFeature;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterBookmark;
 use App\Models\Character\CharacterLink;
-use App\Models\User\UserCharacterLog;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
 use App\Models\Rarity;
 use App\Models\Currency\Currency;
-use App\Models\Feature\Feature;
 
 class CharacterManager extends Service
 {
@@ -171,7 +170,7 @@ class CharacterManager extends Service
                 $recipient->settings->save();
             }
 
-            // If the recipient has an account, send them a notification
+            // If the recipient has an account, send them a Notifications
             if(is_object($recipient) && $user->id != $recipient->id) {
                 Notifications::create($isMyo ? 'MYO_GRANT' : 'CHARACTER_UPLOAD', $recipient, [
                     'character_url' => $character->url,
@@ -295,7 +294,7 @@ class CharacterManager extends Service
             $this->cropThumbnail($image, $isMyo);
 
             // Process and save the image itself
-            if(!$isMyo) $this->processImage($image);
+            if(!$isMyo) CharacterUtility::processImage($image);
 
             // Attach features
             if(!$isMyo) CharacterUtility::handleCharacterFeatures($image->id, $data['feature_id'], $data['feature_data']);
@@ -309,57 +308,7 @@ class CharacterManager extends Service
 
     }
 
-    /**
-     * Trims and optionally resizes and watermarks an image.
-     *
-     *
-     * @param  \App\Models\Character\CharacterImage  $characterImage
-     */
-    private function processImage($characterImage)
-    {
-        $image = Image::make($characterImage->imagePath . '/' . $characterImage->imageFileName);
 
-        if(Config::get('lorekeeper.settings.store_masterlist_fullsizes') == 1) {
-            // Generate fullsize hash if not already generated,
-            // then save the full-sized image
-            if(!$characterImage->fullsize_hash) {
-                $characterImage->fullsize_hash = randomString(15);
-                $characterImage->save();
-            }
-
-            // Save the processed image
-            $image->save($characterImage->imagePath . '/' . $characterImage->fullsizeFileName, 100, Config::get('lorekeeper.settings.masterlist_image_format'));
-        }
-        else {
-            // Delete fullsize if it was previously created.
-            if(isset($characterImage->fullsize_hash) ? file_exists( public_path($characterImage->imageDirectory.'/'.$characterImage->fullsizeFileName)) : FALSE) unlink($characterImage->imagePath . '/' . $characterImage->fullsizeFileName);
-        }
-
-
-        $isWide = $image->width() > $image->height();
-        $size = Config::get('lorekeeper.settings.masterlist_image_dimension');
-        // Scale the largest side down to 1000px
-        $image->resize($isWide ? $size : null, $isWide ? null : $size, function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-        // Make the image be square
-        $image->resizeCanvas($isWide ? null : $image->height(), $isWide ? $image->width() : null, 'center');
-
-        // Watermark the image
-        $watermark = Image::make('images/watermarks/'.$characterImage->rarity->name.'.png');
-        //Downsize the watermark if we need to.
-        if($watermark->width() > $image->width()){
-            $watermark->resize($image->width(), null, function($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-        }
-        $image->insert($watermark, 'center');
-
-        // Save the processed image
-        $image->save($characterImage->imagePath . '/' . $characterImage->imageFileName, 100, Config::get('lorekeeper.settings.masterlist_image_format'));
-    }
 
     /**
      * Crops a thumbnail for the given image.
@@ -464,7 +413,7 @@ class CharacterManager extends Service
             // This logs all the updates made to the character
             $this->createLog($user->id, null, $character->user_id, ($character->user_id ? null : $character->owner_url), $character->id, 'Character Image Uploaded', '[#'.$image->id.']', 'character');
 
-            // If the recipient has an account, send them a notification
+            // If the recipient has an account, send them a Notifications
             if($character->user && $user->id != $character->user_id && $character->is_visible) {
                 Notifications::create('IMAGE_UPLOAD', $character->user, [
                     'character_url' => $character->url,
@@ -512,6 +461,7 @@ class CharacterManager extends Service
             $old['species'] = $image->species_id ? $image->species->displayName : null;
             $old['subtype'] = $image->subtype_id ? $image->subtype->displayName : null;
             $old['rarity'] = $image->rarity_id ? $image->rarity->displayName : null;
+            $old['is_android'] = $image->is_android;
 
             // Clear old features
             $image->features()->delete();
@@ -522,6 +472,7 @@ class CharacterManager extends Service
             $image->species_id = $data['species_id'];
             $image->subtype_id = $data['subtype_id'] ?: null;
             $image->rarity_id = $data['rarity_id'];
+            $image->is_android = isset($data['is_android']) ? 1 : 0;
             $image->save();
 
             $new = [];
@@ -529,6 +480,7 @@ class CharacterManager extends Service
             $new['species'] = $image->species_id ? $image->species->displayName : null;
             $new['subtype'] = $image->subtype_id ? $image->subtype->displayName : null;
             $new['rarity'] = $image->rarity_id ? $image->rarity->displayName : null;
+            $new['is_android'] = $image->is_android;
 
             // Character also keeps track of these features
             $image->character->rarity_id = $image->rarity_id;
@@ -675,7 +627,7 @@ class CharacterManager extends Service
             $this->cropThumbnail($image, $isMyo);
 
             // Process and save the image itself
-            if(!$isMyo) $this->processImage($image);
+            if(!$isMyo) CharacterUtility::processImage($image);
 
             // Add a log for the character
             // This logs all the updates made to the character
@@ -1273,7 +1225,7 @@ class CharacterManager extends Service
                 }
             }
 
-            // Add notifications for the old and new owners
+            // Add Notificationss for the old and new owners
             if($sender) {
                 Notifications::create('CHARACTER_SENT', $sender, [
                     'character_name' => $character->slug,
@@ -1725,7 +1677,7 @@ is_object($sender) ? $sender->id : null,
      * @param  \App\Models\User\User            $user
      * @return  \App\Models\Character\CharacterDesignUpdate|bool
      */
-    public function createDesignUpdateRequest($character, $user)
+    public function createDesignUpdateRequest($character, $user, $oldImage, $type = null)
     {
         DB::beginTransaction();
 
@@ -1740,16 +1692,22 @@ is_object($sender) ? $sender->id : null,
                 'status' => 'Draft',
                 'hash' => randomString(10),
                 'fullsize_hash' => randomString(15),
-                'update_type' => $character->is_myo_slot ? 'MYO' : 'Character',
+                'update_type' => $type ?? ($character->is_myo_slot ? 'MYO' : 'Character'),
 
-                // TODO: This will need to be adjusted with any form adjustments I make for design updates (vs design submissions)
-                // Set some data based on the character's existing stats
-                'rarity_id' => $character->image->rarity_id,
-                'species_id' => $character->image->species_id,
-                'subtype_id' => $character->image->subtype_id
+                'rarity_id' => $oldImage->rarity_id,
+                'species_id' => $oldImage->species_id,
+                'subtype_id' => $type === 'New Form' ? null : $oldImage->subtype_id,
+                // Overriding this since we aren't using it anymore to store the image id
+                'x0' => $oldImage->id
             ];
 
             $request = CharacterDesignUpdate::create($data);
+
+            $isHolo = $oldImage->species_id === 2;
+            $subtype = $isHolo ? 3 :
+                ($request->character->is_myo_slot && isset($oldImage->subtype_id) ?
+                    $oldImage->subtype_id : $request->subtype_id);
+            $isFormUpdate = $type === 'Character';
 
             $image = CharacterImage::create([
                 'character_id' => $request->id,
@@ -1759,10 +1717,33 @@ is_object($sender) ? $sender->id : null,
                 'extension' => Config::get('lorekeeper.settings.masterlist_image_format'),
 
                 'species_id' => $request->species_id,
-                'subtype_id' => ($request->character->is_myo_slot && isset($request->character->image->subtype_id)) ? $request->character->image->subtype_id : $request->subtype_id,
-                'rarity_id' => $request->rarity_id,
+                'subtype_id' => $isFormUpdate ? $oldImage->subtype_id : $subtype,
+                // Base Holo is a common rarity regardless of if it has a holoBUDDY attached
+                'rarity_id' => $isFormUpdate ? $oldImage->rarity_id : ($isHolo ? 1 : $request->rarity_id),
+                // Holos are androids by default
+                'is_android' => $isFormUpdate ? $oldImage->is_android : ($isHolo ? 1 : 0),
+                'is_design_update' => 1,
                 'sort' => 0,
             ]);
+
+            if($isFormUpdate && File::exists($oldImage->imagePath . '/' . $oldImage->imageFileName)) {
+                // For update requests, copy the pre-existing image file and credits to the new image
+                File::copy($oldImage->imagePath . '/' . $oldImage->fullsizeFileName, $image->imagePath . '/' . $image->imageFileName);
+                File::copy($oldImage->thumbnailPath . '/' . $oldImage->thumbnailFileName, $image->thumbnailPath . '/' . $image->thumbnailFileName);
+                 // Shift the image credits over to the new image
+                if(count($oldImage->designers) > 0) {
+                    $oldImage->designers->each(function($item) use($image) {
+                        $copy = $item->replicate()->fill(['character_image_id' => $image->id, 'character_type' => 'Character']);
+                        $copy->save();
+                    });
+                }
+                if(count($oldImage->artists) > 0) {
+                    $oldImage->artists->each(function($item) use($image) {
+                        $copy = $item->replicate()->fill(['character_image_id' => $image->id, 'character_type' => 'Character']);
+                        $copy->save();
+                    });
+                }
+            }
 
             // If the character is not a MYO slot, make a copy of the previous image's traits
             // as presumably, we will not want to make major modifications to them.
@@ -1770,7 +1751,14 @@ is_object($sender) ? $sender->id : null,
             // users to edit compulsory traits, so we'll only add them when the design is approved.
             if(!$character->is_myo_slot)
             {
-                foreach($character->image->features as $feature)
+                if($type === 'New Form') {
+                    $features = CharacterFeature::whereIn('character_image_id', $character->images->pluck('id'))->get()->unique('feature_id');
+                } else {
+                    // this will be what happens for a form update request
+                    $features = $oldImage->features;
+                }
+
+                foreach($features as $feature)
                 {
                     $image->features()->create([
                         'character_image_id' => $image->id,
@@ -1962,20 +1950,23 @@ is_object($sender) ? $sender->id : null,
 
         try {
             if(!(!$request->character->is_myo_slot || ($request->character->is_myo_slot && $request->character->image->species_id)) && !isset($data['species_id'])) throw new \Exception("Please select a species.");
-            if(!($request->character->is_myo_slot && $request->character->image->rarity_id) && !isset($data['rarity_id'])) throw new \Exception("Please select a rarity.");
+            if(!($request->character->is_myo_slot && $request->character->image->rarity_id) && (!isset($data['rarity_id']) && !$image->rarity_id)) throw new \Exception("Please select a rarity.");
 
-            $rarity = ($request->character->is_myo_slot && $request->character->image->rarity_id) ? $request->character->image->rarity : Rarity::find($data['rarity_id']);
-            $species = ($request->character->is_myo_slot && $request->character->image->species_id) ?
-                $request->character->image->species : (isset($request->character->image->species) ?
-                    $request->character->image->species : Species::find($data['species_id']));
-            if(isset($data['subtype_id']) && $data['subtype_id'])
-                $subtype = ($request->character->is_myo_slot && $request->character->image->subtype_id) ?
-                    $request->character->image->subtype : (isset($request->character->image->subtype) ?
-                        $request->character->image->subtype : Subtype::find($data['subtype_id']));
-            else $subtype = $request->character->image->subtype;
+            $rarity = isset($data['rarity_id']) ? Rarity::find($data['rarity_id']) : $image->rarity ?? $request->character->image->rarity;
+            if(isset($data['species_id'])) $species = Species::find($data['species_id']);
+            else if(isset($image->species)) $species = $image->species;
+            else if($request->character->is_myo_slot && $request->character->image->species_id) $species = $request->character->image->species;
+
+            if($species->id === 1) {
+                if(isset($data['subtype_id']) && $data['subtype_id']) {
+                    $subtype = Subtype::find($data['subtype_id']);
+                } else { $subtype = $request->character->image->subtype; }
+            // Do to the setup of the holoBOT tabs this is a lot more strict
+            }
+
             if(!$rarity) throw new \Exception("Invalid rarity selected.");
             if(!$species) throw new \Exception("Invalid species selected.");
-            if($subtype && $subtype->species_id != $species->id) throw new \Exception("Subtype does not match the species.");
+            if(isset($subtype) && $subtype->species_id != $species->id) throw new \Exception("Subtype does not match the species.");
 
             // Clear old features
             $image->updateFeatures()->delete();
@@ -1987,7 +1978,7 @@ is_object($sender) ? $sender->id : null,
             // Update other stats
             $image->species_id = $species->id;
             $image->rarity_id = $rarity->id;
-            $image->subtype_id = $subtype ? $subtype->id : null;
+            $image->subtype_id = isset($subtype) ? $subtype->id : $image->subtype_id;
             $request->has_features = 1;
             $image->save();
             $request->save();
@@ -2014,8 +2005,8 @@ is_object($sender) ? $sender->id : null,
 
             // Recheck and set update type, as insurance/in case of pre-existing drafts
             if($request->character->is_myo_slot)
-            $request->update_type = 'MYO';
-            else $request->update_type = 'Character';
+                $request->update_type = 'MYO';
+            else if($request->update_type === 'MYO') $request->update_type = 'Character';
             // We've done validation and all section by section,
             // so it's safe to simply set the status to Pending here
             $request->status = 'Pending';
@@ -2036,8 +2027,7 @@ is_object($sender) ? $sender->id : null,
      * @param  \App\Models\User\User                        $user
      * @return  bool
      */
-    public function approveRequest($data, $request, $user)
-    {
+    public function approveMYORequest($data, $request, $user) {
         DB::beginTransaction();
 
         try {
@@ -2045,171 +2035,379 @@ is_object($sender) ? $sender->id : null,
             if(!isset($data['character_category_id'])) throw new \Exception("Please select a character category.");
             if(!isset($data['number'])) throw new \Exception("Please enter a character number.");
             if(!isset($data['year'])) throw new \Exception("Please enter a character year.");
-            if(!isset($data['slug']) || Character::where('slug', $data['slug'])->where('id', '!=', $request->character_id)->exists()) throw new \Exception("Please enter a unique character code.");
-            if(!isset($data['holobot_slug']) || Character::where('slug', $data['holobot_slug'])->where('id', '!=', $request->character_id)->exists()) throw new \Exception("Please enter a unique character code.");
-            // Remove any added items/currency
-            // Currency has already been removed, so no action required
-            // However logs need to be added for each of these
+            if((!isset($data['slug']) || Character::where('slug', $data['slug'])->where('id', '!=', $request->character_id)->exists())) throw new \Exception("Please enter a unique character code.");
+            if(isset($request->holobotImage) && (!isset($data['holobot_slug']) || Character::where('slug', $data['holobot_slug'])->where('id', '!=', $request->character_id)->exists())) throw new \Exception("Please enter a unique holobot code.");
+
             $requestData = $request->data;
-            $inventoryManager = new InventoryManager;
-            if(isset($requestData['user']) && isset($requestData['user']['user_items'])) {
-                $stacks = $requestData['user']['user_items'];
-                foreach($requestData['user']['user_items'] as $userItemId=>$quantity) {
-                    $userItemRow = UserItem::find($userItemId);
-                    if(!$userItemRow) throw new \Exception("Cannot return an invalid item. (".$userItemId.")");
-                    if($userItemRow->update_count < $quantity) throw new \Exception("Cannot return more items than was held. (".$userItemId.")");
-                    $userItemRow->update_count -= $quantity;
-                    $userItemRow->save();
-                }
+            CharacterUtility::removeInventory(
+                $requestData,
+                $user,
+                User::find($request->user_id),
+                'MYO Design Approved',
+                $request->displayName
+            );
 
-                $staff = $user;
-                foreach($stacks as $stackId=>$quantity) {
-                    $stack = UserItem::find($stackId);
-                    $user = User::find($request->user_id);
-                    if(!$inventoryManager->debitStack($user, $request->character->is_myo_slot ? 'MYO Design Approved' : 'Character Design Updated', ['data' => 'Item used in ' . ($request->character->is_myo_slot ? 'MYO design approval' : 'Character design update') . ' (<a href="'.$request->url.'">#'.$request->id.'</a>)'], $stack, $quantity)) throw new \Exception("Failed to create log for item stack.");
-                }
-                $user = $staff;
-            }
-            $currencyManager = new CurrencyManager;
-            if(isset($requestData['user']['currencies']) && $requestData['user']['currencies'])
-            {
-                foreach($requestData['user']['currencies'] as $currencyId=>$quantity) {
-                    $currency = Currency::find($currencyId);
-                    if(!$currencyManager->createLog($request->user_id, 'User', null, null,
-                    $request->character->is_myo_slot ? 'MYO Design Approved' : 'Character Design Updated',
-                    'Used in ' . ($request->character->is_myo_slot ? 'MYO design approval' : 'character design update') . ' (<a href="'.$request->url.'">#'.$request->id.'</a>)',
-                    $currencyId, $quantity))
-                        throw new \Exception("Failed to create log for user currency.");
-                }
-            }
-            if(isset($requestData['character']['currencies']) && $requestData['character']['currencies'])
-            {
-                foreach($requestData['character']['currencies'] as $currencyId=>$quantity) {
-                    $currency = Currency::find($currencyId);
-                    if(!$currencyManager->createLog($request->character_id, 'Character', null, null,
-                    $request->character->is_myo_slot ? 'MYO Design Approved' : 'Character Design Updated',
-                    'Used in ' . ($request->character->is_myo_slot ? 'MYO design approval' : 'character design update') . ' (<a href="'.$request->url.'">#'.$request->id.'</a>)',
-                    $currencyId, $quantity))
-                        throw new \Exception("Failed to create log for character currency.");
-                }
-            }
+            CharacterUtility::logCurrencyRemoval(
+                $request->user_id,
+                'MYO Design Approved',
+                $request->displayName
+            );
 
+            // Save the base digital form that we have to have, because it's a MYO request
+            CharacterUtility::moveFormToCharacter($request->image, $request->character_id);
+
+            // Since this is a MYO, add any compulsory traits it had to the main form
+            $features = $request->character->image->features;
+            CharacterUtility::handleCharacterFeatures($request->image, $features->pluck('id'), $features->pluck('data'));
+
+            // Save the android form if it exists and should be submitted
+            if($request->hasAndroidData) CharacterUtility::moveFormToCharacter($request->androidImage, $request->character_id);
+            // Create the holobot if it exists
             if($request->holobotImage) {
-                $holobotImage = $request->holobotImage;
-                $holobot = Character::create([
-                    'character_image_id' => $holobotImage->id,
-                    'character_category_id' => $data['holobot_category_id'],
-                    'rarity_id' => $request->holobotImage->rarity->id,
-                    'user_id' => $request->character->user->id,
-                    'number' => $data['holobot_number'],
-                    'year' => $data['year'],
-                    'slug' => $data['holobot_slug'],
-                    'is_visible' => 1,
-                    'is_myo_slot' => 0
-                ]);
-                $holobot->profile()->create([]);
-
-                // Shift things over to the new character
-                $holobotImage->update(['character_id' => $holobot->id, 'is_design_update' => 0]);
-                $holobotImage->updateFeatures()->update(['character_type' => 'Character']);
-                $this->processImage($holobotImage);
-
-                // Bind the holobot to the main character
-                CharacterLink::create([
-                    'parent_id' => $request->character->id,
-                    'child_id' => $holobot->id
-                ]);
+                CharacterUtility::createAttachedHolobot(
+                    $request->holobotImage,
+                    $data,
+                    $request->character->id,
+                    $request->character->user_id
+                );
             }
-
-
-            $image = $request->image;
-            $androidImage = $request->androidImage;
-            $image->update(['character_id' => $request->character_id, 'is_design_update' => 0]);
-            $androidImage->update(['character_id' => $request->character_id, 'is_design_update' => 0]);
-
-            // Add the compulsory features
-            if($request->character->is_myo_slot) {
-                $features = $request->character->image->features;
-                CharacterUtility::handleCharacterFeatures($image->id, $features->pluck('id'), $features->pluck('data'));
-                CharacterUtility::handleCharacterFeatures($androidImage->id, $features->pluck('id'), $features->pluck('data'));
-            }
-
-            // Shift the image features over to the new image
-            $image->updateFeatures()->update(['character_type' => 'Character']);
-            $androidImage->updateFeatures()->update(['character_type' => 'Character']);
-
-            // Process and save the image
-            $this->processImage($image);
-            $this->processImage($androidImage);
 
             // Set character data and other info such as cooldown time, resell cost and terms etc.
             // since those might be updated with the new design update
-            if(isset($data['transferrable_at'])) $request->character->transferrable_at = $data['transferrable_at'];
-            $request->character->character_category_id = $data['character_category_id'];
-            $request->character->number = $data['number'];
-            $request->character->year = $data['year'];
-            $request->character->slug = $data['slug'];
-            $request->character->rarity_id = $request->rarity_id;
+            CharacterUtility::staffDataUpdates($data, $request->character);
 
-            $request->character->description = $data['description'];
-            $request->character->parsed_description = parse($data['description']);
+            // Save the existing active image
+            $myoIconImage = $request->character->image;
 
-            $request->character->is_sellable = isset($data['is_sellable']);
-            $request->character->is_tradeable = isset($data['is_tradeable']);
-            $request->character->is_giftable = isset($data['is_giftable']);
-            $request->character->sale_value = isset($data['sale_value']) ? $data['sale_value'] : 0;
+            // Set new image as active
+            $request->character->character_image_id = $request->image->id;
 
-            // Invalidate old image if desired
-            if(isset($data['invalidate_old']))
-            {
-                $request->character->image->is_valid = 0;
-                $request->character->image->save();
-            }
+            // Log that the design was approved
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, 'MYO Design Approved', '[#'.$request->image->id.']', 'character');
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, 'MYO Design Approved', '[#'.$request->image->id.']', 'user');
 
-            // Note old image to delete it
-            if ($request->character->is_myo_slot) {
-                $oldImage = $request->character->image;
-            }
-
-            // Set new image if desired
-            if(isset($data['set_active']) || $request->character->is_myo_slot)
-            {
-                $request->character->character_image_id = $image->id;
-            }
-
-            // Final recheck and setting of update type, as insurance
-            if($request->character->is_myo_slot)
-                $request->update_type = 'MYO';
-            else $request->update_type = 'Character';
-            $request->save();
-            $request->character->save();
-
-            // Add a log for the character and user
-            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, $request->update_type == 'MYO' ? 'MYO Design Approved' : 'Character Design Updated', '[#'.$image->id.']', 'character');
-            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, $request->update_type == 'MYO' ? 'MYO Design Approved' : 'Character Design Updated', '[#'.$image->id.']', 'user');
-
-            // If this is for a MYO, set user's FTO status and the MYO status of the slot
+            // Set user's FTO status and the MYO status of the slot
             // and clear the character's name
-            if($request->character->is_myo_slot)
-            {
-                if(Config::get('lorekeeper.settings.clear_myo_slot_name_on_approval')) $request->character->name = null;
-                $request->character->is_myo_slot = 0;
-                $request->user->settings->is_fto = 0;
-                $request->user->settings->save();
-
-                if(isset($oldImage)) {
-                    // Not sure why it's like this but ok
-                    $characterManager = new CharacterManager;
-                    if (!$characterManager->deleteImage($oldImage, $user, true)) {
-                        foreach ($characterManager->errors()->getMessages()['error'] as $error) {
-                            flash($error)->error();
-                        }
-                        throw new \Exception('Failed to delete MYO image.');
-                    }
-                }
-            }
+            $request->character->name = null;
+            $request->character->is_myo_slot = 0;
+            $request->user->settings->is_fto = 0;
+            $request->user->settings->save();
             $request->character->save();
 
+            // Delete the old image
+            CharacterUtility::deleteMYOImage($myoIconImage, $user);
+
+
+            // Set status to approved
+            $request->staff_id = $user->id;
+            $request->status = 'Approved';
+            $request->save();
+
+            // Notify the user
+            Notifications::create('DESIGN_APPROVED', $request->user, [
+                'design_url' => $request->url,
+                'character_url' => $request->character->url,
+                'name' => $request->character->fullName
+            ]);
+
+            // Notify bookmarkers
+            $request->character->notifyBookmarkers('BOOKMARK_IMAGE');
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+
+
+    public function approveHoloMYORequest($data, $request, $user) {
+        DB::beginTransaction();
+
+        try {
+            if($request->status != 'Pending') throw new \Exception("This request cannot be processed.");
+            if(!isset($data['character_category_id'])) throw new \Exception("Please select a character category.");
+            if(!isset($data['number'])) throw new \Exception("Please enter a character number.");
+            if(!isset($data['year'])) throw new \Exception("Please enter a character year.");
+            if((!isset($data['slug']) || Character::where('slug', $data['slug'])->where('id', '!=', $request->character_id)->exists())) throw new \Exception("Please enter a unique character code.");
+
+            $requestData = $request->data;
+            CharacterUtility::removeInventory(
+                $requestData,
+                $user,
+                User::find($request->user_id),
+                'MYO Design Approved',
+                $request->displayName
+            );
+
+            CharacterUtility::logCurrencyRemoval(
+                $request->user_id,
+                'MYO Design Approved',
+                $request->displayName
+            );
+
+            // Save the main holobot form
+            CharacterUtility::moveFormToCharacter($request->holobotImage, $request->character_id);
+
+            // Since this is a MYO, add any compulsory traits it had to the main form
+            $features = $request->character->image->features;
+            CharacterUtility::handleCharacterFeatures($request->holobotImage, $features->pluck('id'), $features->pluck('data'));
+
+            // Save the holobuddy form if it exists and should be submitted
+            if($request->hasHolobuddyData) CharacterUtility::moveFormToCharacter($request->holobuddyImage, $request->character_id);
+
+            // Set character data and other info such as cooldown time, resell cost and terms etc.
+            // since those might be updated with the new design update
+            CharacterUtility::staffDataUpdates($data, $request->character);
+
+            // Save the existing active image
+            $myoIconImage = $request->character->image;
+
+            // Set new image as active
+            $request->character->character_image_id = $request->holobotImage->id;
+
+            // Log that the design was approved
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, 'MYO Design Approved', '[#'.$request->holobotImage->id.']', 'character');
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, 'MYO Design Approved', '[#'.$request->holobotImage->id.']', 'user');
+
+            // Set user's FTO status and the MYO status of the slot
+            // and clear the character's name
+            $request->character->name = null;
+            $request->character->is_myo_slot = 0;
+            $request->user->settings->is_fto = 0;
+            $request->user->settings->save();
+            $request->character->save();
+
+            // Delete the old image
+            CharacterUtility::deleteMYOImage($myoIconImage, $user);
+
+
+            // Set status to approved
+            $request->staff_id = $user->id;
+            $request->status = 'Approved';
+            $request->save();
+
+            // Notify the user
+            Notifications::create('DESIGN_APPROVED', $request->user, [
+                'design_url' => $request->url,
+                'character_url' => $request->character->url,
+                'name' => $request->character->fullName
+            ]);
+
+            // Notify bookmarkers
+            $request->character->notifyBookmarkers('BOOKMARK_IMAGE');
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /*
+    START: Build Supplemental Images
+        1. New Table for images - should be a trimmed down version of the current image table
+        2. `form_id` that will be the image it's associated to
+        3. Update form page to have a multi-image uploader for supplemental images - they should just get associated to the image and then transfer with the image with no extra code on submission
+            -- will need an attribute call on CharacterImage that returns both the supplemental images and the main image as a collection but also one for just the supplemental images probably
+            -- make sure it works for updating a form and adding a new form and a new MYO
+        4. Update Character Image page to look like TH Flat folder view for the supplemental images (plus main image) - should give modal of bigger view of each
+        5. Need admin button on the character image page for adding a supplemental image manually
+    */
+
+    public function approveFormRequest($data, $request, $user) {
+        DB::beginTransaction();
+
+        try {
+            if($request->status != 'Pending') throw new \Exception("This request cannot be processed.");
+            if(isset($request->holobotImage) && (!isset($data['holobot_slug']) || Character::where('slug', $data['holobot_slug'])->where('id', '!=', $request->character_id)->exists())) throw new \Exception("Please enter a unique holobot code.");
+
+            $requestData = $request->data;
+            CharacterUtility::removeInventory(
+                $requestData,
+                $user,
+                User::find($request->user_id),
+                'New Form Design Approved',
+                $request->displayName
+            );
+
+            CharacterUtility::logCurrencyRemoval(
+                $request->user_id,
+                'New Form Design Approved',
+                $request->displayName
+            );
+
+            // Save the applicable form to the character
+            if($request->hasDigitalData) CharacterUtility::moveFormToCharacter($request->image, $request->character_id);
+            if($request->hasAndroidData) CharacterUtility::moveFormToCharacter($request->androidImage, $request->character_id);
+            // Create the holobot if it exists
+            if($request->holobotImage) {
+                CharacterUtility::createAttachedHolobot(
+                    $request->holobotImage,
+                    $data,
+                    $request->character->id,
+                    $request->character->user_id
+                );
+            }
+
+            // Set character data and other info such as cooldown time, resell cost and terms etc.
+            // since those might be updated with the new design update
+            CharacterUtility::staffDataUpdates($data, $request->character);
+
+            $image = $request->hasDigitalData ? $request->image : $request->androidImage;
+            // Log that the design was approved
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, 'New Form Design Approved', '[#'.$image->id.']', 'character');
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, 'New Form Design Approved', '[#'.$image->id.']', 'user');
+
+            // Save things
+            $request->user->settings->save();
+            $request->character->save();
+
+            // Set status to approved
+            $request->staff_id = $user->id;
+            $request->status = 'Approved';
+            $request->save();
+
+            // Notify the user
+            Notifications::create('DESIGN_APPROVED', $request->user, [
+                'design_url' => $request->url,
+                'character_url' => $request->character->url,
+                'name' => $request->character->fullName
+            ]);
+
+            // Notify bookmarkers
+            $request->character->notifyBookmarkers('BOOKMARK_IMAGE');
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    public function approveHoloFormRequest($data, $request, $user) {
+        DB::beginTransaction();
+
+        try {
+            if($request->status != 'Pending') throw new \Exception("This request cannot be processed.");
+
+            $requestData = $request->data;
+            CharacterUtility::removeInventory(
+                $requestData,
+                $user,
+                User::find($request->user_id),
+                'New Form Design Approved',
+                $request->displayName
+            );
+
+            CharacterUtility::logCurrencyRemoval(
+                $request->user_id,
+                'New Form Design Approved',
+                $request->displayName
+            );
+
+            // Save whichever form makes sense
+            if($request->hasHolobotData) CharacterUtility::moveFormToCharacter($request->holobotImage, $request->character_id);
+            if($request->hasHolobuddyData) CharacterUtility::moveFormToCharacter($request->holobuddyImage, $request->character_id);
+
+            // Set character data and other info such as cooldown time, resell cost and terms etc.
+            // since those might be updated with the new design update
+            CharacterUtility::staffDataUpdates($data, $request->character);
+
+            $image = $request->hasHolobotData ? $request->holobotImage : $request->holobuddyImage;
+            // Log that the design was approved
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, 'New Form Design Approved', '[#'.$image->id.']', 'character');
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, 'New Form Design Approved', '[#'.$image->id.']', 'user');
+
+            // Save things
+            $request->user->settings->save();
+            $request->character->save();
+
+            // Set status to approved
+            $request->staff_id = $user->id;
+            $request->status = 'Approved';
+            $request->save();
+
+            // Notify the user
+            Notifications::create('DESIGN_APPROVED', $request->user, [
+                'design_url' => $request->url,
+                'character_url' => $request->character->url,
+                'name' => $request->character->fullName
+            ]);
+
+            // Notify bookmarkers
+            $request->character->notifyBookmarkers('BOOKMARK_IMAGE');
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    public function approveFormUpdateRequest($data, $request, $user) {
+        DB::beginTransaction();
+
+        try {
+            $newImage = $request->image ?? $request->androidImage ?? $request->holobotImage ?? $request->holobuddyImage;
+            $existingForm = CharacterImage::find($request->x0);
+
+            // Process image file and move it
+            // Remove old versions so that images in various filetypes don't pile up
+            unlink($existingForm->imagePath . '/' . $existingForm->imageFileName);
+            if(isset($existingForm->fullsize_hash) ? file_exists( public_path($existingForm->imageDirectory.'/'.$existingForm->fullsizeFileName)) : FALSE) unlink($existingForm->imagePath . '/' . $existingForm->fullsizeFileName);
+            unlink($existingForm->imagePath . '/' . $existingForm->thumbnailFileName);
+
+            // Set the image's extension in the DB as defined in settings
+            $existingForm->extension = Config::get('lorekeeper.settings.masterlist_image_format');
+            $existingForm->save();
+
+            // Move image into the existing form
+            File::move($newImage->imagePath . '/' . $newImage->imageFileName, $existingForm->imagePath . '/' . $existingForm->imageFileName);
+            File::move($newImage->thumbnailPath . '/' . $newImage->thumbnailFileName, $existingForm->thumbnailPath . '/' . $existingForm->thumbnailFileName);
+
+            // Process and save the image itself
+            CharacterUtility::processImage($existingForm);
+
+            // Update species, subtype, and rarity
+            $existingForm->species_id = $newImage->species_id;
+            $existingForm->subtype_id = $newImage->subtype_id;
+            $existingForm->rarity_id = $newImage->rarity_id;
+
+            // Move Features
+            $existingForm->features()->delete();
+            $newFeatures = $newImage->updateFeatures;
+            CharacterUtility::handleCharacterFeatures($existingForm->id, $newFeatures->pluck('id'), $newFeatures->pluck('data'));
+
+            // Move Credits
+            $existingForm->designers()->delete();
+            $existingForm->artists()->delete();
+            if(count($newImage->designers) > 0) {
+                $newImage->designers->each(function($item) use($existingForm) {
+                    $copy = $item->replicate()->fill(['character_image_id' => $existingForm->id, 'character_type' => 'Character']);
+                    $copy->save();
+                });
+            }
+            if(count($newImage->artists) > 0) {
+                $newImage->artists->each(function($item) use($existingForm) {
+                    $copy = $item->replicate()->fill(['character_image_id' => $existingForm->id, 'character_type' => 'Character']);
+                    $copy->save();
+                });
+            }
+
+            $existingForm->save();
+
+            // Set character data and other info such as cooldown time, resell cost and terms etc.
+            // since those might be updated with the new design update
+            CharacterUtility::staffDataUpdates($data, $request->character);
+
+            // Log that the design was approved
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, 'Form Update Approved', '[#'.$existingForm->id.']', 'character');
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, 'Form Update Approved', '[#'.$existingForm->id.']', 'user');
+
+            // Save things
+            $request->character->save();
             // Set status to approved
             $request->staff_id = $user->id;
             $request->status = 'Approved';
@@ -2243,7 +2441,7 @@ is_object($sender) ? $sender->id : null,
      * @param  bool                                         $forceReject
      * @return  bool
      */
-    public function rejectRequest($data, $request, $user, $forceReject = false, $notification = true)
+    public function rejectRequest($data, $request, $user, $forceReject = false, $Notifications = true)
     {
         DB::beginTransaction();
 
@@ -2290,7 +2488,7 @@ is_object($sender) ? $sender->id : null,
             $request->status = 'Rejected';
             $request->save();
 
-            if($notification)
+            if($Notifications)
             {
                 // Notify the user
                 Notifications::create('DESIGN_REJECTED', $request->user, [

@@ -281,6 +281,11 @@ class CharacterImage extends Model
 
     public function getFormTypeAttribute()
     {
-        return '<a href="'.url('world/forms-overview').'">'.($this->is_android ? 'Android' : 'Digital').'</a>';
+        $formType = 'Digital';
+        if($this->species_id === 1 && $this->is_android) $formType = 'Android';
+        else if($this->species_id !== 1 && $this->subtype) $formType = $this->subtype->name;
+        else if($this->character->is_myo_slot) $formType = 'MYO';
+
+        return '<a href="'.url('world/forms-overview').'">'.$formType.'</a>';
     }
 }

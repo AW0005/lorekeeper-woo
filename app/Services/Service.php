@@ -184,6 +184,7 @@ abstract class Service {
     // 3. Nothing happens (no changes required)
     public function handleImage($image, $dir, $name, $oldName = null, $copy = false)
     {
+
         if(!$oldName && !$image) return true;
 
         if(!$image)
@@ -223,7 +224,6 @@ abstract class Service {
                 $this->setError('error', 'Failed to create image directory.');
                 return false;
             }
-            chmod($dir, 0755);
         }
 
         if($copy) File::copy($image, $dir . '/' . $name);

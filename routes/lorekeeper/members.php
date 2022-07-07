@@ -110,6 +110,7 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function() 
     Route::post('{slug}/transfer/{id}/cancel', 'CharacterController@postCancelTransfer');
 
     Route::post('{slug}/approval', 'CharacterController@postCharacterApproval');
+    Route::post('{slug}/update', 'CharacterController@postCharacterUpdate');
     Route::get('{slug}/approval', 'CharacterController@getCharacterApproval');
 });
 Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function() {
@@ -182,6 +183,9 @@ Route::group(['prefix' => 'designs', 'namespace' => 'Characters'], function() {
 
     Route::get('{id}/holobot', 'DesignController@getHolobot');
     Route::post('{id}/holobot', 'DesignController@postHolobot');
+
+    Route::get('{id}/holobuddy', 'DesignController@getHolobuddy');
+    Route::post('{id}/holobuddy', 'DesignController@postHolobuddy');
 
     Route::get('{id}/addons', 'DesignController@getAddons');
     Route::post('{id}/addons', 'DesignController@postAddons');

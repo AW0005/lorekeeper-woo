@@ -15,6 +15,11 @@
     </div>
 
     <div class="form-group">
+        {!! Form::checkbox('is_android', 1, $image->is_android ?? 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+        <span class="ml-2">{!! Form::label('Is Android / Holo') !!}</span>
+    </div>
+
+    <div class="form-group">
         {!! Form::label('Traits') !!}
         <div id="featureList">
             @foreach($image->features as $feature)

@@ -24,7 +24,7 @@
             </li>
         @endif
     </ul>
-    <div class="character-bio tab-content pt-3 w-100">
+    <div class="character-bio tab-content pt-3 w-100 h-100">
         @if(!$image->character->is_myo_slot && !$image->is_valid)
             <div class="alert alert-danger">
                 This version of this character is outdated, and only noted here for recordkeeping purposes. Do not use as an official reference.

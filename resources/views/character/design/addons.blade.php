@@ -15,10 +15,6 @@
         @include('widgets._inventory_select', ['user' => Auth::user(), 'inventory' => $inventory, 'categories' => $categories, 'selected' => $request->inventory])
         @include('widgets._bank_select', ['owner' => Auth::user(), 'selected' => $request->userBank])
 
-        @if(!$request->character->is_myo_slot)
-            @include('widgets._bank_select', ['owner' => $request->character, 'selected' => $request->characterBank])
-        @endif
-
         <div class="text-right">
             {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
         </div>

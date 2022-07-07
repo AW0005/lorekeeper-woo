@@ -2,7 +2,6 @@
 
 namespace App\Models\Character;
 
-use Config;
 use DB;
 use App\Models\Model;
 use App\Models\Currency\Currency;
@@ -106,7 +105,15 @@ class CharacterDesignUpdate extends Model
      */
     public function holobotImage()
     {
-        return $this->hasOne('App\Models\Character\CharacterImage', 'character_id')->images()->where('is_design_update', 1)->where('species_id', 2);
+        return $this->hasOne('App\Models\Character\CharacterImage', 'character_id')->images()->where('is_design_update', 1)->where('species_id', 2)->where('subtype_id', 3);
+    }
+
+    /**
+     * Get the associated holobuddy image
+     */
+    public function holobuddyImage()
+    {
+        return $this->hasOne('App\Models\Character\CharacterImage', 'character_id')->images()->where('is_design_update', 1)->where('species_id', 2)->where('subtype_id', 4);
     }
 
     /**
@@ -213,7 +220,7 @@ class CharacterDesignUpdate extends Model
      */
     public function scopeCharacters($query)
     {
-        $query->select('design_updates.*')->where('update_type', 'Character');
+        $query->select('design_updates.*')->whereIn('update_type', ['Character', 'New Form']);
     }
 
     /**********************************************************************************************
@@ -252,6 +259,15 @@ class CharacterDesignUpdate extends Model
     {
         $inventoryItem = UserItem::whereIn('id', array_keys($this->inventory))->first();
         return isset($inventoryItem) ? $inventoryItem->item->name === 'Android' : false;
+    }
+
+    /**
+     * Get whether the user has attached the android item
+    */
+    public function gethasBuddyItemAttribute()
+    {
+        $inventoryItem = UserItem::whereIn('id', array_keys($this->inventory))->first();
+        return isset($inventoryItem) ? $inventoryItem->item->name === 'Holo Upgrade' : false;
     }
 
     /**
@@ -375,6 +391,20 @@ class CharacterDesignUpdate extends Model
     }
 
 
+        /**
+     * Get whether the android tab is completed
+    */
+    public function getHasDigitalDataAttribute()
+    {
+        $image = $this->image;
+        if(!isset($image)) return false;
+
+        $hasSavedImage = File::exists($image->imagePath . '/' . $image->imageFileName);
+        if(!$hasSavedImage) return false;
+
+        return true;
+    }
+
     /**
      * Get whether the android tab is completed
     */
@@ -400,7 +430,8 @@ class CharacterDesignUpdate extends Model
     {
         $inventoryItem = UserItem::whereIn('id', array_keys($this->inventory))->first();
         $hasAndroidItem = isset($inventoryItem) ? $inventoryItem->item->name === 'Android' : false;
-        if(!isset($hasAndroidItem)) return false;
+        // Android item only applies if this isn't a holobot myo
+        if($this->character->image->species_id === 1 && !isset($hasAndroidItem)) return false;
 
         $holobotImage = $this->holobotImage;
         if(!isset($holobotImage)) return false;
@@ -409,6 +440,25 @@ class CharacterDesignUpdate extends Model
         if(!$hasSavedImage) return false;
 
         return true;
+    }
+
+    /**
+     * Get whether the holobot tab is completed
+    */
+    public function getHasHolobuddyDataAttribute()
+    {
+        $holobuddyImage = $this->holobuddyImage;
+        if(!isset($holobuddyImage)) return false;
+
+        $hasSavedImage = File::exists($holobuddyImage->imagePath . '/' . $holobuddyImage->imageFileName);
+        if(!$hasSavedImage) return false;
+
+        return true;
+    }
+
+    public function getDisplayNameAttribute()
+    {
+        return '<a href="'.$this->url.'">#'.$this->id.'</a>';
     }
 
     /**********************************************************************************************

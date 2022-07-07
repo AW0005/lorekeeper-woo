@@ -279,7 +279,7 @@ class MyoController extends Controller
     {
         if(!Auth::check() || $this->character->user_id != Auth::user()->id) abort(404);
 
-        if($request = $service->createDesignUpdateRequest($this->character, Auth::user())) {
+        if($request = $service->createDesignUpdateRequest($this->character, Auth::user(), $this->character->image)) {
             flash('Successfully created new MYO slot approval draft.')->success();
             return redirect()->to($request->url);
         }

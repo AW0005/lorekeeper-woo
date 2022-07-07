@@ -7,22 +7,9 @@
 
 @include('character.design._header', ['request' => $request])
 
-
-{{--
-TODO:
-TODO:
-TODO:
-TODO:
-
-Design Updates that are adding a new form will NEED to mark which features / traits
-are already on any of the old forms, for ease of approval
-since only *new* features will require trait items
-
---}}
-
 <h2>Masterlist Image</h2>
 @if($request -> status != 'Approved')
-{!! Form::open(['url' => 'designs/'.$request->id.($image->is_android ? '/android-form' : ($image->species_id == 2 ? '/holobot' : '/digital-form')), 'files' => true]) !!}
+{!! Form::open(['url' => 'designs/'.$request->id.'/'.$post, 'files' => true]) !!}
 @endif
 
 @if($has_image)
@@ -167,7 +154,13 @@ since only *new* features will require trait items
 
     <h2 class="mt-5">Traits</h2>
     <p>Select the traits for the {{ $request->character->is_myo_slot ? 'created' : 'updated' }} character.
-    @if($request->character->is_myo_slot) <br />Some traits may be restricted - you cannot change them.</p>@endif
+        @if($request->update_type === 'New Form')
+        <p><b>
+            New forms may use any of the pre-existing traits from other forms on the character, which have been prepopulated here.
+            Feel free to keep or remove these traits as you prefer.
+        </b></p>
+        @endif
+        @if($request->character->is_myo_slot) <br />Some traits may be restricted - you cannot change them.</p>@endif
         <div class="form-group">
             {!! Form::label('species_id', 'Species') !!}
             @if(!$request->character->is_myoSlot || ($request->character->is_myo_slot && $request->character->image->species_id))
@@ -180,8 +173,10 @@ since only *new* features will require trait items
 
         <div class="form-group">
             {!! Form::label('subtype_id', 'Species Subtype') !!}
-            @if(!$request->character->is_myo_slot || ($request->character->is_myo_slot && $request->character->image->subtype_id))
+            @if(($request->character->is_myo_slot && $request->character->image->subtype_id))
                 <div class="alert alert-secondary">{!! $request->character->image->subtype->displayName !!}</div>
+            @elseif($image->species_id === 2)
+                <div class="alert alert-secondary">{!! $image->subtype->displayName !!}</div>
             @else
                 <div id="subtypes">
                     {!! Form::select('subtype_id', $subtypes, $image->subtype_id, ['class' => 'form-control', 'id' => 'subtype']) !!}
@@ -192,11 +187,11 @@ since only *new* features will require trait items
 
         <div class="form-group">
             {!! Form::label('rarity_id', 'Character Rarity') !!}
-            {{-- @if($request->character->is_myo_slot && $request->character->image->rarity_id)
-                <div class="alert alert-secondary">{!! $request->character->image->rarity->displayName !!}</div>
-            @else --}}
+            @if($image->species_id === 2)
+                <div class="alert alert-secondary">{!! $image->rarity->displayName !!}</div>
+            @else
                 {!! Form::select('rarity_id', $rarities, $image->rarity_id, ['class' => 'form-control', 'id' => 'rarity']) !!}
-            {{-- @endif --}}
+            @endif
         </div>
 
         <div class="form-group">

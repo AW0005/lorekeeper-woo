@@ -654,7 +654,29 @@ class CharacterController extends Controller
     {
         if(!Auth::check() || $this->character->user_id != Auth::user()->id) abort(404);
 
-        if($request = $service->createDesignUpdateRequest($this->character, Auth::user())) {
+        if($request = $service->createDesignUpdateRequest($this->character, Auth::user(), $this->character->image, 'New Form')) {
+            flash('Successfully created new design update request draft.')->success();
+            return redirect()->to($request->url);
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Opens a new design update approval request for a character.
+     *
+     * @param  App\Services\CharacterManager  $service
+     * @param  string                         $slug
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCharacterUpdate(Request $request, $slug, CharacterManager $service)
+    {
+        $form = $this->character->images->where('id', $request->all()['form_id'])->first();
+        if(!Auth::check() || $this->character->user_id != Auth::user()->id) abort(404);
+
+        if($request = $service->createDesignUpdateRequest($this->character, Auth::user(), $form, 'Character')) {
             flash('Successfully created new design update request draft.')->success();
             return redirect()->to($request->url);
         }
