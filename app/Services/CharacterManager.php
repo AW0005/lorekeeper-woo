@@ -2331,12 +2331,6 @@ is_object($sender) ? $sender->id : null,
         return $this->rollbackReturn(false);
     }
 
-    /*
-    START: Build Supplemental Images
-        5. Need admin button on the character image page for adding a supplemental image manually
-            -- will also need to move the add image button as an add form button to somewhere that makes sense
-    */
-
     public function approveFormRequest($data, $request, $user) {
         DB::beginTransaction();
 
