@@ -2,11 +2,9 @@
 
 namespace App\Models\Character;
 
-use Config;
-use DB;
+use Illuminate\Support\Facades\DB;
 use App\Models\Model;
 use App\Models\Feature\FeatureCategory;
-use App\Models\Character\CharacterCategory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CharacterImage extends Model
@@ -19,7 +17,7 @@ class CharacterImage extends Model
      * @var array
      */
     protected $fillable = [
-        'character_id', 'user_id', 'species_id', 'subtype_id', 'rarity_id', 'url',
+        'character_id', 'species_id', 'subtype_id', 'rarity_id', 'url',
         'extension', 'use_cropper', 'hash', 'fullsize_hash', 'sort',
         'x0', 'x1', 'y0', 'y1',
         'description', 'parsed_description',
@@ -133,7 +131,7 @@ class CharacterImage extends Model
      */
     public function creators()
     {
-        return $this->hasMany('App\Models\Character\CharacterImageCreator', 'character_image_id');
+        return $this->hasMany('App\Models\Character\CharacterImageCreator', 'character_image_id')->where('character_type', 'Character');
     }
 
     /**
@@ -150,6 +148,11 @@ class CharacterImage extends Model
     public function artists()
     {
         return $this->hasMany('App\Models\Character\CharacterImageCreator', 'character_image_id')->where('type', 'Artist')->where('character_type', 'Character');
+    }
+
+    public function refImages()
+    {
+        return $this->hasMany('App\Models\Character\RefImage', 'image_id');
     }
 
     /**********************************************************************************************

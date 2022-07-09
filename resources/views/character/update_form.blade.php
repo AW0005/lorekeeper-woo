@@ -39,22 +39,21 @@
     Click on the form you wish to update and hit the submit button to open a request.
 </p>
 {!! Form::open(['url' => 'character/'.$character->slug.'/update']) !!}
-<ul class="row nav image-nav mb-1 no-gutters w-100">
-    @foreach($character->images as $displayImage)
-        <li class="col-2 text-center nav-item" data-id="{{ $displayImage->id }}">
-            <a id="{{ $displayImage->id }}" href="#image-{{ $displayImage->id }}" class="tab-trigger">
-                <img src="{{ $displayImage->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $displayImage->character->fullName }}"/>
-            </a>
-            <div class="form-type">{!! $displayImage->formType !!}</div>
-        </li>
-    @endforeach
-</ul>
-<input class="hide" name="form_id" id="form_id" type="text" />
-{{--  {{ $displayImage->id == $image->id ? 'active' : '' }} --}}
-    <div class="text-right">
-        {!! Form::submit('Create Request for Update', ['class' => 'btn btn-primary']) !!}
+    <ul class="row nav image-nav mb-1 no-gutters w-100">
+        @foreach($character->images as $displayImage)
+            <li class="col-2 text-center nav-item" data-id="{{ $displayImage->id }}">
+                <a id="{{ $displayImage->id }}" href="#image-{{ $displayImage->id }}" class="tab-trigger">
+                    <img src="{{ $displayImage->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $displayImage->character->fullName }}"/>
+                </a>
+                <div class="form-type">{!! $displayImage->formType !!}</div>
+            </li>
+        @endforeach
+    </ul>
+    <input class="hide" name="form_id" id="form_id" type="text" />
+    <div class="text-right form_submit">
+        {!! Form::submit('Create Request for Update', ['class' => 'btn btn-primary', 'disabled' => true]) !!}
     </div>
-    {!! Form::close() !!}
+{!! Form::close() !!}
 @endif
 @endsection
 
@@ -66,6 +65,7 @@
                 $('.tab-trigger').removeClass('active');
                 $(e.currentTarget).addClass('active');
                 $('#form_id').val(e.currentTarget.getAttribute('id'));
+                $('.form_submit input').removeAttr('disabled');
             })
         });
     </script>

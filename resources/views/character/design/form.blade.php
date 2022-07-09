@@ -59,10 +59,9 @@
     @endif
         @if($request->status == 'Draft' && $request->user_id == Auth::user()->id)
             <div class="form-group">
-                {!! Form::label('Image') !!} {!! add_help('This is the image that will be used on the masterlist. Note that the image is not protected in any way, so take precautions to avoid art/design theft.') !!}
+                {!! Form::label('Image') !!} {!! add_help('This is the image that will be used on the masterlist.') !!}
                 <div>{!! Form::file('image', ['id' => 'mainImage']) !!}</div>
             </div>
-
         </div>
         </div>
         @else
@@ -151,6 +150,70 @@
                 <a href="#" class="add-artist btn btn-link mb-2" data-toggle="tooltip" title="Add another artist">+</a>
             </div>
         </div>
+
+        <h3 class="mb-2 mt-5"><a data-toggle="collapse" href="#ref-images" aria-expanded="true">Additional Images <i class="fas fa-angle-down"></i></a></h3>
+        <div class="collapse show mb-5" id="ref-images">
+            <p>These are additional reference images that you would like to attach the character. They will show up in the Character's image page. After initial upload of the images, image credits can be specified. </p>
+            <p>This section can be collapsed to save space.</p>
+            <div class="form-group">
+                {!! Form::label('Additional Ref Images') !!}
+                <div>{!! Form::file('ref_images[]', ['multiple' => true, 'id' => 'mainImage']) !!}</div>
+            </div>
+            @if(count($image->refImages))
+            <ul class="row nav image-nav mb-1 w-100">
+                @foreach($image->refImages as $displayImage)
+                    <li class="col-sm-6 col-12 text-center nav-item" data-id="{{ $displayImage->id }}">
+                        <div class="d-flex justify-content-center">
+                            <a style="margin-right: -26px; z-index: 2;" href="#" class="delete-ref-image text-danger" data-toggle="tooltip" title="Remove Image"  data-ref-id="{{ $displayImage->id }}"><i class="fas fa-times-circle"></i></a>
+                            <a id="thumbnail-{{ $displayImage->id }}" href="{{ $displayImage->imageUrl }}">
+                                <img src="{{ $displayImage->thumbnailUrl }}" class="img-thumbnail" />
+                            </a>
+                        </div>
+                        <div class="form-group">
+                        {!! Form::label('Artist(s)') !!}
+                        <div id="ref_artistList_{{ $displayImage->id }}" class="text-left">
+                            <?php $artistCount = count($displayImage->artists); ?>
+                            @foreach($displayImage->artists as $count => $artist)
+                                <div class="mb-2 d-flex border-bottom pb-2">
+                                    <div class="mr-2">
+                                        {!! Form::select('ref_credits['.$displayImage->id.'][ref_artist_id]['.$artist->id.']', $users, $artist->user_id, ['class'=> 'form-control mb-1 selectize', 'placeholder' => 'Select an Artist']) !!}
+                                        {!! Form::text('ref_credits['.$displayImage->id.'][ref_artist_url]['.$artist->id.']', $artist->url, ['class' => 'form-control', 'placeholder' => 'Artist URL']) !!}
+                                    </div>
+                                    {!! Form::text('ref_credits['.$displayImage->id.'][ref_artist_type]['.$artist->id.']', $artist->credit_type, ['class' => 'form-control', 'placeholder' => 'Other Info']) !!}
+                                    <a href="#" class="add-ref-artist btn btn-link" data-ref-id="{{ $displayImage->id }}"
+                                    @if($count != $artistCount - 1)
+                                        style="visibility: hidden;"
+                                    @endif
+                                    >+</a>
+                                </div>
+                            @endforeach
+                            @if(!count($displayImage->artists))
+                                <div class="mb-2 d-flex border-bottom pb-2">
+                                    <div class="mr-2">
+                                        {!! Form::select('ref_credits['.$displayImage->id.'][ref_artist_id][]', $users, null, ['class'=> 'form-control mb-1 selectize', 'placeholder' => 'Select an Artist']) !!}
+                                        {!! Form::text('ref_credits['.$displayImage->id.'][ref_artist_url][]', null, ['class' => 'form-control', 'placeholder' => 'Artist URL']) !!}
+                                    </div>
+                                    {!! Form::text('ref_credits['.$displayImage->id.'][ref_artist_type][]', null, ['class' => 'form-control', 'placeholder' => 'Other Info']) !!}
+                                    <a href="#" class="add-ref-artist btn btn-link" data-toggle="tooltip" title="Add another artist"  data-ref-id="{{ $displayImage->id }}">+</a>
+                                </div>
+                            @endif
+                        </div>
+                    </li>
+                @endforeach
+                <div class="mb-2 d-flex border-bottom pb-2 ref-artist-row hide">
+                    <div class="mr-2">
+                        {!! Form::select('[ref_artist_id][]', $users, null, ['class'=> 'form-control mb-1 ref-artist-select', 'placeholder' => 'Select an Artist']) !!}
+                        {!! Form::text('[ref_artist_url][]', null, ['class' => 'form-control', 'placeholder' => 'Artist URL']) !!}
+                    </div>
+                    {!! Form::text('[ref_artist_type][]', null, ['class' => 'form-control', 'placeholder' => 'Other Info']) !!}
+                    <a href="#" class="add-ref-artist btn btn-link" data-toggle="tooltip" title="Add another artist" data-ref-id="{{ $displayImage->id }}">+</a>
+                </div>
+            </ul>
+            <div class="deleted-ref-images hide">
+            </div>
+            @endif
+        </div>
+
 
     <h2 class="mt-5">Traits</h2>
     <p>Select the traits for the {{ $request->character->is_myo_slot ? 'created' : 'updated' }} character.
@@ -254,6 +317,29 @@
             <div class="col-md-10 col-8">{!! $image->rarity ? $image->rarity->displayName : 'None Selected' !!}</div>
         </div>
     </div>
+    <h3 class="mb-2 mt-5"><a data-toggle="collapse" href="#ref-images" aria-expanded="true">Additional Images <i class="fas fa-angle-down"></i></a></h3>
+        <div class="collapse show mb-5" id="ref-images">
+            @if(count($image->refImages))
+            <ul class="row nav image-nav mb-1 w-100">
+                @foreach($image->refImages as $displayImage)
+                    <li class="col-sm-4 col-6 text-center nav-item" data-id="{{ $displayImage->id }}">
+                        <div class="d-flex justify-content-center">
+                            <a id="thumbnail-{{ $displayImage->id }}" href="{{ $displayImage->imageUrl }}">
+                                <img src="{{ $displayImage->thumbnailUrl }}" class="img-thumbnail" />
+                            </a>
+                        </div>
+                        <div class="form-group">
+                        {!! Form::label('Artist(s)') !!}
+                        <div id="ref_artistList_{{ $displayImage->id }}" class="text-left">
+                            @foreach($displayImage->artists as $artist)
+                                <div>{!! $artist->displayLink() !!}</div>
+                            @endforeach
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+            @endif
+        </div>
     <h5>Traits</h5>
     <div>
         @if($request->character && $request->character->is_myo_slot && $request->character->image->features)
@@ -288,5 +374,43 @@ $( "#species" ).change(function() {
     }).done(function (res) { $("#subtypes").html(res); }).fail(function (jqXHR, textStatus, errorThrown) { alert("AJAX call failed: " + textStatus + ", " + errorThrown); });
 
 });
+
+// Additional script for artists on supplemental images
+$('.add-ref-artist').on('click', function(e) {
+    e.preventDefault();
+    addArtistRow($(this));
+});
+function addArtistRow($trigger) {
+    const id = $trigger.attr('data-ref-id');
+    var $clone = $('.ref-artist-row').clone();
+    $('#ref_artistList_' + id).append($clone);
+    $clone.removeClass('hide ref-artist-row');
+
+    $clone.find('input, select').attr('name', (i, prev) => `ref_credits[${id}]${prev}`);
+
+    const button = $clone.find('.ref-add-artist');
+    button.attr('data-ref-id', id);
+    button.on('click', function(e) {
+        e.preventDefault();
+        addArtistRow($(this));
+    })
+
+    $trigger.css({ visibility: 'hidden' });
+    $clone.find('.ref-artist-select').selectize();
+}
+
+$('.delete-ref-image').on('click', (e) => {
+    e.preventDefault();
+    const id = $(e.currentTarget).attr('data-ref-id');
+    $('.deleted-ref-images').append(`<input name="deleted_ref_images[]" value="${id}" type="text" />`);
+    $(e.currentTarget).closest('.nav-item').remove();
+})
 </script>
+<style>
+    .delete-ref-image i::before {
+        background: white;
+        border-radius: 100%;
+        border: 1px solid white;
+    }
+</style>
 @endsection

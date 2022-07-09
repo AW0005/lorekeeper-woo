@@ -7,7 +7,7 @@
 
 @include('character._header', ['character' => $character])
 
-<p>This will add a new image to the character's gallery. If the character is marked as visible, the owner of the character will be notified of the upload.</p>
+<p>This will add a new form to the character. If the character is marked as visible, the owner of the character will be notified of the upload.</p>
 
 {!! Form::open(['url' => 'admin/character/'.$character->slug.'/image', 'files' => true]) !!}
 
@@ -25,12 +25,9 @@
 <h3>Image Upload</h3>
 
 <div class="form-group">
-    {!! Form::label('Character Image') !!} {!! add_help('This is the full masterlist image. Note that the image is not protected in any way, so take precautions to avoid art/design theft.') !!}
+    {!! Form::label('Character Image') !!} {!! add_help('This is the full masterlist image.') !!}
     <div>{!! Form::file('image', ['id' => 'mainImage']) !!}</div>
 </div>
-<p class="alert alert-info">
-    This section is for crediting the image creators. The first box is for the designer or artist's on-site username (if any). The second is for a link to the designer or artist if they don't have an account on the site.
-</p>
 <div class="form-group">
     {!! Form::label('Designer(s)') !!}
     <div id="designerList">

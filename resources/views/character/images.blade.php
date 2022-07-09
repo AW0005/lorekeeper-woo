@@ -8,30 +8,61 @@
 {!! breadcrumbs([($character->category->masterlist_sub_id ? $character->category->sublist->name.' Masterlist' : 'Character masterlist') => ($character->category->masterlist_sub_id ? 'sublist/'.$character->category->sublist->key : 'masterlist' ), $character->fullName => $character->url, 'Images' => $character->url . '/images']) !!}
 
 @include('character._header', ['character' => $character])
-
-<div class="tab-content">
-    @foreach($character->images($user)->with('features.feature')->with('species')->with('rarity')->get() as $image)
-        <div class="tab-pane fade {{ $image->id == $character->character_image_id ? 'show active' : '' }}" id="image-{{ $image->id }}">
-            <div class="row mb-3">
-                <div class="col-md-7">
-                    <div class="text-center">
-                        <a href="{{ $image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($image->imageDirectory.'/'.$image->fullsizeFileName)) ? $image->fullsizeUrl : $image->imageUrl }}" data-lightbox="entry" data-title="{{ $character->fullName }} [#{{ $image->id }}] {{ $image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($image->imageDirectory.'/'.$image->fullsizeFileName)) ? ' : Full-size Image' : ''}}">
-                            <img style="max-height: calc(100vh - 250px);" src="{{ $image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($image->imageDirectory.'/'.$image->fullsizeFileName)) ? $image->fullsizeUrl : $image->imageUrl }}" class="image" alt="{{ $image->character->fullName }}" />
-                        </a>
-                    </div>
-                    @if($image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($image->imageDirectory.'/'.$image->fullsizeFileName)))
-                        <div class="text-right">You are viewing the full-size image. <a href="{{ $image->imageUrl }}">View watermarked image</a>?</div>
-                    @endif
-                </div>
-                @include('character._image_info', ['image' => $image])
-            </div>
-        </div>
-    @endforeach
-</div>
 <?php $canManage = Auth::check() && Auth::user()->hasPower('manage_characters'); ?>
 @if($canManage)
-        <a href="{{ url('admin/character/'.$character->slug.'/image') }}" class="float-right btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Add Image</a>
+<div class="text-right mb-5" style="margin-top: -70px;">
+    <a href="{{ url('admin/character/'.$character->slug.'/image') }}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Add Form</a>
+</div>
 @endif
+
+@foreach($character->images($user)->get() as $image)
+<div class="album">
+    <div class="d-flex align-items-center bg-dark p-2 ui-corner-all text-white">
+        <div class="text-center nav-item mr-3" data-id="{{ $image->id }}" style="width: 15%;">
+            @php
+                $canViewFull = $image->canViewFull(Auth::check() ? Auth::user() : null);
+                $fileExists = file_exists(public_path($image->imageDirectory.'/'.$image->fullsizeFileName));
+            @endphp
+            <a href="{{ $canViewFull && $fileExists ? $image->fullsizeUrl : $image->imageUrl }}" data-lightbox="entry" data-title="{{ $image->fullName }} [#{{ $image->id }}] {{ $canViewFull && $fileExists ? ' : Full-size Image' : '' }}">
+                <img class="bg-light ui-corner-all p-1" src="{{ $image->thumbnailUrl }}"/>
+            </a>
+        </div>
+        <h3>{!! $image->formType !!} Form</h3>
+    </div>
+    <h5 class="mb-2 mt-4">Additional Images</h5>
+    <div id="ref-images">
+        @if(count($image->refImages))
+        <ul class="row nav image-nav mb-1 w-100">
+            @foreach($image->refImages as $displayImage)
+                <li class="col-sm-3 col-4 text-center nav-item" data-id="{{ $displayImage->id }}">
+                    <div class="d-flex justify-content-center">
+                        @php
+                            $canViewFull = $displayImage->canViewFull(Auth::check() ? Auth::user() : null);
+                            $fileExists = file_exists(public_path($displayImage->imageDirectory.'/'.$displayImage->fullsizeFileName));
+                        @endphp
+                        <a href="{{ $canViewFull && $fileExists ? $displayImage->fullsizeUrl : $displayImage->imageUrl }}" data-lightbox="entry" data-title="{{ $character->fullName }} [#{{ $displayImage->id }}] {{ $canViewFull && $fileExists ? ' : Full-size Image' : '' }}">
+                            <img src="{{ $displayImage->thumbnailUrl }}" class="img-thumbnail" />
+                        </a>
+                    </div>
+                    <div class="form-group">
+                    {!! Form::label('Artist(s)') !!}
+                    <div id="ref_artistList_{{ $displayImage->id }}" class="text-left">
+                        @foreach($displayImage->artists as $artist)
+                            <div>{!! $artist->displayLink() !!}</div>
+                        @endforeach
+                    </div>
+                </li>
+            @endforeach
+        </ul>
+        @endif
+    </div>
+    @if($canManage)
+        <a href="{{ url('admin/character/'.$character->slug.'/'.$image->id.'/ref') }}" class="btn btn-outline-info btn-sm mt-2"><i class="fas fa-plus"></i> Add Additional Image</a>
+    @endif
+    <hr class="mt-4" />
+</div>
+@endforeach
+
 {{-- @if($canManage)
     {!! Form::open(['url' => 'admin/character/' . $character->slug . '/images/sort', 'class' => 'text-right']) !!}
     {!! Form::hidden('sort', '', ['id' => 'sortableOrder']) !!}
@@ -60,4 +91,9 @@
             });
         </script>
     @endif
+    <style>
+        .album h3 a {
+            color: white;
+        }
+    </style>
 @endsection

@@ -110,10 +110,18 @@ class DesignController extends Controller
             $image = $this->instantiateImage($r, $isAndroid, $isHolobot);
         }
 
+        if(!isset($image) || ($r->status === 'Approved')) {
+            if($r->update_type === 'Character') $oldImage = CharacterImage::find($r->x0);
+            // Holobuddy and android should never co-exist
+            elseif($isAndroid || $isHolobot === 4) $oldImage = CharacterImage::find($r->y0);
+            elseif($isHolobot === 3) $oldImage = CharacterImage::find($r->y1);
+            else $oldImage = CharacterImage::find($r->x1);
+        }
+
         return view('character.design.form', [
             'request' => $r,
-            'image' => isset($image) ? $image : $r->character->images->where('is_android', 0)->first(),
-            'has_image' => isset($image) ? File::exists($image->imagePath . '/' . $image->imageFileName) : $r->status == 'Approved',
+            'image' => isset($image) && $r->status !== 'Approved' ? $image : ($oldImage ?? $r->character->image),
+            'has_image' => isset($image) && $r->status !== 'Approved' ? File::exists($image->imagePath . '/' . $image->imageFileName) : true,
             'users' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'specieses' => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes' => ['0' => 'No Subtype'] + Subtype::where('species_id','=', $isHolobot ? 2 : $r->species_id)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),

@@ -343,6 +343,8 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters', 'middleware'
     # IMAGES
     Route::get('{slug}/image', 'CharacterImageController@getNewImage');
     Route::post('{slug}/image', 'CharacterImageController@postNewImage');
+    Route::get('{slug}/{formSlug}/ref', 'CharacterImageController@getNewRef');
+    Route::post('{slug}/{formSlug}/ref', 'CharacterImageController@postNewRef');
     Route::get('image/subtype', 'CharacterImageController@getNewImageSubtype');
 
     Route::get('image/{id}/traits', 'CharacterImageController@getEditImageFeatures');

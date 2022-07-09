@@ -400,7 +400,7 @@ class CharacterDesignUpdate extends Model
         if(!isset($image)) return false;
 
         $hasSavedImage = File::exists($image->imagePath . '/' . $image->imageFileName);
-        if(!$hasSavedImage) return false;
+        if(!$hasSavedImage && !$this->x0) return false;
 
         return true;
     }

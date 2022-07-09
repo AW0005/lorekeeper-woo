@@ -18,6 +18,7 @@ use App\Models\Feature\Feature;
 use App\Services\CharacterManager;
 
 use App\Http\Controllers\Controller;
+use App\Models\Character\RefImage;
 
 class CharacterImageController extends Controller
 {
@@ -82,6 +83,52 @@ class CharacterImageController extends Controller
         $this->character = Character::where('slug', $slug)->first();
         if(!$this->character) abort(404);
         if($service->createImage($data, $this->character, Auth::user())) {
+            flash('Form uploaded successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+            return redirect()->back()->withInput();
+        }
+        return redirect()->to($this->character->url.'/images');
+    }
+
+    /**
+     * Shows the add reference image page. Existing characters only, not MYO slots.
+     *
+     * @param  string  $slug
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getNewRef($slug, $formSlug)
+    {
+        $this->character = Character::where('slug', $slug)->first();
+        $form = CharacterImage::find($formSlug);
+        if(!$this->character || !$form) abort(404);
+
+        return view('character.admin.upload_ref_image', [
+            'character' => $this->character,
+            'form' => $form,
+            'isMyo' => false,
+            'users' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+        ]);
+    }
+
+
+    /**
+     * Creates a new reference image for a character.
+     *
+     * @param  \Illuminate\Http\Request       $request
+     * @param  App\Services\CharacterManager  $service
+     * @param  string                         $slug
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postNewRef(Request $request, CharacterManager $service, $slug, $formSlug)
+    {
+        $request->validate(RefImage::$createRules);
+        $data = $request->only(['image', 'thumbnail', 'artist_url', 'artist_id', 'artist_type']);
+        $this->character = Character::where('slug', $slug)->first();
+        $form = CharacterImage::find($formSlug);
+        if(!$form || !$this->character) abort(404);
+        if($service->createRefImage($data, $form, Auth::user())) {
             flash('Image uploaded successfully.')->success();
         }
         else {
@@ -99,7 +146,7 @@ class CharacterImageController extends Controller
      */
     public function getEditImageFeatures($id)
     {
-      $image = CharacterImage::find($id);
+        $image = CharacterImage::find($id);
 
         return view('character.admin._edit_features_modal', [
             'image' => $image,

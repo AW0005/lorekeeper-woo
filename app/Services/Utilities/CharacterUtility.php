@@ -39,7 +39,7 @@ class CharacterUtility extends Service
         }
     }
 
-    public static function handleImageCredits($imageId, $data) {
+    public static function handleImageCredits($imageId, $data, $type = 'Character') {
         // Check that users with the specified id(s) exist on site
         self::checkUsersExist(@$data['designer_id'], 'designers');
         self::checkUsersExist(@$data['artist_id'], 'artists');
@@ -49,12 +49,9 @@ class CharacterUtility extends Service
         self::convertAliasToUser(@$data['designer_id'], @$data['designer_url']);
         self::convertAliasToUser(@$data['artist_id'], @$data['artist_url']);
 
-        // initialize this if it doens't exist to avoid bugs without killing the code completely
-        if(!isset($data['designer_type'])) $data['designer_type'] = [];
-        if(!isset($data['artist_type'])) $data['artist_type'] = [];
         // Attach artists/designers
-        self::attachCredits($imageId, @$data['designer_id'], @$data['designer_url'], $data['designer_type']);
-        self::attachCredits($imageId, @$data['artist_id'], @$data['artist_url'], $data['artist_type'], 'Artist');
+        self::attachCredits($imageId, @$data['designer_id'], @$data['designer_url'], @$data['designer_type'], 'Designer', $type);
+        self::attachCredits($imageId, @$data['artist_id'], @$data['artist_url'], @$data['artist_type'], 'Artist', $type);
     }
 
     public static function removeInventory($requestData, $staff, $user, $logMsg, $displayName) {
@@ -121,6 +118,11 @@ class CharacterUtility extends Service
         // Shift things over to the new character
         $holobotImage->update(['character_id' => $holobot->id, 'is_design_update' => 0]);
         $holobotImage->updateFeatures()->update(['character_type' => 'Character']);
+        // Process Ref Images
+        $holobotImage->refImages->each(function($image) use($holobotImage) {
+            CharacterUtility::processImage($image, $holobotImage->rarity);
+        });
+
         self::processImage($holobotImage);
 
         // Bind the holobot to the main character
@@ -137,6 +139,11 @@ class CharacterUtility extends Service
         $form->updateFeatures()->update(['character_type' => 'Character']);
         // Process and save the uploaded image
         self::processImage($form);
+
+        // Process Ref Images
+        $form->refImages->each(function($image) use($form) {
+            CharacterUtility::processImage($image, $form->rarity);
+        });
     }
 
     /** Set character data and other info such as cooldown time, resell cost and terms etc.
@@ -170,7 +177,7 @@ class CharacterUtility extends Service
      *
      * @param  \App\Models\Character\CharacterImage  $characterImage
      */
-    public static function processImage($characterImage) {
+    public static function processImage($characterImage, $rarity = null) {
         $image = Image::make($characterImage->imagePath . '/' . $characterImage->imageFileName);
 
         if(Config::get('lorekeeper.settings.store_masterlist_fullsizes') == 1) {
@@ -189,7 +196,6 @@ class CharacterUtility extends Service
             if(isset($characterImage->fullsize_hash) ? file_exists( public_path($characterImage->imageDirectory.'/'.$characterImage->fullsizeFileName)) : FALSE) unlink($characterImage->imagePath . '/' . $characterImage->fullsizeFileName);
         }
 
-
         $isWide = $image->width() > $image->height();
         $size = Config::get('lorekeeper.settings.masterlist_image_dimension');
         // Scale the largest side down to 1000px
@@ -199,9 +205,8 @@ class CharacterUtility extends Service
         });
         // Make the image be square
         $image->resizeCanvas($isWide ? null : $image->height(), $isWide ? $image->width() : null, 'center');
-
         // Watermark the image
-        $watermark = Image::make('images/watermarks/'.$characterImage->rarity->name.'.png');
+        $watermark = Image::make('images/watermarks/'.(isset($characterImage->rarity) ? $characterImage->rarity->name : $rarity->name).'.png');
         //Downsize the watermark if we need to.
         if($watermark->width() > $image->width()){
             $watermark->resize($image->width(), null, function($constraint) {
@@ -240,16 +245,17 @@ class CharacterUtility extends Service
         }
     }
 
-    private static function attachCredits($imageId, $users, $urls, $types, $type = 'Designer') {
+    private static function attachCredits($imageId, $users, $urls, $types, $type, $charType = 'Character') {
         if(isset($users)) {
             foreach($users as $key => $id) {
-                if($id || $urls[$key])
+                if(isset($id) || $urls[$key])
                     DB::table('character_image_creators')->insert([
                         'character_image_id' => $imageId,
                         'type' => $type,
                         'url' => $urls[$key],
                         'user_id' => $id,
-                        'credit_type' => isset($types[$key]) ? $types[$key] : null
+                        'credit_type' => isset($types[$key]) ? $types[$key] : null,
+                        'character_type' => $charType
                     ]);
             }
         }

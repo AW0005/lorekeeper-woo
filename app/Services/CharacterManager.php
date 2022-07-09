@@ -22,6 +22,7 @@ use App\Models\Character\Character;
 use App\Models\Character\CharacterCurrency;
 use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterImage;
+use App\Models\Character\RefImage;
 use App\Models\Character\CharacterFeature;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Character\CharacterDesignUpdate;
@@ -428,6 +429,65 @@ class CharacterManager extends Service
             $character->notifyBookmarkers('BOOKMARK_IMAGE');
 
             return $this->commitReturn($character);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Creates a character Reference image.
+     *
+     * @param  array                            $data
+     * @param  \App\Models\Character\Character  $character
+     * @param  \App\Models\User\User            $user
+     * @return  \App\Models\Character\Character|bool
+     */
+    public function createRefImage($data, $form, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            if(!isset($data['image'])) throw new \Exception("Image must be specified.");
+
+            // Create character image
+            $newRefImage = RefImage::create([
+                'image_id' => $form->id,
+                'extension' => Config::get('lorekeeper.settings.masterlist_image_format'),
+                'hash' => randomString(10),
+                'fullsize_hash' => randomString(15),
+                'sort' => 0,
+            ]);
+
+            if(!$newRefImage) throw new \Exception("Error happened while trying to create image.");
+
+            // Save and process the image
+            $this->handleImage($data['image'], $newRefImage->imageDirectory, $newRefImage->imageFileName);
+            $this->cropThumbnail($newRefImage);
+            CharacterUtility::processImage($newRefImage, $form->rarity);
+
+            // Attach credits
+            CharacterUtility::handleImageCredits($newRefImage->id, $data, 'RefImage');
+
+            // Add a log for the character
+            // This logs all the updates made to the character
+            $this->createLog($user->id, null, $form->character->user_id, ($form->character->user_id ? null : $form->character->owner_url), $form->character->id, 'Character Image Uploaded', '[#'.$newRefImage->id.']', 'character');
+
+            // If the recipient has an account, send them a Notifications
+            if($form->character->user && $user->id != $form->character->user_id && $form->character->is_visible) {
+                Notifications::create('IMAGE_UPLOAD', $form->character->user, [
+                    'character_url' => $form->character->url,
+                    'character_slug' => $form->character->slug,
+                    'character_name' => $form->character->name,
+                    'sender_url' => $user->url,
+                    'sender_name' => $user->name
+                ]);
+            }
+
+            // Notify bookmarkers
+            $form->character->notifyBookmarkers('BOOKMARK_IMAGE');
+
+            return $this->commitReturn($form);
         } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
@@ -1730,7 +1790,7 @@ is_object($sender) ? $sender->id : null,
                 // For update requests, copy the pre-existing image file and credits to the new image
                 File::copy($oldImage->imagePath . '/' . $oldImage->fullsizeFileName, $image->imagePath . '/' . $image->imageFileName);
                 File::copy($oldImage->thumbnailPath . '/' . $oldImage->thumbnailFileName, $image->thumbnailPath . '/' . $image->thumbnailFileName);
-                 // Shift the image credits over to the new image
+                // Shift the image credits over to the new image
                 if(count($oldImage->designers) > 0) {
                     $oldImage->designers->each(function($item) use($image) {
                         $copy = $item->replicate()->fill(['character_image_id' => $image->id, 'character_type' => 'Character']);
@@ -1741,6 +1801,26 @@ is_object($sender) ? $sender->id : null,
                     $oldImage->artists->each(function($item) use($image) {
                         $copy = $item->replicate()->fill(['character_image_id' => $image->id, 'character_type' => 'Character']);
                         $copy->save();
+                    });
+                }
+
+                // Shift the additional images over to the new image
+                if(count($oldImage->refImages) > 0) {
+                    $oldImage->refImages->each(function($refImage) use($image) {
+                        $copy = $refImage->replicate()->fill(['image_id' => $image->id]);
+                        $copy->save();
+
+                        // copy image file
+                        File::copy($refImage->imagePath . '/' . $refImage->fullsizeFileName, $copy->imagePath . '/' . $copy->imageFileName);
+                        File::copy($refImage->thumbnailPath . '/' . $refImage->thumbnailFileName, $copy->thumbnailPath . '/' . $copy->thumbnailFileName);
+
+                        // Copy over credits
+                        if(count($refImage->artists) > 0) {
+                            $refImage->artists->each(function($item) use($copy) {
+                                $creditcopy = $item->replicate()->fill(['character_image_id' => $copy->id, 'character_type' => 'RefImage']);
+                                $creditcopy->save();
+                            });
+                        }
                     });
                 }
             }
@@ -1834,6 +1914,47 @@ is_object($sender) ? $sender->id : null,
             // Save thumbnail
             if(!$isAdmin && isset($data['image']) || ($isAdmin && isset($data['modify_thumbnail']))) {
                 $this->cropThumbnail($image);
+            }
+
+            /* If we have Reference images lets save those */
+            if(isset($data['ref_images'])) {
+                foreach($data['ref_images'] as $refImage) {
+                    $newRefImage = RefImage::create([
+                        'image_id' => $image->id,
+                        'extension' => Config::get('lorekeeper.settings.masterlist_image_format'),
+                        'hash' => randomString(10),
+                        'fullsize_hash' => randomString(15),
+                        'sort' => 0,
+                    ]);
+
+                    $this->handleImage($refImage, $newRefImage->imageDirectory, $newRefImage->imageFileName);
+                    $this->cropThumbnail($newRefImage);
+                }
+            }
+
+            // Attach credits
+            if(isset($data['ref_credits'])) {
+                foreach($data['ref_credits'] as $id => $credits) {
+                    $refImage = RefImage::find($id);
+                    $refImage->artists()->delete();
+
+                    CharacterUtility::handleImageCredits(
+                        $refImage->id,
+                        [
+                            'artist_id' => $credits['ref_artist_id'],
+                            'artist_url' => $credits['ref_artist_url'],
+                            'artist_type' => $credits['ref_artist_type']
+                        ],
+                        'RefImage'
+                    );
+                }
+            }
+
+            // Delete any images that were removed
+            if(isset($data['deleted_ref_images'])) {
+                foreach($data['deleted_ref_images'] as $id) {
+                    RefImage::find($id)->delete();
+                }
             }
 
             return $this->commitReturn(true);
@@ -2101,6 +2222,9 @@ is_object($sender) ? $sender->id : null,
             // Set status to approved
             $request->staff_id = $user->id;
             $request->status = 'Approved';
+            $request->x1 = $request->image->id;
+            $request->y0 = isset($request->androidImage) ? $request->androidImage->id : null;
+            $request->y1 = isset($request->holobotImage) ? $request->holobotImage->id : null;
             $request->save();
 
             // Notify the user
@@ -2186,6 +2310,8 @@ is_object($sender) ? $sender->id : null,
             // Set status to approved
             $request->staff_id = $user->id;
             $request->status = 'Approved';
+            $request->x1 = $request->holobotImage->id;
+            $request->y0 = isset($request->holobuddyImage) ? $request->holobuddyImage->id : null;
             $request->save();
 
             // Notify the user
@@ -2207,13 +2333,8 @@ is_object($sender) ? $sender->id : null,
 
     /*
     START: Build Supplemental Images
-        1. New Table for images - should be a trimmed down version of the current image table
-        2. `form_id` that will be the image it's associated to
-        3. Update form page to have a multi-image uploader for supplemental images - they should just get associated to the image and then transfer with the image with no extra code on submission
-            -- will need an attribute call on CharacterImage that returns both the supplemental images and the main image as a collection but also one for just the supplemental images probably
-            -- make sure it works for updating a form and adding a new form and a new MYO
-        4. Update Character Image page to look like TH Flat folder view for the supplemental images (plus main image) - should give modal of bigger view of each
         5. Need admin button on the character image page for adding a supplemental image manually
+            -- will also need to move the add image button as an add form button to somewhere that makes sense
     */
 
     public function approveFormRequest($data, $request, $user) {
@@ -2267,6 +2388,9 @@ is_object($sender) ? $sender->id : null,
             // Set status to approved
             $request->staff_id = $user->id;
             $request->status = 'Approved';
+            $request->x1 = isset($request->image) ? $request->image->id : null;
+            $request->y0 = isset($request->androidImage) ? $request->androidImage->id : null;
+            $request->y1 = isset($request->holobotImage) ? $request->holobotImage->id : null;
             $request->save();
 
             // Notify the user
@@ -2327,6 +2451,8 @@ is_object($sender) ? $sender->id : null,
             // Set status to approved
             $request->staff_id = $user->id;
             $request->status = 'Approved';
+            $request->y0 = isset($request->holoBuddyImage) ? $request->holoBuddyImage->id : null;
+            $request->y1 = isset($request->holobotImage) ? $request->holobotImage->id : null;
             $request->save();
 
             // Notify the user
@@ -2355,9 +2481,9 @@ is_object($sender) ? $sender->id : null,
 
             // Process image file and move it
             // Remove old versions so that images in various filetypes don't pile up
-            unlink($existingForm->imagePath . '/' . $existingForm->imageFileName);
+            if(file_exists(public_path($existingForm->imageDirectory.'/'.$existingForm->imageFileName))) unlink($existingForm->imagePath . '/' . $existingForm->imageFileName);
             if(isset($existingForm->fullsize_hash) ? file_exists( public_path($existingForm->imageDirectory.'/'.$existingForm->fullsizeFileName)) : FALSE) unlink($existingForm->imagePath . '/' . $existingForm->fullsizeFileName);
-            unlink($existingForm->imagePath . '/' . $existingForm->thumbnailFileName);
+            if(file_exists(public_path($existingForm->imageDirectory.'/'.$existingForm->thumbnailFileName))) unlink($existingForm->imagePath . '/' . $existingForm->thumbnailFileName);
 
             // Set the image's extension in the DB as defined in settings
             $existingForm->extension = Config::get('lorekeeper.settings.masterlist_image_format');
@@ -2395,6 +2521,13 @@ is_object($sender) ? $sender->id : null,
                     $copy->save();
                 });
             }
+
+            //Process and Move ref images
+            $existingForm->refImages()->delete();
+            $newImage->refImages->each(function($image) use($newImage) {
+                CharacterUtility::processImage($image, $newImage->rarity);
+            });
+            $newImage->refImages()->update(['image_id' => $existingForm->id]);
 
             $existingForm->save();
 
