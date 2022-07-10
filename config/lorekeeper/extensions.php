@@ -66,4 +66,10 @@ return [
 
     // Extra Image Credits - Newt
     'extra_image_credits' => 1,
+    // Staff Rewards - Mercury
+    'staff_rewards' => [
+        'enabled' => 1,
+        'currency_id' => 1,
+    ],
+
 ];

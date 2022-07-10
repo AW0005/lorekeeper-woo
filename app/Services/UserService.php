@@ -212,6 +212,7 @@ class UserService extends Service
         try {
             if(!$user->is_banned) {
                 // New ban (not just editing the reason), clear all their engagements
+                if(!$this->logAdminAction($staff, 'Banned User', 'Banned '.$user->displayname)) throw new \Exception("Failed to log admin action.");
 
                 // 1. Character transfers
                 $characterManager = new CharacterManager;
@@ -225,13 +226,13 @@ class UserService extends Service
                 $submissionManager = new SubmissionManager;
                 $submissions = Submission::where('user_id', $user->id)->where('status', 'Pending')->get();
                 foreach($submissions as $submission)
-                    $submissionManager->rejectSubmission(['submission' => $submission, 'staff_comments' => 'User has been banned from site activity.']);
+                    $submissionManager->rejectSubmission(['submission' => $submission, 'staff_comments' => 'User has been banned from site activity.'], $staff);
 
                 // 3. Gallery Submissions
                 $galleryManager = new GalleryManager;
                 $gallerySubmissions = GallerySubmission::where('user_id', $user->id)->where('status', 'Pending')->get();
                 foreach($gallerySubmissions as $submission) {
-                    $galleryManager->rejectSubmission($submission);
+                    $galleryManager->rejectSubmission($submission, $staff);
                     $galleryManager->postStaffComments($submission->id, ['staff_comments' => 'User has been banned from site activity.'], $staff);
                 }
                 $gallerySubmissions = GallerySubmission::where('user_id', $user->id)->where('status', 'Accepted')->get();
@@ -243,7 +244,7 @@ class UserService extends Service
                     $query->where('status', 'Pending')->orWhere('status', 'Draft');
                 })->get();
                 foreach($requests as $request)
-                    $characterManager->rejectRequest(['staff_comments' => 'User has been banned from site activity.'], $request, $staff, true);
+                    (new DesignUpdateManager)->rejectRequest(['staff_comments' => 'User has been banned from site activity.'], $request, $staff, true);
 
                 // 5. Trades
                 $tradeManager = new TradeManager;
@@ -289,6 +290,8 @@ class UserService extends Service
         DB::beginTransaction();
 
         try {
+            if(!$this->logAdminAction($staff, 'Unbanned User', 'Unbanned '.$user->displayname)) throw new \Exception("Failed to log admin action.");
+
             if($user->is_banned) {
                 $user->is_banned = 0;
                 $user->save();

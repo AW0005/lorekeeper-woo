@@ -95,7 +95,7 @@ class PromptsController extends Controller
                     break;
             }
         }
-        else $query->sortCategory();
+        else $query->sortNewest();
 
         return view('prompts.prompts', [
             'prompts' => $query->paginate(20)->appends($request->query()),

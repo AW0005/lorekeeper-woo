@@ -20,7 +20,19 @@ return [
             [
                 'name' => 'User Ranks',
                 'url' => 'admin/users/ranks'
-            ]
+            ],
+            [
+                'name' => 'Log of Logs',
+                'url' => 'admin/logoflogs'
+            ],
+            [
+                'name' => 'Admin Logs',
+                'url' => 'admin/logs'
+            ],
+            [
+                'name' => 'Staff Reward Settings',
+                'url' => 'admin/staff-reward-settings'
+            ],
         ]
     ],
     // Hiding in favor of the admin home page.
