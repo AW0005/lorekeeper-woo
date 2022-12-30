@@ -16,9 +16,9 @@ use App\Models\Recipe\Recipe;
 use App\Services\RecipeService;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pet\Pet;
 
-class RecipeController extends Controller
-{
+class RecipeController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Admin / Recipe Controller
@@ -32,7 +32,7 @@ class RecipeController extends Controller
     
         RECIPES
 
-    **********************************************************************************************/
+     **********************************************************************************************/
 
     /**
      * Shows the recipe index.
@@ -40,24 +40,22 @@ class RecipeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getRecipeIndex(Request $request)
-    {
+    public function getRecipeIndex(Request $request) {
         $query = Recipe::query();
         $data = $request->only(['name']);
-        if(isset($data['name'])) 
-            $query->where('name', 'LIKE', '%'.$data['name'].'%');
+        if (isset($data['name']))
+            $query->where('name', 'LIKE', '%' . $data['name'] . '%');
         return view('admin.recipes.recipes', [
             'recipes' => $query->paginate(20)->appends($request->query())
         ]);
     }
-    
+
     /**
      * Shows the create recipe page.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateRecipe()
-    {
+    public function getCreateRecipe() {
         return view('admin.recipes.create_edit_recipe', [
             'recipe' => new Recipe,
             'items' => Item::orderBy('name')->pluck('name', 'id'),
@@ -65,20 +63,20 @@ class RecipeController extends Controller
             'currencies' => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
             'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
             'raffles' => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
-            'recipes'=> Recipe::orderBy('name')->pluck('name', 'id'),
+            'recipes' => Recipe::orderBy('name')->pluck('name', 'id'),
+            'pets' => Pet::orderBy('name')->pluck('name', 'id')
         ]);
     }
-    
+
     /**
      * Shows the edit recipe page.
      *
      * @param  int  $id
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditRecipe($id)
-    {
+    public function getEditRecipe($id) {
         $recipe = Recipe::find($id);
-        if(!$recipe) abort(404);
+        if (!$recipe) abort(404);
         return view('admin.recipes.create_edit_recipe', [
             'recipe' => $recipe,
             'items' => Item::orderBy('name')->pluck('name', 'id'),
@@ -86,7 +84,8 @@ class RecipeController extends Controller
             'currencies' => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
             'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
             'raffles' => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
-            'recipes'=> Recipe::orderBy('name')->pluck('name', 'id'),
+            'recipes' => Recipe::orderBy('name')->pluck('name', 'id'),
+            'pets' => Pet::orderBy('name')->pluck('name', 'id')
         ]);
     }
 
@@ -98,36 +97,32 @@ class RecipeController extends Controller
      * @param  int|null                  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditRecipe(Request $request, RecipeService $service, $id = null)
-    {
+    public function postCreateEditRecipe(Request $request, RecipeService $service, $id = null) {
         $id ? $request->validate(Recipe::$updateRules) : $request->validate(Recipe::$createRules);
         $data = $request->only([
             'name', 'description', 'image', 'remove_image', 'needs_unlocking',
             'ingredient_type', 'ingredient_data', 'ingredient_quantity',
-            'rewardable_type', 'rewardable_id', 'reward_quantity', 
+            'rewardable_type', 'rewardable_id', 'reward_quantity',
             'is_limited', 'limit_type', 'limit_id', 'limit_quantity'
         ]);
-        if($id && $service->updateRecipe(Recipe::find($id), $data, Auth::user())) {
+        if ($id && $service->updateRecipe(Recipe::find($id), $data, Auth::user())) {
             flash('Recipe updated successfully.')->success();
-        }
-        else if (!$id && $recipe = $service->createRecipe($data, Auth::user())) {
+        } else if (!$id && $recipe = $service->createRecipe($data, Auth::user())) {
             flash('Recipe created successfully.')->success();
-            return redirect()->to('admin/data/recipes/edit/'.$recipe->id);
-        }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+            return redirect()->to('admin/data/recipes/edit/' . $recipe->id);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) flash($error)->error();
         }
         return redirect()->back();
     }
-    
+
     /**
      * Gets the recipe deletion modal.
      *
      * @param  int  $id
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteRecipe($id)
-    {
+    public function getDeleteRecipe($id) {
         $recipe = Recipe::find($id);
         return view('admin.recipes._delete_recipe', [
             'recipe' => $recipe,
@@ -142,13 +137,11 @@ class RecipeController extends Controller
      * @param  int                       $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteRecipe(Request $request, RecipeService $service, $id)
-    {
-        if($id && $service->deleteRecipe(Recipe::find($id))) {
+    public function postDeleteRecipe(Request $request, RecipeService $service, $id) {
+        if ($id && $service->deleteRecipe(Recipe::find($id))) {
             flash('Recipe deleted successfully.')->success();
-        }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) flash($error)->error();
         }
         return redirect()->to('admin/data/recipes');
     }
@@ -157,7 +150,7 @@ class RecipeController extends Controller
     
         RECIPE TAGS
 
-    **********************************************************************************************/
+     **********************************************************************************************/
 
     /**
      * Gets the tag addition page.
@@ -166,8 +159,7 @@ class RecipeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getAddRecipeTag(RecipeService $service, $id)
-    {
+    public function getAddRecipeTag(RecipeService $service, $id) {
         $recipe = Recipe::find($id);
         return view('admin.recipes.add_tag', [
             'recipe' => $recipe,
@@ -183,16 +175,14 @@ class RecipeController extends Controller
      * @param  int                       $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postAddRecipeTag(Request $request, RecipeService $service, $id)
-    {
+    public function postAddRecipeTag(Request $request, RecipeService $service, $id) {
         $recipe = Recipe::find($id);
         $tag = $request->get('tag');
-        if($tag = $service->addRecipeTag($recipe, $tag)) {
+        if ($tag = $service->addRecipeTag($recipe, $tag)) {
             flash('Tag added successfully.')->success();
             return redirect()->to($tag->adminUrl);
-        }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) flash($error)->error();
         }
         return redirect()->back();
     }
@@ -203,11 +193,10 @@ class RecipeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditRecipeTag(RecipeService $service, $id, $tag)
-    {
+    public function getEditRecipeTag(RecipeService $service, $id, $tag) {
         $recipe = Recipe::find($id);
         $tag = $recipe->tags()->where('tag', $tag)->first();
-        if(!$recipe || !$tag) abort(404);
+        if (!$recipe || !$tag) abort(404);
         return view('admin.recipes.edit_tag', [
             'recipe' => $recipe,
             'tag' => $tag
@@ -223,18 +212,16 @@ class RecipeController extends Controller
      * @param  string                    $tag
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postEditRecipeTag(Request $request, RecipeService $service, $id, $tag)
-    {
+    public function postEditRecipeTag(Request $request, RecipeService $service, $id, $tag) {
         $recipe = Recipe::find($id);
-        if($service->editRecipeTag($recipe, $tag, $request->all())) {
+        if ($service->editRecipeTag($recipe, $tag, $request->all())) {
             flash('Tag edited successfully.')->success();
-        }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) flash($error)->error();
         }
         return redirect()->back();
     }
-    
+
     /**
      * Gets the recipe tag deletion modal.
      *
@@ -242,8 +229,7 @@ class RecipeController extends Controller
      * @param  string                    $tag
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteRecipeTag($id, $tag)
-    {
+    public function getDeleteRecipeTag($id, $tag) {
         $recipe = Recipe::find($id);
         $tag = $recipe->tags()->where('tag', $tag)->first();
         return view('admin.recipes._delete_recipe_tag', [
@@ -261,15 +247,13 @@ class RecipeController extends Controller
      * @param  string                    $tag
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteRecipeTag(Request $request, RecipeService $service, $id, $tag)
-    {
+    public function postDeleteRecipeTag(Request $request, RecipeService $service, $id, $tag) {
         $recipe = Recipe::find($id);
-        if($service->deleteRecipeTag($recipe, $tag)) {
+        if ($service->deleteRecipeTag($recipe, $tag)) {
             flash('Tag deleted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) flash($error)->error();
         }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
-        return redirect()->to('admin/data/recipes/edit/'.$recipe->id);
+        return redirect()->to('admin/data/recipes/edit/' . $recipe->id);
     }
 }

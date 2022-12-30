@@ -7,8 +7,7 @@ use Config;
 use DB;
 use App\Models\Model;
 
-class RecipeIngredient extends Model
-{
+class RecipeIngredient extends Model {
     /**
      * The attributes that are mass assignable.
      *
@@ -24,7 +23,7 @@ class RecipeIngredient extends Model
      * @var string
      */
     protected $table = 'recipe_ingredients';
-    
+
     /**
      * Validation rules for creation.
      *
@@ -36,7 +35,7 @@ class RecipeIngredient extends Model
         'ingredient_data' => 'required',
         'quantity' => 'required|integer|min:1',
     ];
-    
+
     /**
      * Validation rules for updating.
      *
@@ -53,13 +52,12 @@ class RecipeIngredient extends Model
     
         RELATIONS
 
-    **********************************************************************************************/
+     **********************************************************************************************/
 
     /**
      * Get the associated recipe.
      */
-    public function recipe() 
-    {
+    public function recipe() {
         return $this->belongsTo('App\Models\Recipe\Recipe');
     }
 
@@ -67,15 +65,14 @@ class RecipeIngredient extends Model
     
         ACCESSORS
 
-    **********************************************************************************************/
+     **********************************************************************************************/
 
     /**
      * Gets the json decoded data array.
      *
      * @return string
      */
-    public function getDataAttribute()
-    {
+    public function getDataAttribute() {
         return json_decode($this->ingredient_data);
     }
 
@@ -84,10 +81,8 @@ class RecipeIngredient extends Model
      *
      * @return string
      */
-    public function getIngredientAttribute()
-    {
-        switch ($this->ingredient_type)
-        {
+    public function getIngredientAttribute() {
+        switch ($this->ingredient_type) {
             case 'Item':
                 return App\Models\Item\Item::where('id', $this->data[0])->get()[0];
             case 'MultiItem':
@@ -98,6 +93,10 @@ class RecipeIngredient extends Model
                 return App\Models\Item\ItemCategory::whereIn('id', $this->data)->get();
             case 'Currency':
                 return App\Models\Currency\Currency::where('id', $this->data[0])->get()[0];
+            case 'Pet':
+                return App\Models\Pet\Pet::where('id', $this->data[0])->get()[0];
+            case 'MultiPet':
+                return App\Models\Pet\Pet::whereIn('id', $this->data)->get();
         }
         return null;
     }

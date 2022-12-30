@@ -1,5 +1,5 @@
 <h3>Your Pets <a class="small pet-collapse-toggle collapse-toggle" href="#userPet" data-toggle="collapse">Show</a></h3>
-<div class="card mb-3 collapse show" id="userPet">
+<div class="card mb-3 collapse" id="userPet">
     <div class="card-body">
         <div class="text-right mb-3">
             <div class="d-inline-block">
@@ -20,17 +20,19 @@
                 <a href="#" class="btn btn-primary pet-clear-selection">Clear Visible Selection</a>
             </div>
         </div>
-        <div id="userItems" class="user-items">
+        <div id="userItems" class="user-pets">
             <div class="row">
-                @foreach($pet as $item)
-                    <div class="col-lg-2 col-sm-3 col-6 mb-3 user-item category-all category-{{ $item->item->item_category_id ? : 0 }} {{ isset($selected) && in_array($item->id, $selected) ? 'category-selected' : '' }}" data-id="{{ $item->id }}" data-name="{{ $user->name }}'s {{ $item->item->name }}">
-                        <div class="text-center pet-item">
+                @foreach ($pets as $item)
+                    <div class="col-lg-2 col-sm-3 col-6 mb-3 user-pet category-all category-{{ $item->pet->item_category_id ?: 0 }} {{ isset($selected) && array_key_exists('pet'.$item->id, $selected) ? 'category-selected' : '' }} {{ $item->isTransferrable ? '' : 'select-disabled' }}" data-id="{{ $item->id }}"
+                        data-name="{{ $user->name }}'s {{ $item->pet->name }}">
+                        <div class="text-center pet-item {{ $item->isTransferrable ? '' : 'disabled' }}"
+                        @if (!$item->isTransferrable) data-toggle="tooltip" title="This pet is not currently use-able" @endif>
                             <div class="mb-1">
-                                <a class="pet-stack"><img src="{{ $item->item->imageUrl }}" /></a>
+                                <a class="pet-stack"><img src="{{ $item->pet->imageUrl }}" /></a>
                             </div>
                             <div>
-                                <a class="pet-stack pet-stack-name">{{ $item->item->name }}</a>
-                                {!! Form::checkbox((isset($fieldName) && $fieldName ? $fieldName : 'stack_id[]'), $item->id, isset($selected) && in_array($item->id, $selected) ? true : false, ['class' => 'pet-checkbox hide']) !!}
+                                <a class="pet-stack pet-stack-name">{{ $item->pet->name }}</a>
+                                {!! Form::checkbox(isset($fieldName) && $fieldName ? $fieldName : 'pet_stack_id[]', $item->id, isset($selected) && array_key_exists('pet'.$item->id, $selected) ? true : false, ['class' => 'pet-checkbox hide']) !!}
                             </div>
                             <div>
                                 <a href="#" class="btn btn-xs btn-outline-info pet-info">Info</a>

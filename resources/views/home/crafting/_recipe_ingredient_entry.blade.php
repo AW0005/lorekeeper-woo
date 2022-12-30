@@ -24,5 +24,28 @@
         @break
     @case('Currency')
         {{ $ingredient->quantity }} {!! $ingredient->ingredient->display_name !!}
-        @break
+    @break
+    
+    @case('Pet')
+        {{ $ingredient->quantity }} 
+        @if (isset($ingredient->ingredient->image_url))
+            <img class="small-icon" src="{{ $ingredient->ingredient->image_url }}">
+        @endif
+        <span>
+            {!! $ingredient->ingredient->displayName !!}
+        </span>
+    @break
+
+    @case('MultiPet')
+        <strong>Any mix of {{ $ingredient->quantity }} item{{ $ingredient->quantity == 1 ? '' : 's' }} from the following:</strong>
+        <p class="mb-0">
+            @foreach ($ingredient->ingredient as $key => $ing)
+                @if (isset($ing->image_url))
+                    <img class="small-icon" src="{{ $ing->image_url }}">
+                @endif
+                <strong>{!! $ing->displayName !!}</strong>{{ $key < $ingredient->ingredient->count() - 1 && $ingredient->ingredient->count() > 2 ? ', ' : '' }}{{ $key == $ingredient->ingredient->count() - 2 && $ingredient->ingredient->count() > 1 ? ' or ' : '' }}
+            @endforeach
+        </p>
+    @break
+
 @endswitch

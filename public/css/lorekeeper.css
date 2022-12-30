@@ -545,22 +545,33 @@ tr.accountbound {
 .collapse-toggle.collapsed:after {
     transform: none;
 }
-.user-items .inventory-item, .user-characters .character-item {
+.user-items .inventory-item,
+.user-characters .character-item,
+.user-pets .pet-item {
     padding: 10px;
 }
-.user-items .inventory-stack, .user-characters .character-stack {
+.user-items .inventory-stack,
+.user-characters .character-stack,
+.user-pets .pet-stack {
     cursor: pointer;
 }
-.user-items .inventory-item img, .user-characters .character-item img {
+.user-items .inventory-item img,
+.user-characters .character-item img,
+.user-pets .pet-item img {
     max-width: 100%;
 }
-.user-characters .character-item.disabled, .user-characters .character-item.disabled .character-stack  {
+.user-characters .character-item.disabled,
+.user-characters .character-item.disabled .character-stack,
+.user-pets .pet-item.disabled,
+.user-pets .pet-item.disabled .pet-stack {
     opacity: 0.5;
     cursor: not-allowed;
 }
-.user-items .category-selected .inventory-item, .user-characters .category-selected .character-item {
-    background-color: rgba(0,0,0,0.05);
-    border-radius: .25rem;
+.user-items .category-selected .inventory-item,
+.user-characters .category-selected .character-item,
+.user-pets .category-selected .pet-item {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 0.25rem;
 }
 .user-items .category-selected.select-item-row {
     background-color: rgba(0,0,0,0.05);
