@@ -82,7 +82,7 @@ class RecipeManager extends Service {
                 if (isset($data['pet_stack_id'])) {
                     // Fetch the stacks from DB
                     $petStacks = UserPet::whereIn('id', $data['pet_stack_id'])->get();
-                    isset($stacks) ? $stacks->concat($petStacks) : $stacks = $petStacks;
+                    isset($stacks) ? $stacks = $stacks->concat($petStacks) : $stacks = $petStacks;
                 }
 
                 // Check for sufficient ingredients
@@ -97,7 +97,7 @@ class RecipeManager extends Service {
                     if (!(str_contains($id, 'pet') ? $petService : $service)->debitStack($user, 'Crafting', ['data' => 'Used in ' . $recipe->name . ' Recipe'], $stack, $quantity)) throw new \Exception('Items could not be removed.');
                 }
             } else {
-                $items = $recipe->ingredients->where('ingredient_type', 'Item');
+                $items = $recipe->ingredients->whereIn('ingredient_type', ['Item', 'Pet']);
                 if (count($items) > 0) throw new \Exception('Insufficient ingredients selected.');
             }
 
@@ -159,6 +159,14 @@ class RecipeManager extends Service {
                         $stacks = $selectedStacks->whereIn('pet.id', $ingredient->data);
                         $prefix = 'pet';
                         break;
+                    case 'PetCategory':
+                        $stacks = $selectedStacks->where('pet.pet_category_id', $ingredient->data[0]);
+                        $prefix = 'pet';
+                        break;
+                    case 'MultiPetCategory':
+                        $stacks = $selectedStacks->whereIn('pet.pet_category_id', $ingredient->data);
+                        $prefix = 'pet';
+                        break;
                     case 'Currency':
                         continue 2;
                 }
@@ -182,6 +190,14 @@ class RecipeManager extends Service {
                         break;
                     case 'MultiPet':
                         $stacks = $user_pets->whereIn('pet.id', $ingredient->data);
+                        $prefix = 'pet';
+                        break;
+                    case 'PetCategory':
+                        $stacks = $user_pets->where('pet.pet_category_id', $ingredient->data[0]);
+                        $prefix = 'pet';
+                        break;
+                    case 'MultiPetCategory':
+                        $stacks = $user_pets->whereIn('pet.pet_category_id', $ingredient->data);
                         $prefix = 'pet';
                         break;
                     case 'Currency':

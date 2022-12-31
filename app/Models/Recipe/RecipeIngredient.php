@@ -97,6 +97,10 @@ class RecipeIngredient extends Model {
                 return App\Models\Pet\Pet::where('id', $this->data[0])->get()[0];
             case 'MultiPet':
                 return App\Models\Pet\Pet::whereIn('id', $this->data)->get();
+            case 'PetCategory':
+                return App\Models\Pet\PetCategory::where('id', $this->data[0])->get()[0];
+            case 'MultiPetCategory':
+                return App\Models\Pet\PetCategory::whereIn('id', $this->data)->get();
         }
         return null;
     }

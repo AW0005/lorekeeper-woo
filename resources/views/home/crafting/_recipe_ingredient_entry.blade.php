@@ -47,5 +47,25 @@
             @endforeach
         </p>
     @break
+    
+    @case('PetCategory')
+        {{ $ingredient->quantity }} pet{{ $ingredient->quantity == 1 ? '' : 's' }} from the
+        @if (isset($ingredient->ingredient->image_url))
+            <img class="small-icon" src="{{ $ingredient->ingredient->image_url }}">
+        @endif{!! $ingredient->ingredient->displayName !!}
+        category
+    @break
+
+    @case('MultiPetCategory')
+        <!-- This doesn't work yet! -->
+        <strong>Any mix of {{ $ingredient->quantity }} pet{{ $ingredient->quantity == 1 ? '' : 's' }} from the following categories:</strong>
+        @foreach ($ingredient->ingredient as $ing)
+            <div>- @if (isset($ing->image_url))
+                    <img class="small-icon" src="{{ $ing->image_url }}">
+                @endif
+                <span>{!! $ing->displayName !!}</span>
+            </div>
+        @endforeach
+    @break
 
 @endswitch

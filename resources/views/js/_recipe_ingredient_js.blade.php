@@ -10,9 +10,11 @@
         var $multiCategoryEntry = $('#ingredientRowData').find('.multi-category-entry');
         var $currencySelect = $('#ingredientRowData').find('.currency-select');
         var $petSelect = $('#ingredientRowData').find('.pet-select');
-        console.log($petSelect);
         var $multiPetSelectGroup = $('#ingredientRowData').find('.multi-pet-select-group');
         var $multiPetEntry = $('#ingredientRowData').find('.multi-pet-entry');
+        var $petCategorySelect = $('#ingredientRowData').find('.pet-category-select');
+        var $multiPetCategorySelectGroup = $('#ingredientRowData').find('.multi-pet-category-select-group');
+        var $multiPetCategoryEntry = $('#ingredientRowData').find('.multi-pet-category-entry');
         var currentRowID = $ingredientTable.find('.ingredient-row').length;
 
     $('#ingredientTableBody .selectize').selectize();
@@ -60,6 +62,12 @@
                     attachAddMultiListener($clone.find('.add-multi-pet-button'), val);
                     attachRemoveMultiListener($clone.find('.remove-multi-entry-button'));
                 }
+                else if (val == 'PetCategory') $clone = $petCategorySelect.clone();
+                else if (val == 'MultiPetCategory') {
+                    $clone = $multiPetCategorySelectGroup.clone();
+                    attachAddMultiListener($clone.find('.add-multi-pet-category-button'), val);
+                    attachRemoveMultiListener($clone.find('.remove-multi-entry-button'));
+                }
 
                 $cell.html('');
                 $cell.append($clone);
@@ -67,6 +75,7 @@
                 if (val == 'MultiItem') $select = $clone.find('.multi-item-select');
                 else if (val == 'MultiCategory') $select = $clone.find('.multi-category-select');
                 else if (val == 'MultiPet') $select = $clone.find('.multi-pet-select');
+                else if (val == 'MultiPetCategory') $select = $clone.find('.multi-pet-category-select');
                 else $select = $clone;
 
                 $select.attr('name', 'ingredient_data[' + row_num + '][]');
@@ -100,6 +109,10 @@
                     $clone = $multiPetEntry.clone();
                     $(this).parent().find('.multi-pet-list').append($clone);
                     $select = $clone.find('.multi-pet-select');
+                } else if (type == 'MultiPetCategory') {
+                    $clone = $multiPetCategoryEntry.clone();
+                    $(this).parent().find('.multi-pet-category-list').append($clone);
+                    $select = $clone.find('.multi-pet-category-select');
                 }
                 $select.attr('name', 'ingredient_data[' + row_num + '][]');
                 $select.selectize();

@@ -17,6 +17,7 @@ use App\Services\RecipeService;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pet\Pet;
+use App\Models\Pet\PetCategory;
 
 class RecipeController extends Controller {
     /*
@@ -64,7 +65,8 @@ class RecipeController extends Controller {
             'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
             'raffles' => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
             'recipes' => Recipe::orderBy('name')->pluck('name', 'id'),
-            'pets' => Pet::orderBy('name')->pluck('name', 'id')
+            'pets' => Pet::orderBy('name')->pluck('name', 'id'),
+            'petCategories' => PetCategory::orderBy('sort', 'DESC')->pluck('name', 'id'),
         ]);
     }
 
@@ -85,7 +87,8 @@ class RecipeController extends Controller {
             'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
             'raffles' => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
             'recipes' => Recipe::orderBy('name')->pluck('name', 'id'),
-            'pets' => Pet::orderBy('name')->pluck('name', 'id')
+            'pets' => Pet::orderBy('name')->pluck('name', 'id'),
+            'petCategories' => PetCategory::orderBy('sort', 'DESC')->pluck('name', 'id'),
         ]);
     }
 

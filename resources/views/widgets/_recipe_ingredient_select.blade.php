@@ -19,6 +19,15 @@
                             'class' => 'form-control ingredient-type',
                             'placeholder' => 'Select Ingredient Type',
                         ]) !!}</td>
+                        <td>{!! Form::select(
+                            'ingredient_type[' . $row_counter . ']',
+                            ['Item' => 'Item', 'MultiItem' => 'Multi Item', 'Category' => 'Category', 'MultiCategory' => 'Multi Category', 'Currency' => 'Currency', 'Pet' => 'Pet', 'MultiPet' => 'Multi Pet', 'PetCategory' => 'Pet Category', 'MultiPetCategory' => 'Multi Pet Category'],
+                            $ingredient->ingredient_type,
+                            [
+                                'class' => 'form-control ingredient-type',
+                                'placeholder' => 'Select Ingredient Type',
+                            ],
+                        ) !!}</td>
                         <td class="ingredient-row-select">
                             @switch($ingredient->ingredient_type)
                                 @case('Item')
@@ -72,6 +81,26 @@
                                             @endforeach
                                         </div>
                                         <a href="#" class="btn btn-primary add-multi-item-button mb-2">Add Pet</a>
+                                    </div>
+                                @break
+                                
+                                
+
+                                @case('PetCategory')
+                                    {!! Form::select('ingredient_data[' . $row_counter . '][]', $petCategories, $ingredient->data[0], ['class' => 'form-control pet-category-select selectize', 'placeholder' => 'Select Category']) !!}
+                                @break
+
+                                @case('MultiPetCategory')
+                                    <div class="multi-pet-category-select-group">
+                                        <div class="multi-pet-category-list">
+                                            @foreach ($ingredient->data as $entry)
+                                                <div class="mb-2">
+                                                    {!! Form::select('ingredient_data[' . $row_counter . '][]', $petCategories, $entry, ['class' => 'form-control multi-pet-category-select selectize', 'placeholder' => 'Select Category']) !!}
+                                                    <div class="text-right text-uppercase" style="margin-top: -0.5em;"><a href="#" class="remove-multi-entry-button text-danger {{ count($ingredient->data) > 1 ? '' : 'hide' }}">Remove Pet Category</a></div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <a href="#" class="btn btn-primary add-multi-pet-category-button mb-2">Add Pet Category</a>
                                     </div>
                                 @break
                             @endswitch
