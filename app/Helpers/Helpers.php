@@ -265,9 +265,15 @@ function checkAlias($url, $failOnError = true)
 function prettyProfileLink($url)
 {
     $matches = [];
-    // Check different sites and return site if a match is made, plus username (retreived from the URL)
-    foreach(Config::get('lorekeeper.sites') as $siteName=>$siteInfo) {
-        if(preg_match_all($siteInfo['regex'], $url, $matches)) {$site = $siteName; $name = $matches[1][0]; $link = $matches[0][0]; break;}
+    // Check different sites and return site if a match is made, plus username (retrieved from the URL)
+    foreach (Config::get('lorekeeper.sites') as $siteName => $siteInfo) {
+        if (preg_match_all($siteInfo['regex'], $url, $matches)) {
+            // TODO: this isn't working perfectly with the expanded tumblr regex for some reason
+            $site = $siteName;
+            $name = isset($matches[2][0]) ?  $matches[2][0] : $matches[1][0];
+            $link = $matches[0][0];
+            break;
+        }
     }
 
     // Return formatted link if possible; failing that, an unformatted link

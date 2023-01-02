@@ -48,7 +48,7 @@
         <h5 class="card-title">Links</h5>
         <div class="row">
             @foreach($user->aliases as $alias)
-                @if($alias->id !== $user->primaryAlias->id) <div class="col-6">{!! $alias->displayName !!}</div> @endif
+                @if($alias->id !== $user->primaryAlias->id) <div class="col-md-3 col-6">{!! $alias->displayAlias !!}</div> @endif
             @endforeach
             @foreach($user->links as $link)
                 <div class="col-md-3 col-6">{!! $link->displayName !!}</div>

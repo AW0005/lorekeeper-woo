@@ -70,7 +70,7 @@ return [
     'tumblr' => [
         'full_name'     => 'Tumblr',
         'display_name'  => 'tumblr',
-        'regex'         => '/([A-Za-z0-9_-]+)\.tumblr\.com/',
+        'regex'         => '/([A-Za-z0-9_-]+[^www])\.tumblr\.com|www\.tumblr\.com\/([A-Za-z0-9_-]+)/',
         'link'          => 'tumblr.com',
         'icon'          => 'fab fa-tumblr',
         'auth'          => 0,

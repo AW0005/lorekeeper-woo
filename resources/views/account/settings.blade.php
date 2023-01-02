@@ -38,6 +38,7 @@
 </div>
     
     
+    {{-- TODO: Needs a way to remove links --}}
     <div class="card p-3 mb-2">
         <h3>Additional Links</h3>
         <p>This adds additional links to your profile page for social media sites. These do not get used anywhere else on site, the way that aliases do.</p>
