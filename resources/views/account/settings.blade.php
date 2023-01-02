@@ -130,7 +130,7 @@
             $('.add-site').on('click', (e) => {
                 console.log('here');
                 e.preventDefault();
-                const newInput = $('.link').clone();
+                const newInput = $('.link.hide').clone();
                 newInput.removeClass('hide');
                 $('.links').append(newInput);
             })
