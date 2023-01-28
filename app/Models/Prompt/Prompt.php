@@ -18,7 +18,7 @@ class Prompt extends Model
     protected $fillable = [
         'prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active',
         'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix',
-        'hide_submissions'
+        'hide_submissions', 'prompt_timeframe'
     ];
 
     /**
@@ -102,14 +102,29 @@ class Prompt extends Model
         return $query->where('is_active', 1)
             ->where(function($query) {
                 $query->whereNull('start_at')->orWhere('start_at', '<', Carbon::now())->orWhere(function($query) {
+                    // Start at hasn't passed but hide before start is false
                     $query->where('start_at', '>=', Carbon::now())->where('hide_before_start', 0);
                 });
         })->where(function($query) {
                 $query->whereNull('end_at')->orWhere('end_at', '>', Carbon::now())->orWhere(function($query) {
+                    // end at has passed but hide after end is false
                     $query->where('end_at', '<=', Carbon::now())->where('hide_after_end', 0);
                 });
+        })->orWhere(function ($query) {
+            $query->where('prompt_timeframe', 'weekly')->whereRaw('DAYOFWEEK(start_at) < ' . (Carbon::now()->dayOfWeekIso - 1));
+        })->where(function ($query) {
+            $query->where('prompt_timeframe', 'weekly')->whereRaw('DAYOFWEEK(end_at) > ' . (Carbon::now()->dayOfWeekIso - 1));
+            // Monthly
+        })->orWhere(function ($query) {
+            $query->where('prompt_timeframe', 'monthly')->whereRaw('DAY(start_at) < ' . Carbon::now()->day);
+        })->where(function ($query) {
+            $query->where('prompt_timeframe', 'monthly')->whereRaw('DAY(end_at) > ' . Carbon::now()->day);
+            // Yearly
+        })->orWhere(function ($query) {
+            $query->where('prompt_timeframe', 'yearly')->whereRaw('DAY(start_at) < ' . Carbon::now()->day)->whereRaw('MONTH(start_at) <= ' . Carbon::now()->month);
+        })->where(function ($query) {
+            $query->where('prompt_timeframe', 'yearly')->whereRaw('DAY(end_at) > ' . Carbon::now()->day)->whereRaw('MONTH(end_at) >= ' . Carbon::now()->month);
         });
-
     }
 
     /**
@@ -257,5 +272,22 @@ class Prompt extends Model
     public function getAssetTypeAttribute()
     {
         return 'prompts';
+    }
+
+    public function getIsOpenAttribute() {
+        if ((!$this->end_at || !$this->end_at->isPast()) && (!$this->start_at || !$this->start_at->isFuture()))
+            return true;
+        elseif ($this->prompt_timeframe === 'weekly' && $this->start_at && $this->start_at->dayOfWeek < Carbon::now()->dayOfWeek && $this->end_at && $this->end_at->dayOfWeek >= Carbon::now()->dayOfWeek)
+            return true;
+        elseif ($this->prompt_timeframe === 'monthly' && $this->start_at && $this->start_at->day < Carbon::now()->day && $this->end_at && $this->end_at->day >= Carbon::now()->day)
+            return true;
+        elseif (
+            $this->prompt_timeframe === 'yearly'
+            && $this->start_at && $this->start_at->day < Carbon::now()->day && $this->start_at->month <= Carbon::now()->month
+            && $this->end_at && $this->end_at->day >= Carbon::now()->day && $this->end_at->month >= Carbon::now()->month
+        )
+            return true;
+
+        return false;
     }
 }

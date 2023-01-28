@@ -54,10 +54,8 @@
             @endif
         </div>
         <div class="text-right">
-            @if($prompt->end_at && $prompt->end_at->isPast())
-                <span class="text-secondary">This prompt has ended.</span>
-            @elseif($prompt->start_at && $prompt->start_at->isFuture())
-                <span class="text-secondary">This prompt is not open for submissions yet.</span>
+            @if(!$prompt->isOpen)
+                <span class="text-secondary">This prompt is not currently open.</span>
             @else
                 <a href="{{ url('submissions/new?prompt_id=' . $prompt->id) }}" class="btn btn-primary">Submit Prompt</a>
             @endunless
