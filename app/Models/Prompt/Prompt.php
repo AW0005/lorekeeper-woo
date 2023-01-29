@@ -274,20 +274,25 @@ class Prompt extends Model
         return 'prompts';
     }
 
-    public function getIsOpenAttribute() {
-        if ((!$this->end_at || !$this->end_at->isPast()) && (!$this->start_at || !$this->start_at->isFuture()))
-            return true;
-        // elseif ($this->prompt_timeframe === 'weekly' && $this->start_at && $this->start_at->dayOfWeek < Carbon::now()->dayOfWeek && $this->end_at && $this->end_at->dayOfWeek >= Carbon::now()->dayOfWeek)
-        //     return true;
-        elseif ($this->prompt_timeframe === 'monthly' && $this->start_at && $this->start_at->day < Carbon::now()->day && $this->end_at && $this->end_at->day >= Carbon::now()->day)
-            return true;
-        elseif (
-            $this->prompt_timeframe === 'yearly'
-            && $this->start_at && $this->start_at->day < Carbon::now()->day && $this->start_at->month <= Carbon::now()->month
-            && $this->end_at && $this->end_at->day >= Carbon::now()->day && $this->end_at->month >= Carbon::now()->month
-        )
-            return true;
+    public function getStartAtAttribute($start_at) {
+        $start_at = Carbon::parse($start_at);
 
-        return false;
+        if (isset($this->prompt_timeframe)) {
+            if ($this->prompt_timeframe === 'monthly') $start_at->month(Carbon::now()->month);
+            if ($this->prompt_timeframe === 'yearly') $start_at->year(Carbon::now()->year);
+        }
+
+        return $start_at;
+    }
+
+    public function getEndAtAttribute($end_at) {
+        $end_at = Carbon::parse($end_at);
+
+        if (isset($this->prompt_timeframe)) {
+            if ($this->prompt_timeframe === 'monthly') $end_at->month(Carbon::now()->month);
+            if ($this->prompt_timeframe === 'yearly') $end_at->year(Carbon::now()->year);
+        }
+
+        return $end_at;
     }
 }
