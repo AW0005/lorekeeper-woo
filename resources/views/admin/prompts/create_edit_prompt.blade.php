@@ -89,8 +89,8 @@
 
 <div class="row align-items-end">
     <div class="col-md-6 form-group">
-        {!! Form::label('prompt_timeframe', 'Prompt Repeat Timeframe') !!} {!! add_help('This is the timeframe that the prompt will repeat itself (re-open and re-close) relative to the original start and end time. Rollover will happen on UTC time. Weekday repeatables must be within a Sunday - Saturday week timeframe.') !!}
-        {!! Form::select('prompt_timeframe', ["never" => "Never", "yearly" => "Yearly", "monthly" => "Monthly", "weekly" => "Weekly"] , $prompt ? $prompt->prompt_timeframe : 'never', ['class' => 'form-control']) !!}
+        {!! Form::label('prompt_timeframe', 'Prompt Repeat Timeframe') !!} {!! add_help('This is the timeframe that the prompt will repeat itself (re-open and re-close) relative to the original start and end time. Rollover will happen on UTC time.') !!}
+        {!! Form::select('prompt_timeframe', ["never" => "Never", "yearly" => "Yearly", "monthly" => "Monthly", {{-- "weekly" => "Weekly" --}}] , $prompt ? $prompt->prompt_timeframe : 'never', ['class' => 'form-control']) !!}
     </div>
     <div class="col-md-6 form-group">
         {!! Form::checkbox('is_active', 1, $prompt->id ? $prompt->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}

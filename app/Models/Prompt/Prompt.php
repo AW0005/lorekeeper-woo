@@ -110,12 +110,12 @@ class Prompt extends Model
                     // end at has passed but hide after end is false
                     $query->where('end_at', '<=', Carbon::now())->where('hide_after_end', 0);
                 });
-        })->orWhere(function ($query) {
+        })/* ->orWhere(function ($query) {
             $query->where('prompt_timeframe', 'weekly')->whereRaw('DAYOFWEEK(start_at) < ' . (Carbon::now()->dayOfWeekIso - 1));
         })->where(function ($query) {
             $query->where('prompt_timeframe', 'weekly')->whereRaw('DAYOFWEEK(end_at) > ' . (Carbon::now()->dayOfWeekIso - 1));
             // Monthly
-        })->orWhere(function ($query) {
+        }) */->orWhere(function ($query) {
             $query->where('prompt_timeframe', 'monthly')->whereRaw('DAY(start_at) < ' . Carbon::now()->day);
         })->where(function ($query) {
             $query->where('prompt_timeframe', 'monthly')->whereRaw('DAY(end_at) > ' . Carbon::now()->day);
@@ -277,8 +277,8 @@ class Prompt extends Model
     public function getIsOpenAttribute() {
         if ((!$this->end_at || !$this->end_at->isPast()) && (!$this->start_at || !$this->start_at->isFuture()))
             return true;
-        elseif ($this->prompt_timeframe === 'weekly' && $this->start_at && $this->start_at->dayOfWeek < Carbon::now()->dayOfWeek && $this->end_at && $this->end_at->dayOfWeek >= Carbon::now()->dayOfWeek)
-            return true;
+        // elseif ($this->prompt_timeframe === 'weekly' && $this->start_at && $this->start_at->dayOfWeek < Carbon::now()->dayOfWeek && $this->end_at && $this->end_at->dayOfWeek >= Carbon::now()->dayOfWeek)
+        //     return true;
         elseif ($this->prompt_timeframe === 'monthly' && $this->start_at && $this->start_at->day < Carbon::now()->day && $this->end_at && $this->end_at->day >= Carbon::now()->day)
             return true;
         elseif (
