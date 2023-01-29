@@ -277,6 +277,7 @@ class PromptService extends Service
         if(!isset($data['hide_before_start'])) $data['hide_before_start'] = 0;
         if(!isset($data['hide_after_end'])) $data['hide_after_end'] = 0;
         if(!isset($data['is_active'])) $data['is_active'] = 0;
+        if (isset($data['prompt_timeframe']) && $data['prompt_timeframe'] === 'never') $data['prompt_timeframe'] = null;
 
         if(isset($data['remove_image']))
         {
