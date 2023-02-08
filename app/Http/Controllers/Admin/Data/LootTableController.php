@@ -52,7 +52,7 @@ class LootTableController extends Controller
         return view('admin.loot_tables.create_edit_loot_table', [
             'table' => new LootTable,
             'items' => Item::orderBy('name')->pluck('name', 'id'),
-            'pets' => Pet::orderBy('name')->pluck('name', 'id'),
+            'pets' => Pet::orderBy('name'),
             'categories' => ItemCategory::orderBy('sort', 'DESC')->pluck('name', 'id'),
             'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
             'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
@@ -77,7 +77,7 @@ class LootTableController extends Controller
         return view('admin.loot_tables.create_edit_loot_table', [
             'table' => $table,
             'items' => Item::orderBy('name')->pluck('name', 'id'),
-            'pets' => Pet::orderBy('name')->pluck('name', 'id'),
+            'pets' => Pet::orderBy('name'),
             'categories' => ItemCategory::orderBy('sort', 'DESC')->pluck('name', 'id'),
             'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
             'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
@@ -97,7 +97,7 @@ class LootTableController extends Controller
     {
         $id ? $request->validate(LootTable::$updateRules) : $request->validate(LootTable::$createRules);
         $data = $request->only([
-            'name', 'display_name', 'rewardable_type', 'rewardable_id', 'quantity', 'weight',
+            'name', 'display_name', 'rewardable_type', 'rewardable_variant', 'rewardable_id', 'quantity', 'weight',
             'criteria', 'rarity'
         ]);
         if($id && $service->updateLootTable(LootTable::find($id), $data)) {

@@ -14,14 +14,18 @@
         @if($loots)
             @foreach($loots as $loot)
                 <tr class="loot-row">
-                    <td>{!! Form::select('rewardable_type[]', ['Item' => 'Item', 'Currency' => 'Currency', 'Pet' => 'Pet', 'Gear' => 'Gear', 'Weapon' => 'Weapon'] + ($showLootTables ? ['LootTable' => 'Loot Table'] : []) + ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []), $loot->rewardable_type, ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type']) !!}</td>
+                    <td>{!! Form::select('rewardable_type[]', ['Item' => 'Item', 'Currency' => 'Currency', 'Pet' => 'Pet', 'Gear' => 'Gear', 'Weapon' => 'Weapon'] + ($showLootTables ? ['LootTable' => 'Loot Table'] : []) + ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []), $loot->rewardable_type === 'Pet-Variant' ? 'Pet' : $loot->rewardable_type, ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type']) !!}</td>
                     <td class="loot-row-select">
                         @if($loot->rewardable_type == 'Item')
                             {!! Form::select('rewardable_id[]', $items, $loot->rewardable_id, ['class' => 'form-control item-select selectize', 'placeholder' => 'Select Item']) !!}
                         @elseif($loot->rewardable_type == 'Currency')
                             {!! Form::select('rewardable_id[]', $currencies, $loot->rewardable_id, ['class' => 'form-control currency-select selectize', 'placeholder' => 'Select Currency']) !!}
-                        @elseif($loot->rewardable_type == 'Pet')
-                            {!! Form::select('rewardable_id[]', $pets, $loot->rewardable_id, ['class' => 'form-control pet-select selectize', 'placeholder' => 'Select Pet']) !!}
+                        @elseif($loot->rewardable_type == 'Pet' || $loot->rewardable_type == 'Pet-Variant')
+                            @php $pet = $loot->rewardable_type == 'Pet' ? \App\Models\Pet\Pet::find($loot->rewardable_id) : \App\Models\Pet\PetVariant::find($loot->rewardable_id)->pet; @endphp
+                            {!! Form::select('rewardable_id[]', $pets, $pet->id, ['class' => 'form-control pet-select selectize', 'placeholder' => 'Select Pet']) !!}
+                            @if(isset($showVariants) && $showVariants)
+                                {!! Form::select('rewardable_variant[]', [0 => 'Default'] + $pet->variants()->pluck('variant_name', 'id')->toArray(), $loot->rewardable_type == 'Pet' ? 0 : $loot->rewardable_id, ['class' => 'form-control pet-variant-select-' . $pet->id, 'placeholder' => 'Select Pet Variant']) !!}
+                            @endif
                         @elseif($loot->rewardable_type == 'Weapon')
                             {!! Form::select('rewardable_id[]', $weapons, $loot->rewardable_id, ['class' => 'form-control weapon-select selectize', 'placeholder' => 'Select Weapon']) !!}
                         @elseif($loot->rewardable_type == 'Gear')

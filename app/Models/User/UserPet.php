@@ -16,7 +16,7 @@ class UserPet extends Model
      * @var array
      */
     protected $fillable = [
-        'data', 'pet_id', 'user_id', 'attached_at'
+        'data', 'pet_id', 'user_id', 'variant_id', 'attached_at'
     ];
 
     /**

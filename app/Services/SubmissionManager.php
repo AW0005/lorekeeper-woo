@@ -273,7 +273,6 @@ class SubmissionManager extends Service
                             if(!$reward->is_user_owned) throw new \Exception("Invalid currency selected.");
                             break;
                         case 'Pet':
-                            if (!$isStaff) break;
                             $reward = Pet::find($data['rewardable_id'][$key]);
                             break;
                         case 'LootTable':
@@ -285,11 +284,9 @@ class SubmissionManager extends Service
                             $reward = Raffle::find($data['rewardable_id'][$key]);
                             break;
                         case 'Gear':
-                            if (!$isStaff) break;
                             $reward = Gear::find($data['rewardable_id'][$key]);
                             break;
                         case 'Weapon':
-                            if (!$isStaff) break;
                             $reward = Weapon::find($data['rewardable_id'][$key]);
                             break;
                     }

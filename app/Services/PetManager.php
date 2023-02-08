@@ -285,9 +285,13 @@ class PetManager extends Service
 
         try {
 
-
-            for($i = 0; $i < $quantity; $i++) $user_pet = UserPet::create(['user_id' => $recipient->id, 'pet_id' => $pet->id, 'data' => json_encode($data)]);
-
+            for ($i = 0; $i < $quantity; $i++) {
+                if (!$pet->variant_name) {
+                    $user_pet = UserPet::create(['user_id' => $recipient->id, 'pet_id' => $pet->id, 'data' => json_encode($data)]);
+                } else {
+                    $user_pet = UserPet::create(['user_id' => $recipient->id, 'pet_id' => $pet->pet_id, 'variant_id' => $pet->id, 'data' => json_encode($data)]);
+                }
+            }
 
             // Create drop information for the character, if relevant
             if($pet->pet && $pet->pet->dropData) {

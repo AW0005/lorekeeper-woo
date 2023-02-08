@@ -25,15 +25,28 @@ $( document ).ready(function() {
         attachRewardTypeListener($clone.find('.reward-type'));
         attachRemoveListener($clone.find('.remove-loot-button'));
     });
+    
+    
+    function onPetSelect (e) {
+        var val = $(this).val();
+        var $cell = $(this).parent().parent().find('.loot-row-select');
+        var clone = $('#lootRowData').find('.pet-variant-select-' + val);
+        
+        $cell.find('select:not(.pet-select)').remove();
+        $cell.append(clone);
+    }
+    
+    $PetSelect.on('change', onPetSelect);
+    $('.loot-row-select .pet-select').on('change', onPetSelect);
 
     $('.reward-type').on('change', function(e) {
         var val = $(this).val();
-        var $cell = $(this).parent().find('.loot-row-select');
+        var $cell = $(this).parent().parent().find('.loot-row-select');
 
         var $clone = null;
         if(val == 'Item') $clone = $itemSelect.clone();
         else if (val == 'Currency') $clone = $currencySelect.clone();
-        else if (val == 'Pet') $clone = $PetSelect.clone();
+        else if (val == 'Pet') $clone = $PetSelect.clone(true);
         else if (val == 'Weapon') $clone = $WeaponSelect.clone();
         else if (val == 'Gear') $clone = $GearSelect.clone();
         @if($showLootTables)
@@ -55,7 +68,7 @@ $( document ).ready(function() {
             var $clone = null;
             if(val == 'Item') $clone = $itemSelect.clone();
             else if (val == 'Currency') $clone = $currencySelect.clone();
-            else if (val == 'Pet') $clone = $PetSelect.clone();
+            else if (val == 'Pet') $clone = $PetSelect.clone(true);
             else if (val == 'Weapon') $clone = $WeaponSelect.clone();
             else if (val == 'Gear') $clone = $GearSelect.clone();
             @if($showLootTables)

@@ -71,6 +71,8 @@ class Loot extends Model
                 return $this->belongsTo('App\Models\Loot\LootTable', 'rewardable_id');
             case 'Pet':
                 return $this->belongsTo('App\Models\Pet\Pet', 'rewardable_id');
+            case 'PetVariant':
+                return $this->belongsTo('App\Models\Pet\PetVariant', 'rewardable_id');
             case 'ItemCategory':
                 return $this->belongsTo('App\Models\Item\ItemCategory', 'rewardable_id');
             case 'ItemCategoryRarity':

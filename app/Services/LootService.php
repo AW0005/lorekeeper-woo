@@ -48,7 +48,7 @@ class LootService extends Service
 
             $table = LootTable::create(Arr::only($data, ['name', 'display_name']));
 
-            $this->populateLootTable($table, Arr::only($data, ['rewardable_type', 'rewardable_id', 'quantity', 'weight', 'criteria', 'rarity']));
+            $this->populateLootTable($table, Arr::only($data, ['rewardable_type', 'rewardable_id', 'rewardable_variant', 'quantity', 'weight', 'criteria', 'rarity']));
 
             return $this->commitReturn($table);
         } catch(\Exception $e) {
@@ -69,23 +69,23 @@ class LootService extends Service
         DB::beginTransaction();
 
         try {
-
-            // More specific validation
-            foreach($data['rewardable_type'] as $key => $type)
-            {
-                if(!$type) throw new \Exception("Loot type is required.");
-                if($type != 'ItemRarity' && !$data['rewardable_id'][$key]) throw new \Exception("Reward is required.");
-                if(!$data['quantity'][$key] || $data['quantity'][$key] < 1) throw new \Exception("Quantity is required and must be an integer greater than 0.");
-                if(!$data['weight'][$key] || $data['weight'][$key] < 1) throw new \Exception("Weight is required and must be an integer greater than 0.");
-                if($type == 'ItemCategoryRarity') {
-                    if(!isset($data['criteria'][$key]) || !$data['criteria'][$key]) throw new \Exception("Criteria is required for conditional item categories.");
-                    if(!isset($data['rarity'][$key]) || !$data['rarity'][$key]) throw new \Exception("A rarity is required for conditional item categories.");
+            if (isset($data['rewardable_type'])) {
+                // More specific validation
+                foreach ($data['rewardable_type'] as $key => $type) {
+                    if (!$type) throw new \Exception("Loot type is required.");
+                    if ($type != 'ItemRarity' && !$data['rewardable_id'][$key]) throw new \Exception("Reward is required.");
+                    if (!$data['quantity'][$key] || $data['quantity'][$key] < 1) throw new \Exception("Quantity is required and must be an integer greater than 0.");
+                    if (!$data['weight'][$key] || $data['weight'][$key] < 1) throw new \Exception("Weight is required and must be an integer greater than 0.");
+                    if ($type == 'ItemCategoryRarity') {
+                        if (!isset($data['criteria'][$key]) || !$data['criteria'][$key]) throw new \Exception("Criteria is required for conditional item categories.");
+                        if (!isset($data['rarity'][$key]) || !$data['rarity'][$key]) throw new \Exception("A rarity is required for conditional item categories.");
+                    }
                 }
             }
 
             $table->update(Arr::only($data, ['name', 'display_name']));
 
-            $this->populateLootTable($table, Arr::only($data, ['rewardable_type', 'rewardable_id', 'quantity', 'weight', 'criteria', 'rarity']));
+            $this->populateLootTable($table, Arr::only($data, ['rewardable_type', 'rewardable_id', 'rewardable_variant', 'quantity', 'weight', 'criteria', 'rarity']));
 
             return $this->commitReturn($table);
         } catch(\Exception $e) {
@@ -104,6 +104,7 @@ class LootService extends Service
     {
         // Clear the old loot...
         $table->loot()->delete();
+        if (!isset($data['rewardable_type'])) return;
 
         foreach($data['rewardable_type'] as $key => $type)
         {
@@ -115,8 +116,8 @@ class LootService extends Service
 
             Loot::create([
                 'loot_table_id'   => $table->id,
-                'rewardable_type' => $type,
-                'rewardable_id'   => isset($data['rewardable_id'][$key]) ? $data['rewardable_id'][$key] : 1,
+                'rewardable_type' => $type === 'Pet' && $data['rewardable_variant'][$key] > 0 ? 'PetVariant' : $type,
+                'rewardable_id'   => $type === 'Pet' && $data['rewardable_variant'][$key] > 0 ? $data['rewardable_variant'][$key] : (isset($data['rewardable_id'][$key]) ? $data['rewardable_id'][$key] : 1),
                 'quantity'        => $data['quantity'][$key],
                 'weight'          => $data['weight'][$key],
                 'data'            => isset($lootData) ? json_encode($lootData) : null

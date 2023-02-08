@@ -49,6 +49,11 @@ class PetVariant extends Model
 
     **********************************************************************************************/
 
+    public function getAssetTypeAttribute() {
+        return 'pet-variants';
+    }
+    
+    
     /**
      * Gets the file directory containing the model's image.
      *
@@ -57,6 +62,10 @@ class PetVariant extends Model
     public function getImageDirectoryAttribute()
     {
         return 'images/data/pets';
+    }
+
+    public function getDisplayNameAttribute() {
+        return $this->pet->displayName . ' (' . $this->variant_name . ')';
     }
 
     /**

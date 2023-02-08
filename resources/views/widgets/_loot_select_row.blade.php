@@ -1,3 +1,9 @@
+@php
+
+$pets = \App\Models\Pet\Pet::orderBy('name');
+
+@endphp
+
 <div id="lootRowData" class="hide">
     <table class="table table-sm">
         <tbody id="lootRow">
@@ -11,7 +17,13 @@
     </table>
     {!! Form::select('rewardable_id[]', $items, null, ['class' => 'form-control item-select', 'placeholder' => 'Select Item']) !!}
     {!! Form::select('rewardable_id[]', $currencies, null, ['class' => 'form-control currency-select', 'placeholder' => 'Select Currency']) !!}
-    {!! Form::select('rewardable_id[]', $pets, null, ['class' => 'form-control pet-select', 'placeholder' => 'Select Pet']) !!}
+    {!! Form::select('rewardable_id[]', $pets->pluck('name', 'id'), null, ['class' => 'form-control pet-select', 'placeholder' => 'Select Pet']) !!}
+    
+    @if(isset($showVariants) && $showVariants)
+        @foreach($pets->get() as $pet)
+            {!! Form::select('rewardable_variant[]', [0 => 'Default'] + $pet->variants()->pluck('variant_name', 'id')->toArray(), 0, ['class' => 'form-control pet-variant-select-' . $pet->id, 'placeholder' => 'Select Pet Variant']) !!}
+        @endforeach
+    @endif
     {!! Form::select('rewardable_id[]', $weapons, null, ['class' => 'form-control weapon-select', 'placeholder' => 'Select Weapon']) !!}
     {!! Form::select('rewardable_id[]', $gears, null, ['class' => 'form-control gear-select', 'placeholder' => 'Select Gear']) !!}
     @if($showLootTables)

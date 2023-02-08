@@ -13,6 +13,8 @@ use App\Models\Raffle\Raffle;
 use App\Models\Pet\Pet;
 use App\Models\Claymore\Gear;
 use App\Models\Claymore\Weapon;
+use App\Models\Pet\PetVariant;
+
 class BoxService extends Service
 {
     /*
@@ -83,9 +85,9 @@ class BoxService extends Service
 
         try {
             // If there's no data, return.
-            if(!isset($data['rewardable_type'])) return true;
-            
-            // The data will be stored as an asset table, json_encode()d. 
+            if (isset($data['rewardable_type'])) {
+
+            // The data will be stored as an asset table, json_encode()d.
             // First build the asset table, then prepare it for storage.
             $assets = createAssetsArray();
             foreach($data['rewardable_type'] as $key => $r) {
@@ -113,11 +115,15 @@ class BoxService extends Service
                         $type = 'App\Models\Raffle\Raffle';
                         break;
                 }
-                $asset = $type::find($data['rewardable_id'][$key]);
-                addAsset($assets, $asset, $data['quantity'][$key]);
+
+                    $asset = $data['rewardable_type'][$key] === 'Pet' && $data['rewardable_variant'][$key] > 0 ? PetVariant::find($data['rewardable_variant'][$key]) : $type::find($data['rewardable_id'][$key]);
+                    addAsset($assets, $asset, $data['quantity'][$key]);
             }
             $assets = getDataReadyAssets($assets);
-
+            } else {
+                $assets = [];
+            }
+            
             $tag->update(['data' => json_encode($assets)]);
 
             return $this->commitReturn(true);
@@ -181,7 +187,8 @@ class BoxService extends Service
             {
                 foreach($assetType as $asset)
                 {
-                    array_push($result_elements, $asset['asset']->name.(class_basename($asset['asset']) == 'Raffle' ? ' (Raffle Ticket)' : '')." x".$asset['quantity']);
+                    $name = $asset['asset']->name ?? ($asset['asset']->pet->name . ' (' . $asset['asset']->variant_name . ')');
+                    array_push($result_elements, $name . (class_basename($asset['asset']) == 'Raffle' ? ' (Raffle Ticket)' : '') . " x" . $asset['quantity']);
                 }
             }
         }
