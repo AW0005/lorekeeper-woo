@@ -274,7 +274,7 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data)
             $service = new \App\Services\CurrencyManager;
             foreach($contents as $asset)
                 if(!$service->creditCurrency($sender, $recipient, $logType, $data['data'], $asset['asset'], $asset['quantity'])) return false;
-        } elseif ($key == 'pets' || $key = 'pet-variants' && count($contents)) {
+        } elseif (($key == 'pets' || $key == 'pet-variants') && count($contents)) {
             $service = new \App\Services\PetManager;
             foreach($contents as $asset)
                 if(!$service->creditPet($sender, $recipient, $logType, $data, $asset['asset'], $asset['quantity'])) return false;
