@@ -299,7 +299,7 @@ class PetManager extends Service
                 if($drop->createDrop($user_pet->id, null)) throw new \Exception('Failed to create pet drop.');
             }
 
-            if($type && !$this->createLog($sender ? $sender->id : null, $recipient->id, null, $type, $data['data'], $pet->id, $quantity)) throw new \Exception("Failed to create log.");
+            if ($type && !$this->createLog($sender ? $sender->id : null, $recipient->id, null, $type, $data['data'], $user_pet->pet->id, $quantity)) throw new \Exception("Failed to create log.");
 
             return $this->commitReturn(true);
         } catch(\Exception $e) {
