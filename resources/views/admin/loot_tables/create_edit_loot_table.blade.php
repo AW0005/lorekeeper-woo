@@ -183,7 +183,7 @@ $( document ).ready(function() {
     function onPetSelect (e) {
         var val = $(this).val();
         var $cell = $(this).parent().parent().find('.loot-row-select');
-        var clone = $('#lootRowData').find('.pet-variant-select-' + val);
+        var clone = $('#lootRowData').find('.pet-variant-select-' + val).clone();
         
         $cell.find('select:not(.pet-select)').remove();
         $cell.append(clone);
