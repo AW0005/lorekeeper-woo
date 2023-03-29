@@ -116,14 +116,14 @@ class Prompt extends Model
             $query->where('prompt_timeframe', 'weekly')->whereRaw('DAYOFWEEK(end_at) > ' . (Carbon::now()->dayOfWeekIso - 1));
             // Monthly
         }) */->orWhere(function ($query) {
-            $query->where('prompt_timeframe', 'monthly')->whereRaw('DAY(start_at) < ' . Carbon::now()->day);
+            $query->where('prompt_timeframe', 'monthly')->whereDay('start_at', '<', Carbon::now()->day);
         })->where(function ($query) {
-            $query->where('prompt_timeframe', 'monthly')->whereRaw('DAY(end_at) > ' . Carbon::now()->day);
+            $query->where('prompt_timeframe', 'monthly')->whereDay('end_at', '>', Carbon::now()->day);
             // Yearly
         })->orWhere(function ($query) {
-            $query->where('prompt_timeframe', 'yearly')->whereRaw('DAY(start_at) < ' . Carbon::now()->day)->whereRaw('MONTH(start_at) <= ' . Carbon::now()->month);
+            $query->where('prompt_timeframe', 'yearly')->whereDay('start_at', '<', Carbon::now()->day)->whereMonth('start_at', '<=', Carbon::now()->month);
         })->where(function ($query) {
-            $query->where('prompt_timeframe', 'yearly')->whereRaw('DAY(end_at) > ' . Carbon::now()->day)->whereRaw('MONTH(end_at) >= ' . Carbon::now()->month);
+            $query->where('prompt_timeframe', 'yearly')->whereDay('end_at', '>', Carbon::now()->day)->whereMonth('end_at', '>=', Carbon::now()->month);
         });
     }
 
