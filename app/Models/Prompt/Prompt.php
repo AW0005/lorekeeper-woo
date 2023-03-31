@@ -275,6 +275,7 @@ class Prompt extends Model
     }
 
     public function getStartAtAttribute($start_at) {
+        if (!isset($start_at)) return null;
         $start_at = Carbon::parse($start_at);
 
         if (isset($this->prompt_timeframe)) {
@@ -286,6 +287,7 @@ class Prompt extends Model
     }
 
     public function getEndAtAttribute($end_at) {
+        if (!isset($end_at)) return null;
         $end_at = Carbon::parse($end_at);
 
         if (isset($this->prompt_timeframe)) {
