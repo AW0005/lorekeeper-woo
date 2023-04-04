@@ -275,4 +275,19 @@ class AccountController extends Controller
         }
         return redirect()->back();
     }
+
+    /**
+     * Edits the user's links
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postLinks(Request $request, UserService $service) {
+        if ($service->updateLinks($request->only('links'), Auth::user())) {
+            flash('Links updated successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
 }

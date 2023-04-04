@@ -42,6 +42,22 @@
     </div>
 </div>
 
+@if(isset($user->links) || count($user->aliases) > 1)
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">Links</h5>
+        <div class="row">
+            @foreach($user->aliases as $alias)
+                @if($alias->id !== $user->primaryAlias->id) <div class="col-6">{!! $alias->displayName !!}</div> @endif
+            @endforeach
+            @foreach($user->links as $link)
+                <div class="col-md-3 col-6">{!! $link->displayName !!}</div>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
+
 @if(isset($user->profile->parsed_text))
     <div class="card mb-3" style="clear:both;">
         <div class="card-body">

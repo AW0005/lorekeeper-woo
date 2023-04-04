@@ -22,6 +22,7 @@ use App\Services\SubmissionManager;
 use App\Services\GalleryManager;
 use App\Services\CharacterManager;
 use App\Models\Trade;
+use App\Models\User\UserLink;
 
 class UserService extends Service
 {
@@ -301,6 +302,37 @@ class UserService extends Service
         } catch(\Exception $e) { 
             $this->setError('error', $e->getMessage());
         }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Updates the user's links.
+     *
+     * @param  array                  $data
+     * @param  \App\Models\User\User  $user
+     * @return bool
+     */
+    public function updateLinks($data, $user) {
+        DB::beginTransaction();
+
+        try {
+            // Delete all existing links first and then update accordingly
+            $user->links()->delete();
+
+            if (isset($data['links'])) {
+                foreach ($data['links'] as $site) {
+                    UserLink::create([
+                        'user_id' => $user->id,
+                        'site_url' => $site
+                    ]);
+                }
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
         return $this->rollbackReturn(false);
     }
 }

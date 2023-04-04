@@ -27,15 +27,40 @@
 <div class="card p-3 mb-2">
     <h3>Profile</h3>
     {!! Form::open(['url' => 'account/profile']) !!}
-        <div class="form-group">
-            {!! Form::label('text', 'Profile Text') !!}
-            {!! Form::textarea('text', Auth::user()->profile->text, ['class' => 'form-control wysiwyg']) !!}
+    <div class="form-group">
+        {!! Form::label('text', 'Profile Text') !!}
+        {!! Form::textarea('text', Auth::user()->profile->text, ['class' => 'form-control wysiwyg']) !!}
+    </div>
+    <div class="text-right">
+        {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+    </div>
+    {!! Form::close() !!}
+</div>
+    
+    
+    <div class="card p-3 mb-2">
+        <h3>Additional Links</h3>
+        <p>This adds additional links to your profile page for social media sites. These do not get used anywhere else on site, the way that aliases do.</p>
+        {!! Form::open(['url' => 'account/links']) !!}
+        <div class="links">
+            @foreach(Auth::user()->links as $link)
+                <div class="link">
+                    {!! Form::label('Link Url') !!}
+                    {!! Form::text('links[]', $link->site_url, ['class' => 'form-control']) !!}
+                </div>
+            @endforeach
         </div>
+        <button class="btn btn-inverse add-site mt-2" type="button">Add Site</button>
         <div class="text-right">
             {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
         </div>
-    {!! Form::close() !!}
-</div>
+        {!! Form::close() !!}
+    </div>
+
+    <div class="link hide">
+         {!! Form::label('Link Url') !!}
+         {!! Form::text('links[]', null, ['class' => 'form-control']) !!}
+    </div>
 
 <div class="card p-3 mb-2">
     <h3>Birthday Publicity</h3>
@@ -94,5 +119,21 @@
         </div>
     {!! Form::close() !!}
 </div>
+@endsection
 
+@section('scripts')
+    @parent
+    <script>
+        $(document).ready(function() {
+            $('.selectize').selectize();
+            
+            $('.add-site').on('click', (e) => {
+                console.log('here');
+                e.preventDefault();
+                const newInput = $('.link').clone();
+                newInput.removeClass('hide');
+                $('.links').append(newInput);
+            })
+        });
+    </script>
 @endsection

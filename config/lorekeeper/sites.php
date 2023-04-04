@@ -116,4 +116,13 @@ return [
         'regex'        => '/picarto\.tv\/([A-Za-z0-9_-]+)/',
         'link'         => 'picarto.tv',
     ],
+
+
+    'furaffinity' => [
+        'full_name'    => 'FurAffinity',
+        'display_name' => 'furaffinity',
+        'regex'        => '/furaffinity\.net\/user\/([A-Za-z0-9_-]+)/',
+        'link'         => 'furaffinity.net',
+        'icon'          => 'fas fa-paw'
+    ],
 ];
