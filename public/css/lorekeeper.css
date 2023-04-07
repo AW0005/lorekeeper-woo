@@ -370,6 +370,10 @@ main > .row {
     cursor: not-allowed;
 }
 
+.pagination {
+    flex-wrap: wrap;
+}
+
 .spoiler {
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 5px;
@@ -628,4 +632,9 @@ tr.accountbound {
     
 @media only screen and (max-width: 600px) {
     .comment_replies { padding-left:1rem;}
+}
+
+/* RECIPES ***************************************************************************************/
+.recipe-image {
+    width: 150px;
 }

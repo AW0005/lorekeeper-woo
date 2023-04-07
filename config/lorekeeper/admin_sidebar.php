@@ -98,6 +98,10 @@ return [
                 'name' => 'Pet Grants',
                 'url' => 'admin/grants/pets'
             ],
+            [
+                'name' => 'Recipe Grants',
+                'url' => 'admin/grants/recipes'
+            ]
         ]
     ],
     'Masterlist' => [
@@ -183,6 +187,10 @@ return [
             [
                 'name' => 'Pets',
                 'url' => 'admin/data/pets'
+            ],
+            [
+                'name' => 'Recipes',
+                'url' => 'admin/data/recipes'
             ],
         ]
     ],

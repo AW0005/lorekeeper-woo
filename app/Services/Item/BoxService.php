@@ -11,6 +11,7 @@ use App\Models\Currency\Currency;
 use App\Models\Loot\LootTable;
 use App\Models\Raffle\Raffle;
 use App\Models\Pet\Pet;
+use App\Models\Recipe\Recipe;
 
 class BoxService extends Service
 {
@@ -37,6 +38,7 @@ class BoxService extends Service
             'pets' => Pet::orderBy('name')->pluck('name', 'id'),
             'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
             'raffles' => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
+            'recipes'=> Recipe::orderBy('name')->pluck('name', 'id'),
         ];
     }
 
@@ -81,8 +83,8 @@ class BoxService extends Service
         try {
             // If there's no data, return.
             if(!isset($data['rewardable_type'])) return true;
-            
-            // The data will be stored as an asset table, json_encode()d. 
+
+            // The data will be stored as an asset table, json_encode()d.
             // First build the asset table, then prepare it for storage.
             $assets = createAssetsArray();
             foreach($data['rewardable_type'] as $key => $r) {
@@ -103,6 +105,9 @@ class BoxService extends Service
                     case 'Raffle':
                         $type = 'App\Models\Raffle\Raffle';
                         break;
+                    case 'Recipe':
+                        $type = 'App\Models\Recipe\Recipe';
+                        break;
                 }
                 $asset = $type::find($data['rewardable_id'][$key]);
                 addAsset($assets, $asset, $data['quantity'][$key]);
@@ -112,7 +117,7 @@ class BoxService extends Service
             $tag->update(['data' => json_encode($assets)]);
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -134,7 +139,7 @@ class BoxService extends Service
         try {
             foreach($stacks as $key=>$stack) {
                 // We don't want to let anyone who isn't the owner of the box open it,
-                // so do some validation... 
+                // so do some validation...
                 if($stack->user_id != $user->id) throw new \Exception("This item does not belong to you.");
 
                 // Next, try to delete the box item. If successful, we can start distributing rewards.
@@ -150,7 +155,7 @@ class BoxService extends Service
                 }
             }
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);

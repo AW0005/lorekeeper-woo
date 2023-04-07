@@ -22,6 +22,7 @@ use App\Models\Loot\LootTable;
 use App\Models\Raffle\Raffle;
 use App\Models\Prompt\Prompt;
 use App\Models\Pet\Pet;
+use App\Models\Recipe\Recipe;
 
 class SubmissionManager extends Service
 {
@@ -75,14 +76,14 @@ class SubmissionManager extends Service
             // Attach items. Technically, the user doesn't lose ownership of the item - we're just adding an additional holding field.
             // We're also not going to add logs as this might add unnecessary fluff to the logs and the items still belong to the user.
             if(isset($data['stack_id'])) {
-                foreach($data['stack_id'] as $key=>$stackId) {
+                foreach($data['stack_id'] as $stackId) {
                     $stack = UserItem::with('item')->find($stackId);
                     if(!$stack || $stack->user_id != $user->id) throw new \Exception("Invalid item selected.");
-                    if(!isset($data['stack_quantity'][$key])) $data['stack_quantity'][$key] = $stack->count;
-                    $stack->submission_count += $data['stack_quantity'][$key];
+                    if(!isset($data['stack_quantity'][$stackId])) throw new \Exception("Invalid quantity selected.");
+                    $stack->submission_count += $data['stack_quantity'][$stackId];
                     $stack->save();
 
-                    addAsset($userAssets, $stack, $data['stack_quantity'][$key]);
+                    addAsset($userAssets, $stack, $data['stack_quantity'][$stackId]);
                 }
             }
 
@@ -252,6 +253,11 @@ class SubmissionManager extends Service
                         case 'Raffle':
                             if (!$isStaff) break;
                             $reward = Raffle::find($data['rewardable_id'][$key]);
+                            break;
+                        case 'Recipe':
+                            if (!$isStaff) break;
+                            $reward = Recipe::find($data['rewardable_id'][$key]);
+                            if(!$reward->needs_unlocking) throw new \Exception("Invalid recipe selected.");
                             break;
                     }
                     if(!$reward) continue;
