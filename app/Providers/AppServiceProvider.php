@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Facades\CarbonExtended;
 use App\Providers\Socialite\ToyhouseProvider;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
