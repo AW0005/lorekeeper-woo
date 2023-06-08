@@ -27,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         //
         Schema::defaultStringLength(191);
         Paginator::useBootstrap();
+        \Illuminate\Support\Facades\Date::useClass(CarbonExtended::class);
 
         /*
          * Paginate a standard Laravel Collection.
