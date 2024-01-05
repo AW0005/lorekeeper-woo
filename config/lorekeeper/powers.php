@@ -19,6 +19,10 @@ return [
         'name' => 'Edit World Data',
         'description' => 'Allow rank to modify the world data. This includes creating/editing/uploading images for species, items, traits, etc.'
     ],
+    'edit_prompts' => [
+        'name' => 'Edit Prompt Data',
+        'description' => 'Allow rank to modify and create prompts and prompt categories.'
+    ],
     'edit_pages' => [
         'name' => 'Edit Text Pages',
         'description' => 'Allow rank to create/modify text pages. This includes pages created using the page creator tool and news posts.'

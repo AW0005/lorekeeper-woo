@@ -125,6 +125,20 @@ return [
             ],
         ]
     ],
+    'Prompts' => [
+        'power' => 'edit_prompts',
+        'links' => [
+            [
+                'name' => 'Prompts',
+                'url' => 'admin/data/prompts'
+            ],
+
+            [
+                'name' => 'Prompt Categories',
+                'url' => 'admin/data/prompt-categories'
+            ],
+        ]
+    ],
     'Data' => [
         'power' => 'edit_data',
         'links' => [

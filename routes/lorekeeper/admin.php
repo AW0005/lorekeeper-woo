@@ -73,6 +73,26 @@ Route::group(['prefix' => 'images', 'middleware' => 'power:edit_site_settings'],
     Route::post('reset', 'FileController@postResetFile');
 });
 
+Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:edit_prompts'], function () {
+    # PROMPTS
+    Route::get('prompt-categories', 'PromptController@getIndex');
+    Route::get('prompt-categories/create', 'PromptController@getCreatePromptCategory');
+    Route::get('prompt-categories/edit/{id}', 'PromptController@getEditPromptCategory');
+    Route::get('prompt-categories/delete/{id}', 'PromptController@getDeletePromptCategory');
+    Route::post('prompt-categories/create', 'PromptController@postCreateEditPromptCategory');
+    Route::post('prompt-categories/edit/{id?}', 'PromptController@postCreateEditPromptCategory');
+    Route::post('prompt-categories/delete/{id}', 'PromptController@postDeletePromptCategory');
+    Route::post('prompt-categories/sort', 'PromptController@postSortPromptCategory');
+
+    Route::get('prompts', 'PromptController@getPromptIndex');
+    Route::get('prompts/create', 'PromptController@getCreatePrompt');
+    Route::get('prompts/edit/{id}', 'PromptController@getEditPrompt');
+    Route::get('prompts/delete/{id}', 'PromptController@getDeletePrompt');
+    Route::post('prompts/create', 'PromptController@postCreateEditPrompt');
+    Route::post('prompts/edit/{id?}', 'PromptController@postCreateEditPrompt');
+    Route::post('prompts/delete/{id}', 'PromptController@postDeletePrompt');
+});
+
 # DATA
 Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:edit_data'], function() {
 
