@@ -1,4 +1,6 @@
-<?php namespace App\Services;
+<?php
+
+namespace App\Services;
 
 use App;
 use Auth;
@@ -29,8 +31,7 @@ abstract class Service {
     /**
      * Default constructor.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->callMethod('beforeConstruct');
         $this->resetErrors();
         $this->callMethod('afterConstruct');
@@ -41,17 +42,15 @@ abstract class Service {
      * @param string $methodName
      * @return mixed
      */
-    protected function callMethod($methodName)
-    {
-        if(method_exists($this, $methodName)) return App::call([$this, $methodName]);
+    protected function callMethod($methodName) {
+        if (method_exists($this, $methodName)) return App::call([$this, $methodName]);
     }
 
     /**
      * Return if an error exists. 
      * @return bool
      */
-    public function hasErrors()
-    {
+    public function hasErrors() {
         return $this->errors->count() > 0;
     }
 
@@ -59,8 +58,7 @@ abstract class Service {
      * Return if an error exists. 
      * @return bool
      */
-    public function hasError($key)
-    {
+    public function hasError($key) {
         return $this->errors->has($key);
     }
 
@@ -68,16 +66,14 @@ abstract class Service {
      * Return errors. 
      * @return Illuminate\Support\MessageBag
      */
-    public function errors()
-    {
+    public function errors() {
         return $this->errors;
     }
     /**
      * Return errors. 
      * @return array
      */
-    public function getAllErrors()
-    {
+    public function getAllErrors() {
         return $this->errors->unique();
     }
 
@@ -85,8 +81,7 @@ abstract class Service {
      * Return error by key. 
      * @return Illuminate\Support\MessageBag
      */
-    public function getError($key)
-    {
+    public function getError($key) {
         return $this->errors->get($key);
     }
 
@@ -94,8 +89,7 @@ abstract class Service {
      * Empty the errors MessageBag.
      * @return void
      */
-    public function resetErrors()
-    {
+    public function resetErrors() {
         $this->errors = new MessageBag();
     }
 
@@ -105,8 +99,7 @@ abstract class Service {
      * @param string $value
      * @return void
      */
-    protected function setError($key, $value)
-    {
+    protected function setError($key, $value) {
         $this->errors->add($key, $value);
     }
 
@@ -115,8 +108,7 @@ abstract class Service {
      * @param Illuminate\Support\MessageBag $errors
      * @return void
      */
-    protected function setErrors($errors) 
-    {
+    protected function setErrors($errors) {
         $this->errors->merge($errors);
     }
 
@@ -125,8 +117,7 @@ abstract class Service {
      * @param mixed $return
      * @return mixed $return
      */
-    protected function commitReturn($return = true)
-    {
+    protected function commitReturn($return = true) {
         DB::commit();
         return $return;
     }
@@ -136,8 +127,7 @@ abstract class Service {
      * @param mixed $return
      * @return mixed $return
      */
-    protected function rollbackReturn($return = false)
-    {
+    protected function rollbackReturn($return = false) {
         DB::rollback();
         return $return;
     }
@@ -148,33 +138,28 @@ abstract class Service {
      * @param string $field
      * @return mixed 
      */
-    protected function getNumeric($data, $field = 'id')
-    {
-        if(is_numeric($data)) return $data;
-        elseif(is_object($data)) return $data->$field;
-        elseif(is_array($data)) return $data[$field];
+    protected function getNumeric($data, $field = 'id') {
+        if (is_numeric($data)) return $data;
+        elseif (is_object($data)) return $data->$field;
+        elseif (is_array($data)) return $data[$field];
         else return 0;
     }
 
-    public function remember($key = null, $fn = null)
-    {
-        if(isset($this->cache[$key])) return $this->cache[$key];
+    public function remember($key = null, $fn = null) {
+        if (isset($this->cache[$key])) return $this->cache[$key];
         return $this->cache[$key] = $fn();
     }
 
-    public function forget($key = null)
-    {
+    public function forget($key = null) {
         unset($this->cache[$key]);
     }
 
-    public function setUser($user)
-    {
+    public function setUser($user) {
         $this->user = $user;
         return $this;
     }
 
-    public function user()
-    {
+    public function user() {
         return $this->user ? $this->user : Auth::user();
     }
 
@@ -182,21 +167,21 @@ abstract class Service {
     // 2. Given new image, want to upload it to new location.
     //    (old image may or may not exist)
     // 3. Nothing happens (no changes required)
-    public function handleImage($image, $dir, $name, $oldName = null, $copy = false)
-    {
-        if(!$oldName && !$image) return true;
+    public function handleImage($image, $dir, $name, $oldName = null, $copy = false) {
+        if (!$oldName && !$image) return true;
 
-        if(!$image)
-        {
+        if (!$image) {
             // Check if we're moving an old image, and move it if it does.
-            if($oldName) { return $this->moveImage($dir, $name, $oldName, $copy); }
-        }
-        else
-        {
+            if ($oldName) {
+                return $this->moveImage($dir, $name, $oldName, $copy);
+            }
+        } else {
             // Don't want to leave a lot of random images lying around,
             // so move the old image first if it exists.
-            if($oldName) { $this->moveImage($dir, $name, $oldName, $copy); }
-            
+            if ($oldName) {
+                $this->moveImage($dir, $name, $oldName, $copy);
+            }
+
             // Then overwrite the old image.
             return $this->saveImage($image, $dir, $name, $copy);
         }
@@ -205,18 +190,15 @@ abstract class Service {
     }
 
     // Moves an old image within the same directory.
-    private function moveImage($dir, $name, $oldName, $copy = false)
-    {
-        if($copy) File::copy($dir . '/' . $oldName, $dir . '/' . $name);
+    private function moveImage($dir, $name, $oldName, $copy = false) {
+        if ($copy) File::copy($dir . '/' . $oldName, $dir . '/' . $name);
         else File::move($dir . '/' . $oldName, $dir . '/' . $name);
         return true;
     }
 
     // Moves an uploaded image into a directory, checking if it exists.
-    private function saveImage($image, $dir, $name, $copy = false)
-    { 
-        if(!file_exists($dir))
-        {
+    private function saveImage($image, $dir, $name, $copy = false) {
+        if (!file_exists($dir)) {
             // Create the directory.
             if (!mkdir($dir, 0755, true)) {
                 $this->setError('error', 'Failed to create image directory.');
@@ -224,15 +206,14 @@ abstract class Service {
             }
             chmod($dir, 0755);
         }
-        if($copy) File::copy($image, $dir . '/' . $name);
+        if ($copy) File::copy($image, $dir . '/' . $name);
         else File::move($image, $dir . '/' . $name);
         chmod($dir . '/' . $name, 0755);
-        
+
         return true;
     }
 
-    public function deleteImage($dir, $name)
-    {
+    public function deleteImage($dir, $name) {
         unlink($dir . '/' . $name);
     }
 }

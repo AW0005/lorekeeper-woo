@@ -15,6 +15,7 @@ use App\Models\Trade;
 use App\Models\Report\Report;
 
 use App\Http\Controllers\Controller;
+use App\Models\LogEvent;
 
 class HomeController extends Controller
 {
@@ -42,6 +43,20 @@ class HomeController extends Controller
             'galleryCurrencyAwards' => $galleryCurrencyAwards,
             'gallerySubmissionCount' => GallerySubmission::collaboratorApproved()->where('status', 'Pending')->count(),
             'galleryAwardCount' => GallerySubmission::requiresAward()->where('is_valued', 0)->count()
+        ]);
+    }
+
+    /**
+     * Shows the logs index.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getLogofLogs() {
+
+        $logs = LogEvent::get();
+
+        return view('admin.logoflogs', [
+            'logs' => $logs->sortByDesc('created_at')->paginate(20)
         ]);
     }
 }

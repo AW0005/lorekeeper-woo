@@ -1,4 +1,6 @@
-<?php namespace App\Services;
+<?php
+
+namespace App\Services;
 
 use DB;
 use Image;
@@ -19,8 +21,7 @@ use App\Models\Character\Character;
 use App\Models\Prompt\Prompt;
 use App\Models\Currency\Currency;
 
-class GalleryManager extends Service
-{
+class GalleryManager extends Service {
     /*
     |--------------------------------------------------------------------------
     | Gallery Manager
@@ -38,44 +39,40 @@ class GalleryManager extends Service
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\Gallery\GallerySubmission
      */
-    public function createSubmission($data, $currencyFormData, $user)
-    {
+    public function createSubmission($data, $currencyFormData, $user) {
         DB::beginTransaction();
 
         try {
             //  Check that submissions are open
-            if(!Settings::get('gallery_submissions_open')) throw new \Exception("Gallery submissions are currently closed.");
+            if (!Settings::get('gallery_submissions_open')) throw new \Exception("Gallery submissions are currently closed.");
             // Check that the gallery exists and can be submitted to
             $gallery = Gallery::find($data['gallery_id']);
-            if(!$gallery) throw new \Exception ("Invalid gallery selected.");
-            if(!$gallery->submissions_open && !$user->hasPower('manage_submissions')) throw new \Exception("You cannot submit to this gallery.");
-            if((isset($gallery->start_at) && $gallery->start_at->isFuture()) || (isset($gallery->end_at) && $gallery->end_at->isPast())) throw new \Exception('This gallery\'s submissions aren\'t open.');
+            if (!$gallery) throw new \Exception("Invalid gallery selected.");
+            if (!$gallery->submissions_open && !$user->hasPower('manage_submissions')) throw new \Exception("You cannot submit to this gallery.");
+            if ((isset($gallery->start_at) && $gallery->start_at->isFuture()) || (isset($gallery->end_at) && $gallery->end_at->isPast())) throw new \Exception('This gallery\'s submissions aren\'t open.');
 
             // Check that associated collaborators exist
-            if(isset($data['collaborator_id'])) {
+            if (isset($data['collaborator_id'])) {
                 $collaborators = User::whereIn('id', $data['collaborator_id'])->get();
-                if(count($collaborators) != count($data['collaborator_id'])) throw new \Exception("One or more of the selected collaborators does not exist, or you have entered a duplicate.");
-            }
-            else $collaborators = [];
+                if (count($collaborators) != count($data['collaborator_id'])) throw new \Exception("One or more of the selected collaborators does not exist, or you have entered a duplicate.");
+            } else $collaborators = [];
 
             // Check that associated participants exist
-            if(isset($data['participant_id'])) {
+            if (isset($data['participant_id'])) {
                 $participants = User::whereIn('id', $data['participant_id'])->get();
-                if(count($participants) != count($data['participant_id'])) throw new \Exception("One or more of the selected participants does not exist, or you have entered a duplicate.");
-            }
-            else $participants = [];
+                if (count($participants) != count($data['participant_id'])) throw new \Exception("One or more of the selected participants does not exist, or you have entered a duplicate.");
+            } else $participants = [];
 
             // Check that associated characters exist
-            if(isset($data['slug'])) {
+            if (isset($data['slug'])) {
                 $characters = Character::myo(0)->visible()->whereIn('slug', $data['slug'])->get();
-                if(count($characters) != count($data['slug'])) throw new \Exception("One or more of the selected characters does not exist, or you have entered a duplicate.");
-            }
-            else $characters = [];
+                if (count($characters) != count($data['slug'])) throw new \Exception("One or more of the selected characters does not exist, or you have entered a duplicate.");
+            } else $characters = [];
 
             // Check that the selected prompt exists and can be submitted to
-            if(isset($data['prompt_id'])) {
+            if (isset($data['prompt_id'])) {
                 $prompt = Prompt::active()->find($data['prompt_id']);
-                if(!$prompt) throw new \Exception("Invalid prompt selected.");
+                if (!$prompt) throw new \Exception("Invalid prompt selected.");
             }
 
             $submission = GallerySubmission::create([
@@ -88,7 +85,7 @@ class GalleryManager extends Service
 
             $data = $this->populateData($data);
 
-            if(isset($currencyFormData) && $currencyFormData) {
+            if (isset($currencyFormData) && $currencyFormData) {
                 $data['data']['currencyData'] = $currencyFormData;
                 $data['data']['total'] = calculateGroupCurrency($currencyFormData);
                 $data['data'] = collect($data['data'])->toJson();
@@ -96,12 +93,12 @@ class GalleryManager extends Service
 
             $submission->update($data);
 
-            if(isset($data['image']) && $data['image']) $this->processImage($data, $submission);
+            if (isset($data['image']) && $data['image']) $this->processImage($data, $submission);
             $submission->update();
 
-            if(isset($data['collaborator_id']) && $collaborators->count()) {
+            if (isset($data['collaborator_id']) && $collaborators->count()) {
                 // Attach any collaborators to the submission
-                foreach($data['collaborator_id'] as $key=>$collaborator) {
+                foreach ($data['collaborator_id'] as $key => $collaborator) {
                     GalleryCollaborator::create([
                         'user_id' => $collaborator,
                         'gallery_submission_id' => $submission->id,
@@ -110,7 +107,7 @@ class GalleryManager extends Service
                     ]);
 
                     // Notify collaborators (but not the submitting user)
-                    if($collaborator != $user->id) {
+                    if ($collaborator != $user->id) {
                         Notifications::create('GALLERY_SUBMISSION_COLLABORATOR', User::find($collaborator), [
                             'sender_url' => $user->url,
                             'sender' => $user->name,
@@ -120,9 +117,9 @@ class GalleryManager extends Service
                 }
             }
 
-            if(isset($data['participant_id']) && $participants->count()) {
+            if (isset($data['participant_id']) && $participants->count()) {
                 // Attach any participants to the submission
-                foreach($data['participant_id'] as $key=>$participant) {
+                foreach ($data['participant_id'] as $key => $participant) {
                     GalleryCollaborator::create([
                         'user_id' => $participant,
                         'gallery_submission_id' => $submission->id,
@@ -134,17 +131,17 @@ class GalleryManager extends Service
             }
 
             // Attach any characters to the submission
-            foreach($characters as $character) {
+            foreach ($characters as $character) {
                 GalleryCharacter::create([
                     'character_id' => $character->id,
                     'gallery_submission_id' => $submission->id,
                 ]);
             }
 
-            if(!$submission->collaborators->count() && (!Settings::get('gallery_submissions_require_approval') || (Settings::get('gallery_submissions_require_approval') && $submission->gallery->votes_required == 0))) $this->acceptSubmission($submission);
+            if (!$submission->collaborators->count() && (!Settings::get('gallery_submissions_require_approval') || (Settings::get('gallery_submissions_require_approval') && $submission->gallery->votes_required == 0))) $this->acceptSubmission($submission);
 
             return $this->commitReturn($submission);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -158,34 +155,32 @@ class GalleryManager extends Service
      * @param  \App\Models\User\User                  $user
      * @return bool|\App\Models\Gallery\GallerySubmission
      */
-    public function updateSubmission($submission, $data, $user)
-    {
+    public function updateSubmission($submission, $data, $user) {
         DB::beginTransaction();
 
         try {
             // Check that the user can edit the submission
-            if(!$submission->user_id == $user->id && !$user->hasPower('manage_submissions')) throw new \Exception("You can't edit this submission.");
+            if (!$submission->user_id == $user->id && !$user->hasPower('manage_submissions')) throw new \Exception("You can't edit this submission.");
 
             // Check that there is text and/or an image, including if there is an existing image (via the existence of a hash)
-            if((!isset($data['image']) && !isset($submission->hash)) && !$data['text']) throw new \Exception("Please submit either text or an image.");
+            if ((!isset($data['image']) && !isset($submission->hash)) && !$data['text']) throw new \Exception("Please submit either text or an image.");
 
             // If still pending, perform validation on and process collaborators and participants
-            if($submission->status == 'Pending') {
+            if ($submission->status == 'Pending') {
                 // Check that associated collaborators exist
-                if(isset($data['collaborator_id'])) {
+                if (isset($data['collaborator_id'])) {
                     $collaborators = User::whereIn('id', $data['collaborator_id'])->get();
-                    if(count($collaborators) != count($data['collaborator_id'])) throw new \Exception("One or more of the selected users does not exist, or you have entered a duplicate.");
-                }
-                else $collaborators = [];
+                    if (count($collaborators) != count($data['collaborator_id'])) throw new \Exception("One or more of the selected users does not exist, or you have entered a duplicate.");
+                } else $collaborators = [];
 
                 // Fetch collaborator approval data
                 $collaboratorApproval = $submission->collaborators->pluck('has_approved', 'user_id');
                 // Remove all collaborators from the submission so they can be reattached with new data
                 $submission->collaborators()->delete();
 
-                if(isset($data['collaborator_id']) && $collaborators->count()) {
+                if (isset($data['collaborator_id']) && $collaborators->count()) {
                     // Attach any collaborators to the submission
-                    foreach($data['collaborator_id'] as $key=>$collaborator) {
+                    foreach ($data['collaborator_id'] as $key => $collaborator) {
                         GalleryCollaborator::create([
                             'user_id' => $collaborator,
                             'gallery_submission_id' => $submission->id,
@@ -196,18 +191,17 @@ class GalleryManager extends Service
                 }
 
                 // Check that associated participants exist
-                if(isset($data['participant_id'])) {
+                if (isset($data['participant_id'])) {
                     $participants = User::whereIn('id', $data['participant_id'])->get();
-                    if(count($participants) != count($data['participant_id'])) throw new \Exception("One or more of the selected participants does not exist, or you have entered a duplicate.");
-                }
-                else $participants = [];
+                    if (count($participants) != count($data['participant_id'])) throw new \Exception("One or more of the selected participants does not exist, or you have entered a duplicate.");
+                } else $participants = [];
 
                 // Remove all participants from the submission so they can be reattached with new data
                 $submission->participants()->delete();
 
-                if(isset($data['participant_id']) && $participants->count()) {
+                if (isset($data['participant_id']) && $participants->count()) {
                     // Attach any participants to the submission
-                    foreach($data['participant_id'] as $key=>$participant) {
+                    foreach ($data['participant_id'] as $key => $participant) {
                         GalleryCollaborator::create([
                             'user_id' => $participant,
                             'gallery_submission_id' => $submission->id,
@@ -220,17 +214,16 @@ class GalleryManager extends Service
             }
 
             // Check that associated characters exist
-            if(isset($data['slug'])) {
+            if (isset($data['slug'])) {
                 $characters = Character::myo(0)->visible()->whereIn('slug', $data['slug'])->get();
-                if(count($characters) != count($data['slug'])) throw new \Exception("One or more of the selected characters does not exist, or you have entered a duplicate.");
-            }
-            else $characters = [];
+                if (count($characters) != count($data['slug'])) throw new \Exception("One or more of the selected characters does not exist, or you have entered a duplicate.");
+            } else $characters = [];
 
             // Remove all characters from the submission so they can be reattached with new data
             $submission->characters()->delete();
 
             // Attach any characters to the submission
-            foreach($characters as $character) {
+            foreach ($characters as $character) {
                 GalleryCharacter::create([
                     'character_id' => $character->id,
                     'gallery_submission_id' => $submission->id,
@@ -238,35 +231,34 @@ class GalleryManager extends Service
             }
 
             // Check that the selected prompt exists and can be submitted to
-            if(isset($data['prompt_id'])) {
+            if (isset($data['prompt_id'])) {
                 $prompt = $user->hasPower('manage_submissions') ? Prompt::find($data['prompt_id']) : Prompt::active()->find($data['prompt_id']);
-                if(!$prompt) throw new \Exception("Invalid prompt selected.");
+                if (!$prompt) throw new \Exception("Invalid prompt selected.");
             }
 
-            if((isset($submission->parsed_description) && $submission->parsed_description) && !isset($data['description'])) $data['parsed_description'] = null;
-            if((isset($submission->parsed_text) && $submission->parsed_text) && !isset($data['text'])) $data['parsed_text'] = null;
+            if ((isset($submission->parsed_description) && $submission->parsed_description) && !isset($data['description'])) $data['parsed_description'] = null;
+            if ((isset($submission->parsed_text) && $submission->parsed_text) && !isset($data['text'])) $data['parsed_text'] = null;
 
             $data = $this->populateData($data);
-            if(isset($data['image']) && $data['image']) $this->processImage($data, $submission);
+            if (isset($data['image']) && $data['image']) $this->processImage($data, $submission);
 
             // Processing relating to staff edits
-            if($user->hasPower('manage_submissions')) {
-                if(!isset($data['gallery_id']) && !$data['gallery_id']) $data['gallery_id'] = $submission->gallery->id;
+            if ($user->hasPower('manage_submissions')) {
+                if (!isset($data['gallery_id']) && !$data['gallery_id']) $data['gallery_id'] = $submission->gallery->id;
 
                 $data['staff_id'] = $user->id;
             }
 
             // Send notifications for staff edits if necessary
-            if($user->hasPower('manage_submissions') && $user->id != $submission->user->id && (isset($data['alert_user']) && $data['alert_user'])) {
-                if($data['gallery_id'] != $submission->gallery_id) {
+            if ($user->hasPower('manage_submissions') && $user->id != $submission->user->id && (isset($data['alert_user']) && $data['alert_user'])) {
+                if ($data['gallery_id'] != $submission->gallery_id) {
                     Notifications::create('GALLERY_SUBMISSION_MOVED', $submission->user, [
                         'submission_title' => $submission->title,
                         'submission_id' => $submission->id,
                         'staff_url' => $user->url,
                         'staff_name' => $user->name,
                     ]);
-                }
-                else {
+                } else {
                     Notifications::create('GALLERY_SUBMISSION_EDITED', $submission->user, [
                         'submission_title' => $submission->title,
                         'submission_id' => $submission->id,
@@ -279,7 +271,7 @@ class GalleryManager extends Service
             $submission->update($data);
 
             return $this->commitReturn($submission);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -291,11 +283,10 @@ class GalleryManager extends Service
      * @param  array                                  $data
      * @return array
      */
-    private function populateData($data)
-    {
+    private function populateData($data) {
         // Parse any text
-        if(isset($data['text']) && $data['text']) $data['parsed_text'] = parse($data['text']);
-        if(isset($data['description']) && $data['description']) $data['parsed_description'] = parse($data['description']);
+        if (isset($data['text']) && $data['text']) $data['parsed_text'] = parse($data['text']);
+        if (isset($data['description']) && $data['description']) $data['parsed_description'] = parse($data['description']);
 
         return $data;
     }
@@ -307,9 +298,8 @@ class GalleryManager extends Service
      * @param  \App\Models\Gallery\GallerySubmission  $submission
      * @return array
      */
-    private function processImage($data, $submission)
-    {
-        if(isset($submission->hash)) {
+    private function processImage($data, $submission) {
+        if (isset($submission->hash)) {
             unlink($submission->imagePath . '/' . $submission->imageFileName);
             unlink($submission->imagePath . '/' . $submission->thumbnailFileName);
         }
@@ -340,17 +330,16 @@ class GalleryManager extends Service
      * @param  \App\Models\User\User                  $user
      * @return bool|\App\Models\Gallery\GalleryFavorite
      */
-    public function editCollaborator($submission, $data, $user)
-    {
+    public function editCollaborator($submission, $data, $user) {
         DB::beginTransaction();
 
         try {
             // Check that the submission is pending and the user is a collaborator on it
-            if(!$submission->status == 'Pending') throw new \Exception("This submission isn't pending.");
-            if($submission->collaborators->where('user_id', $user->id)->first() == null) throw new \Exception("You aren't a collaborator on this submission.");
+            if (!$submission->status == 'Pending') throw new \Exception("This submission isn't pending.");
+            if ($submission->collaborators->where('user_id', $user->id)->first() == null) throw new \Exception("You aren't a collaborator on this submission.");
 
             // Check if the user has requested to be removed from the submission
-            if(isset($data['remove_user']) && $data['remove_user']) {
+            if (isset($data['remove_user']) && $data['remove_user']) {
                 $submission->collaborators()->where('user_id', $user->id)->delete();
             }
             // Otherwise update the record of their contribution and mark them as having approved
@@ -361,21 +350,20 @@ class GalleryManager extends Service
 
                 // Check if all collaborators have approved, and if so send a notification to the
                 // submitting user (unless they are the last to approve-- which shouldn't happen, but)
-                if($submission->collaboratorApproved) {
-                    if(Settings::get('gallery_submissions_require_approval') && $submission->gallery->votes_required > 0) {
-                        if($submission->user->id != $user->id) {
+                if ($submission->collaboratorApproved) {
+                    if (Settings::get('gallery_submissions_require_approval') && $submission->gallery->votes_required > 0) {
+                        if ($submission->user->id != $user->id) {
                             Notifications::create('GALLERY_COLLABORATORS_APPROVED', $submission->user, [
                                 'submission_title' => $submission->title,
                                 'submission_id' => $submission->id,
                             ]);
                         }
-                    }
-                    else $this->acceptSubmission($submission);
+                    } else $this->acceptSubmission($submission);
                 }
             }
 
             return $this->commitReturn($submission);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -389,15 +377,14 @@ class GalleryManager extends Service
      * @param  \App\Models\User\User                  $user
      * @return  bool
      */
-    public function castVote($action, $submission, $user)
-    {
+    public function castVote($action, $submission, $user) {
         DB::beginTransaction();
 
         try {
-            if($submission->status != 'Pending') throw new \Exception("This request cannot be processed.");
-            if(!$submission->collaboratorApproved) throw new \Exception("This submission's collaborators have not all approved yet.");
+            if ($submission->status != 'Pending') throw new \Exception("This request cannot be processed.");
+            if (!$submission->collaboratorApproved) throw new \Exception("This submission's collaborators have not all approved yet.");
 
-            switch($action) {
+            switch ($action) {
                 default:
                     flash('Invalid action.')->error();
                     break;
@@ -421,18 +408,18 @@ class GalleryManager extends Service
             // Count up the existing votes to see if the required number has been reached
             $rejectSum = 0;
             $approveSum = 0;
-            foreach($submission->voteData as $voter=>$vote) {
-                if($vote == 1) $rejectSum += 1;
-                if($vote == 2) $approveSum += 1;
+            foreach ($submission->voteData as $voter => $vote) {
+                if ($vote == 1) $rejectSum += 1;
+                if ($vote == 2) $approveSum += 1;
             }
 
             // And if so, process the submission
-            if($action == 'reject' && $rejectSum >= $submission->gallery->votes_required)
-            $this->rejectSubmission($submission);
-            if($action == 'accept' && $approveSum >= $submission->gallery->votes_required) $this->acceptSubmission($submission);
+            if ($action == 'reject' && $rejectSum >= $submission->gallery->votes_required)
+                $this->rejectSubmission($submission);
+            if ($action == 'accept' && $approveSum >= $submission->gallery->votes_required) $this->acceptSubmission($submission);
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -445,18 +432,17 @@ class GalleryManager extends Service
      * @param  \App\Models\User\User                  $user
      * @return bool|\App\Models\Gallery\GalleryFavorite
      */
-    public function postStaffComments($id, $data, $user)
-    {
+    public function postStaffComments($id, $data, $user) {
         DB::beginTransaction();
 
         try {
             $submission = GallerySubmission::find($id);
             // Check that the submission exists and that the user can edit staff comments
-            if(!$submission) throw new \Exception("Invalid submission selected.");
-            if(!$user->hasPower('manage_submissions')) throw new \Exception("You can't edit staff comments on this submission.");
+            if (!$submission) throw new \Exception("Invalid submission selected.");
+            if (!$user->hasPower('manage_submissions')) throw new \Exception("You can't edit staff comments on this submission.");
 
             // Parse comments
-            if(isset($data['staff_comments']) && $data['staff_comments']) $data['parsed_staff_comments'] = parse($data['staff_comments']);
+            if (isset($data['staff_comments']) && $data['staff_comments']) $data['parsed_staff_comments'] = parse($data['staff_comments']);
 
             $submission->update([
                 'staff_comments' => $data['staff_comments'],
@@ -464,7 +450,7 @@ class GalleryManager extends Service
                 'staff_id' => $user->id,
             ]);
 
-            if(isset($data['alert_user'])) {
+            if (isset($data['alert_user'])) {
                 Notifications::create('GALLERY_SUBMISSION_STAFF_COMMENTS', $submission->user, [
                     'sender' => $user->name,
                     'sender_url' => $user->url,
@@ -474,7 +460,7 @@ class GalleryManager extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -486,30 +472,29 @@ class GalleryManager extends Service
      * @param  \App\Models\Gallery\GallerySubmission  $submission
      * @return bool|\App\Models\Gallery\GallerySubmission
      */
-    private function acceptSubmission($submission)
-    {
+    private function acceptSubmission($submission) {
         DB::beginTransaction();
 
         try {
             // Check that the submission exists and is pending
-            if(!$submission) throw new \Exception("Invalid submission selected.");
-            if($submission->status != 'Pending') throw new \Exception("This submission isn't pending.");
+            if (!$submission) throw new \Exception("Invalid submission selected.");
+            if ($submission->status != 'Pending') throw new \Exception("This submission isn't pending.");
 
             $submission->update(['status' => 'Accepted']);
 
             // If the submission wouldn't have been automatically approved, send a notification
-            if(Settings::get('gallery_submissions_require_approval') || (!Settings::get('gallery_submissions_require_approval') && $submission->collaborators->count())) {
+            if (Settings::get('gallery_submissions_require_approval') || (!Settings::get('gallery_submissions_require_approval') && $submission->collaborators->count())) {
                 Notifications::create('GALLERY_SUBMISSION_ACCEPTED', $submission->user, [
                     'submission_title' => $submission->title,
                     'submission_id' => $submission->id
                 ]);
             }
 
-            if($submission->characters->count()) {
+            if ($submission->characters->count()) {
                 // Send a notification to included characters' owners now that the submission is accepted
                 // but not for the submitting user's own characters
-                foreach($submission->characters as $character) {
-                    if($character->user && $character->character->user->id != $submission->user->id) {
+                foreach ($submission->characters as $character) {
+                    if ($character->user && $character->character->user->id != $submission->user->id) {
                         Notifications::create('GALLERY_SUBMISSION_CHARACTER', $character->character->user, [
                             'sender' => $submission->user->name,
                             'sender_url' => $submission->user->url,
@@ -521,11 +506,11 @@ class GalleryManager extends Service
                 }
             }
 
-            if($submission->participants->count()) {
+            if ($submission->participants->count()) {
                 // Send a notification to participants now that the submission is accepted
                 // but not for the submitting user
-                foreach($submission->participants as $participant) {
-                    if($participant->user->id != $submission->user->id) {
+                foreach ($submission->participants as $participant) {
+                    if ($participant->user->id != $submission->user->id) {
                         Notifications::create('GALLERY_SUBMISSION_PARTICIPANT', $participant->user, [
                             'sender_url' => $submission->user->url,
                             'sender' => $submission->user->name,
@@ -536,7 +521,7 @@ class GalleryManager extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -548,14 +533,13 @@ class GalleryManager extends Service
      * @param  \App\Models\Gallery\GallerySubmission  $submission
      * @return bool|\App\Models\Gallery\GallerySubmission
      */
-    private function rejectSubmission($submission)
-    {
+    private function rejectSubmission($submission) {
         DB::beginTransaction();
 
         try {
             // Check that the submission exists and is pending
-            if(!$submission) throw new \Exception("Invalid submission selected.");
-            if($submission->status != 'Pending') throw new \Exception("This submission isn't pending.");
+            if (!$submission) throw new \Exception("Invalid submission selected.");
+            if ($submission->status != 'Pending') throw new \Exception("This submission isn't pending.");
 
             $submission->update(['status' => 'Rejected']);
 
@@ -565,7 +549,7 @@ class GalleryManager extends Service
             ]);
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -577,19 +561,18 @@ class GalleryManager extends Service
      * @param  \App\Models\Gallery\GallerySubmission  $submission
      * @return bool
      */
-    public function archiveSubmission($submission, $user)
-    {
+    public function archiveSubmission($submission, $user) {
         DB::beginTransaction();
 
         try {
-            if(!$submission) throw new \Exception("Invalid submission selected.");
-            if($submission->user->id != $user->id && !$user->hasPower('manage_submissions')) throw new \Exception("You can't archive this submission.");
+            if (!$submission) throw new \Exception("Invalid submission selected.");
+            if ($submission->user->id != $user->id && !$user->hasPower('manage_submissions')) throw new \Exception("You can't archive this submission.");
 
-            if($submission->is_visible) $submission->update(['is_visible' => 0]);
+            if ($submission->is_visible) $submission->update(['is_visible' => 0]);
             else $submission->update(['is_visible' => 1]);
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -602,43 +585,45 @@ class GalleryManager extends Service
      * @param  \App\Models\User\User                  $user
      * @return bool|\App\Models\Gallery\GalleryFavorite
      */
-    public function postValueSubmission($id, $data, $user)
-    {
+    public function postValueSubmission($id, $data, $user) {
         DB::beginTransaction();
 
         try {
             $submission = GallerySubmission::find($id);
             // Check that the submission exists and that the user can value it
-            if(!$submission) throw new \Exception("Invalid submission selected.");
-            if(!$user->hasPower('manage_submissions')) throw new \Exception("You can't evaluate this submission.");
+            if (!$submission) throw new \Exception("Invalid submission selected.");
+            if (!$user->hasPower('manage_submissions')) throw new \Exception("You can't evaluate this submission.");
 
-            if(!isset($data['ineligible'])) {
+            if (!isset($data['ineligible'])) {
                 // Process data and award currency for each user associated with the submission
                 // First, set up CurrencyManager instance and log information
                 $currencyManager = new CurrencyManager;
                 $currency = Currency::find(Settings::get('group_currency'));
 
-                $awardType = 'Gallery Submission Reward';
-                $awardData = 'Received reward for gallery submission (<a href="'.$submission->url.'">#'.$submission->id.'</a>)';
+                $awardData = 'Received reward for gallery submission (<a href="' . $submission->url . '">#' . $submission->id . '</a>)';
 
                 $grantedList = [];
                 $awardQuantity = [];
 
+                $logEvent = LogEvent::create([
+                    'event_type' => 'Gallery Submission Reward',
+                ]);
+
                 // Then cycle through associated users and award currency
-                if(isset($data['value']['submitted'])) {
-                    if(!$currencyManager->creditCurrency($user, $submission->user, $awardType, $awardData, $currency, $data['value']['submitted'][$submission->user->id])) throw new \Exception("Failed to award currency to submitting user.");
+                if (isset($data['value']['submitted'])) {
+                    if (!$currencyManager->creditCurrency($user, $submission->user, $logEvent, $awardData, $currency, $data['value']['submitted'][$submission->user->id])) throw new \Exception("Failed to award currency to submitting user.");
 
                     $grantedList[] = $submission->user;
                     $awardQuantity[] = $data['value']['submitted'][$submission->user->id];
                 }
 
-                if(isset($data['value']['collaborator'])) {
-                    foreach($submission->collaborators as $collaborator) {
-                        if($data['value']['collaborator'][$collaborator->user->id] > 0) {
+                if (isset($data['value']['collaborator'])) {
+                    foreach ($submission->collaborators as $collaborator) {
+                        if ($data['value']['collaborator'][$collaborator->user->id] > 0) {
                             // Double check that the submitting user isn't being awarded currency twice
-                            if(isset($data['value']['submitted']) && $collaborator->user->id == $submission->user->id) throw new \Exception("Can't award currency to the submitting user twice.");
+                            if (isset($data['value']['submitted']) && $collaborator->user->id == $submission->user->id) throw new \Exception("Can't award currency to the submitting user twice.");
 
-                            if(!$currencyManager->creditCurrency($user, $collaborator->user, $awardType, $awardData, $currency, $data['value']['collaborator'][$collaborator->user->id])) throw new \Exception("Failed to award currency to one or more collaborators.");
+                            if (!$currencyManager->creditCurrency($user, $collaborator->user, $logEvent, $awardData, $currency, $data['value']['collaborator'][$collaborator->user->id])) throw new \Exception("Failed to award currency to one or more collaborators.");
 
                             $grantedList[] = $collaborator->user;
                             $awardQuantity[] = $data['value']['collaborator'][$collaborator->user->id];
@@ -646,10 +631,10 @@ class GalleryManager extends Service
                     }
                 }
 
-                if(isset($data['value']['participant'])) {
-                    foreach($submission->participants as $participant) {
-                        if($data['value']['participant'][$participant->user->id] > 0) {
-                            if(!$currencyManager->creditCurrency($user, $participant->user, $awardType, $awardData, $currency, $data['value']['participant'][$participant->user->id])) throw new \Exception("Failed to award currency to one or more participants.");
+                if (isset($data['value']['participant'])) {
+                    foreach ($submission->participants as $participant) {
+                        if ($data['value']['participant'][$participant->user->id] > 0) {
+                            if (!$currencyManager->creditCurrency($user, $participant->user, $logEvent, $awardData, $currency, $data['value']['participant'][$participant->user->id])) throw new \Exception("Failed to award currency to one or more participants.");
 
                             $grantedList[] = $participant->user;
                             $awardQuantity[] = $data['value']['participant'][$participant->user->id];
@@ -658,7 +643,7 @@ class GalleryManager extends Service
                 }
 
                 // Collect and json encode existing as well as new data for storage
-                if(isset($submission->data['total'])) $valueData = collect([
+                if (isset($submission->data['total'])) $valueData = collect([
                     'currencyData' => $submission->data['currencyData'],
                     'total' => $submission->data['total'],
                     'value' => $data['value'],
@@ -673,7 +658,7 @@ class GalleryManager extends Service
                 ]);
 
                 // Send a notification to each user that received a currency award
-                foreach($grantedList as $key=>$grantedUser) {
+                foreach ($grantedList as $key => $grantedUser) {
                     Notifications::create('GALLERY_SUBMISSION_VALUED', $grantedUser, [
                         'currency_quantity' => $awardQuantity[$key],
                         'currency_name' => $currency->name,
@@ -681,10 +666,9 @@ class GalleryManager extends Service
                         'submission_id' => $submission->id,
                     ]);
                 }
-            }
-            else {
+            } else {
                 // Collect and json encode existing as well as new data for storage
-                if(isset($submission->data['total'])) $valueData = collect([
+                if (isset($submission->data['total'])) $valueData = collect([
                     'currencyData' => $submission->data['currencyData'],
                     'total' => $submission->data['total'],
                     'ineligible' => 1,
@@ -697,11 +681,10 @@ class GalleryManager extends Service
                     'data' => $valueData,
                     'is_valued' => 1,
                 ]);
-
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -714,27 +697,25 @@ class GalleryManager extends Service
      * @param  \App\Models\User\User                  $user
      * @return bool|\App\Models\Gallery\GalleryFavorite
      */
-    public function favoriteSubmission($submission, $user)
-    {
+    public function favoriteSubmission($submission, $user) {
         DB::beginTransaction();
 
         try {
             // Check that the submission can be favorited
-            if(!$submission->isVisible) throw new \Exception("This submission isn't visible to be favorited.");
-            if($submission->user->id == $user->id || $submission->collaborators->where('user_id', $user->id)->first() != null) throw new \Exception("You can't favorite your own submission!");
+            if (!$submission->isVisible) throw new \Exception("This submission isn't visible to be favorited.");
+            if ($submission->user->id == $user->id || $submission->collaborators->where('user_id', $user->id)->first() != null) throw new \Exception("You can't favorite your own submission!");
 
             // Check if the user has an existing favorite, and if so, delete it
             // or else create one.
-            if($submission->favorites->where('user_id', $user->id)->first() != null) {
+            if ($submission->favorites->where('user_id', $user->id)->first() != null) {
                 $submission->favorites()->where('user_id', $user->id)->delete();
-            }
-            else {
+            } else {
                 GalleryFavorite::create([
                     'user_id' => $user->id,
                     'gallery_submission_id' => $submission->id,
                 ]);
 
-                if($submission->user->id != $user->id) {
+                if ($submission->user->id != $user->id) {
                     Notifications::create('GALLERY_SUBMISSION_FAVORITE', $submission->user, [
                         'sender_url' => $user->url,
                         'sender' => $user->name,
@@ -745,10 +726,9 @@ class GalleryManager extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
-
 }

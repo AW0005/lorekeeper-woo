@@ -16,7 +16,7 @@ class CurrencyLog extends Model
         'sender_id', 'sender_type',
         'recipient_id', 'recipient_type',
         'log', 'log_type', 'data',
-        'currency_id', 'quantity'
+        'currency_id', 'quantity', 'event_id'
     ];
 
     /**
@@ -34,7 +34,7 @@ class CurrencyLog extends Model
     public $timestamps = true;
 
     /**********************************************************************************************
-    
+
         RELATIONS
 
     **********************************************************************************************/
@@ -42,7 +42,7 @@ class CurrencyLog extends Model
     /**
      * Get the user who initiated the logged action.
      */
-    public function sender() 
+    public function sender()
     {
         if($this->sender_type == 'User') return $this->belongsTo('App\Models\User\User', 'sender_id');
         return $this->belongsTo('App\Models\Character\Character', 'sender_id');
@@ -51,7 +51,7 @@ class CurrencyLog extends Model
     /**
      * Get the user who received the logged action.
      */
-    public function recipient() 
+    public function recipient()
     {
         if($this->recipient_type == 'User') return $this->belongsTo('App\Models\User\User', 'recipient_id');
         return $this->belongsTo('App\Models\Character\Character', 'recipient_id');
@@ -60,9 +60,16 @@ class CurrencyLog extends Model
     /**
      * Get the currency that is the target of the action.
      */
-    public function currency() 
+    public function currency()
     {
         return $this->belongsTo('App\Models\Currency\Currency');
     }
 
+    /**
+     * Get the currency that is the target of the action.
+     */
+    public function model()
+    {
+        return $this->currency();
+    }
 }

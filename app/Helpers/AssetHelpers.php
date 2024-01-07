@@ -10,6 +10,8 @@
 |
 */
 
+use App\Models\LogEvent;
+
 /**
  * Calculates amount of group currency a submission should be awarded
  * based on form input. Corresponds to the GroupCurrencyForm configured in
@@ -225,7 +227,6 @@ function parseAssetData($array)
  * @param  array                  $assets
  * @param  \App\Models\User\User  $sender
  * @param  \App\Models\User\User  $recipient
- * @param  string                 $logType
  * @param  string                 $data
  * @return array
  */
@@ -241,6 +242,8 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data)
         unset($assets['loot_tables']);
     }
 
+    // START:
+    // 3. update all the other places these functions are being called like this to create log events
     foreach($assets as $key => $contents)
     {
         if($key == 'items' && count($contents))

@@ -14,7 +14,7 @@ class UserCharacterLog extends Model
      */
     protected $fillable = [
         'character_id', 'sender_id', 'sender_alias', 'recipient_id', 'recipient_alias',
-        'log', 'log_type', 'data', 'sender_url', 'recipient_url'
+        'log', 'log_type', 'data', 'sender_url', 'recipient_url', 'event_id'
     ];
 
     /**
@@ -59,6 +59,12 @@ class UserCharacterLog extends Model
     public function character() 
     {
         return $this->belongsTo('App\Models\Character\Character');
+    }
+
+
+    public function model()
+    {
+        return $this->character();
     }
 
     /**********************************************************************************************

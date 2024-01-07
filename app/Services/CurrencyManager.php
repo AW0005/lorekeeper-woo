@@ -1,4 +1,6 @@
-<?php namespace App\Services;
+<?php
+
+namespace App\Services;
 
 use Carbon\Carbon;
 use App\Services\Service;
@@ -11,9 +13,9 @@ use App\Models\User\User;
 use App\Models\Currency\Currency;
 use App\Models\User\UserCurrency;
 use App\Models\Character\CharacterCurrency;
+use App\Models\LogEvent;
 
-class CurrencyManager extends Service
-{
+class CurrencyManager extends Service {
     /*
     |--------------------------------------------------------------------------
     | Currency Service
@@ -30,25 +32,28 @@ class CurrencyManager extends Service
      * @param  \App\Models\User\User  $staff
      * @return  bool
      */
-    public function grantUserCurrencies($data, $staff)
-    {
+    public function grantUserCurrencies($data, $staff) {
         DB::beginTransaction();
 
         try {
-            if($data['quantity'] == 0) throw new \Exception("Please enter a non-zero quantity.");
+            if ($data['quantity'] == 0) throw new \Exception("Please enter a non-zero quantity.");
 
             // Process names
             $users = User::find($data['names']);
-            if(count($users) != count($data['names'])) throw new \Exception("An invalid user was selected.");
+            if (count($users) != count($data['names'])) throw new \Exception("An invalid user was selected.");
 
             // Process currency
             $currency = Currency::find($data['currency_id']);
-            if(!$currency) throw new \Exception("Invalid currency selected.");
-            if(!$currency->is_user_owned) throw new \Exception("This currency cannot be held by users.");
+            if (!$currency) throw new \Exception("Invalid currency selected.");
+            if (!$currency->is_user_owned) throw new \Exception("This currency cannot be held by users.");
 
-            if($data['quantity'] < 0)
-                foreach($users as $user) {
-                    $this->debitCurrency($user, $staff, 'Staff Removal', $data['data'], $currency, -$data['quantity']);
+            $logEvent = LogEvent::create([
+                'event_type' => $data['quantity'] < 0 ? 'Staff Removal' : 'Staff Grant',
+            ]);
+
+            if ($data['quantity'] < 0)
+                foreach ($users as $user) {
+                    $this->debitCurrency($user, $staff, $logEvent, $data['data'], $currency, -$data['quantity']);
                     Notifications::create('CURRENCY_REMOVAL', $user, [
                         'currency_name' => $currency->name,
                         'currency_quantity' => -$data['quantity'],
@@ -57,8 +62,8 @@ class CurrencyManager extends Service
                     ]);
                 }
             else
-                foreach($users as $user) {
-                    $this->creditCurrency($staff, $user, 'Staff Grant', $data['data'], $currency, $data['quantity']);
+                foreach ($users as $user) {
+                    $this->creditCurrency($staff, $user, $logEvent, $data['data'], $currency, $data['quantity']);
                     Notifications::create('CURRENCY_GRANT', $user, [
                         'currency_name' => $currency->name,
                         'currency_quantity' => $data['quantity'],
@@ -68,7 +73,7 @@ class CurrencyManager extends Service
                 }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -83,48 +88,50 @@ class CurrencyManager extends Service
      * @param  \App\Models\User\User            $staff
      * @return  bool
      */
-    public function grantCharacterCurrencies($data, $character, $staff)
-    {
+    public function grantCharacterCurrencies($data, $character, $staff) {
         DB::beginTransaction();
 
         try {
-            if($data['quantity'] == 0) throw new \Exception("Please enter a non-zero quantity.");
+            if ($data['quantity'] == 0) throw new \Exception("Please enter a non-zero quantity.");
 
-            if(!$character) throw new \Exception("Invalid character selected.");
+            if (!$character) throw new \Exception("Invalid character selected.");
+
+            $logEvent = LogEvent::create([
+                'event_type' => $data['quantity'] < 0 ? 'Staff Removal' : 'Staff Grant',
+            ]);
 
             // Process currency
             $currency = Currency::find($data['currency_id']);
-            if(!$currency) throw new \Exception("Invalid currency selected.");
-            if(!$currency->is_character_owned) throw new \Exception("This currency cannot be held by characters.");
-            if($data['quantity'] < 0) {
-                $this->debitCurrency($character, $staff, 'Staff Removal', $data['data'], $currency, -$data['quantity']);
-                if(isset($character->user)) {
-                  Notifications::create('CHARACTER_CURRENCY_REMOVAL', $character->user, [
-                      'currency_name' => $currency->name,
-                      'currency_quantity' => -$data['quantity'],
-                      'sender_url' => $staff->url,
-                      'sender_name' => $staff->name,
-                      'character_name' => $character->fullName,
-                      'character_slug' => $character->slug
-                  ]);
+            if (!$currency) throw new \Exception("Invalid currency selected.");
+            if (!$currency->is_character_owned) throw new \Exception("This currency cannot be held by characters.");
+            if ($data['quantity'] < 0) {
+                $this->debitCurrency($character, $staff, $logEvent, $data['data'], $currency, -$data['quantity']);
+                if (isset($character->user)) {
+                    Notifications::create('CHARACTER_CURRENCY_REMOVAL', $character->user, [
+                        'currency_name' => $currency->name,
+                        'currency_quantity' => -$data['quantity'],
+                        'sender_url' => $staff->url,
+                        'sender_name' => $staff->name,
+                        'character_name' => $character->fullName,
+                        'character_slug' => $character->slug
+                    ]);
                 }
-            }
-            else{
-                $this->creditCurrency($staff, $character, 'Staff Grant', $data['data'], $currency, $data['quantity']);
-                if(isset($character->user)) {
-                  Notifications::create('CHARACTER_CURRENCY_GRANT', $character->user, [
-                      'currency_name' => $currency->name,
-                      'currency_quantity' => $data['quantity'],
-                      'sender_url' => $staff->url,
-                      'sender_name' => $staff->name,
-                      'character_name' => $character->fullName,
-                      'character_slug' => $character->slug
-                  ]);
+            } else {
+                $this->creditCurrency($staff, $character, $logEvent, $data['data'], $currency, $data['quantity']);
+                if (isset($character->user)) {
+                    Notifications::create('CHARACTER_CURRENCY_GRANT', $character->user, [
+                        'currency_name' => $currency->name,
+                        'currency_quantity' => $data['quantity'],
+                        'sender_url' => $staff->url,
+                        'sender_name' => $staff->name,
+                        'character_name' => $character->fullName,
+                        'character_slug' => $character->slug
+                    ]);
                 }
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -139,22 +146,25 @@ class CurrencyManager extends Service
      * @param  int                            $quantity
      * @return  bool
      */
-    public function transferCurrency($sender, $recipient, $currency, $quantity)
-    {
+    public function transferCurrency($sender, $recipient, $currency, $quantity) {
         DB::beginTransaction();
 
         try {
-            if(!$recipient) throw new \Exception("Invalid recipient selected.");
-            if($recipient->logType == 'User' && !$recipient->hasAlias) throw new \Exception("Cannot transfer currency to a non-verified member.");
-            if($recipient->logType == 'User' && $recipient->is_banned) throw new \Exception("Cannot transfer currency to a banned member.");
-            if(!$currency) throw new \Exception("Invalid currency selected.");
-            if($quantity <= 0) throw new \Exception("Invalid quantity entered.");
+            if (!$recipient) throw new \Exception("Invalid recipient selected.");
+            if ($recipient->logType == 'User' && !$recipient->hasAlias) throw new \Exception("Cannot transfer currency to a non-verified member.");
+            if ($recipient->logType == 'User' && $recipient->is_banned) throw new \Exception("Cannot transfer currency to a banned member.");
+            if (!$currency) throw new \Exception("Invalid currency selected.");
+            if ($quantity <= 0) throw new \Exception("Invalid quantity entered.");
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'User Transfer',
+            ]);
 
-            if($this->debitCurrency($sender, $recipient, null, null, $currency, $quantity) &&
-            $this->creditCurrency($sender, $recipient, null, null, $currency, $quantity))
-            {
-                $this->createLog($sender->id, $sender->logType, $recipient->id, $recipient->logType, 'User Transfer', null, $currency->id, $quantity);
+            if (
+                $this->debitCurrency($sender, $recipient, null, null, $currency, $quantity) &&
+                $this->creditCurrency($sender, $recipient, null, null, $currency, $quantity)
+            ) {
+                $this->createLog($sender->id, $sender->logType, $recipient->id, $recipient->logType, $logEvent, null, $currency->id, $quantity);
 
                 Notifications::create('CURRENCY_TRANSFER', $recipient, [
                     'currency_name' => $currency->name,
@@ -164,7 +174,7 @@ class CurrencyManager extends Service
                 ]);
                 return $this->commitReturn(true);
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -179,26 +189,29 @@ class CurrencyManager extends Service
      * @param  int                                                    $quantity
      * @return  bool
      */
-    public function transferCharacterCurrency($sender, $recipient, $currency, $quantity)
-    {
+    public function transferCharacterCurrency($sender, $recipient, $currency, $quantity) {
         DB::beginTransaction();
 
         try {
-            if(!$recipient) throw new \Exception("Invalid recipient selected.");
-            if(!$sender) throw new \Exception("Invalid sender selected.");
-            if($recipient->logType == 'Character' && $sender->logType == 'Character') throw new \Exception("Cannot transfer currencies between characters.");
-            if($recipient->logType == 'Character' && !$sender->hasPower('edit_inventories') && !$recipient->is_visible) throw new \Exception("Invalid character selected.");
-            if(!$currency) throw new \Exception("Invalid currency selected.");
-            if($quantity <= 0) throw new \Exception("Invalid quantity entered.");
+            if (!$recipient) throw new \Exception("Invalid recipient selected.");
+            if (!$sender) throw new \Exception("Invalid sender selected.");
+            if ($recipient->logType == 'Character' && $sender->logType == 'Character') throw new \Exception("Cannot transfer currencies between characters.");
+            if ($recipient->logType == 'Character' && !$sender->hasPower('edit_inventories') && !$recipient->is_visible) throw new \Exception("Invalid character selected.");
+            if (!$currency) throw new \Exception("Invalid currency selected.");
+            if ($quantity <= 0) throw new \Exception("Invalid quantity entered.");
 
+            $logEvent = LogEvent::create([
+                'event_type' => $sender->logType == 'User' ? 'User → Character Transfer' : 'Character → User Transfer',
+            ]);
 
-            if($this->debitCurrency($sender, $recipient, null, null, $currency, $quantity) &&
-            $this->creditCurrency($sender, $recipient, null, null, $currency, $quantity))
-            {
-                $this->createLog($sender->id, $sender->logType, $recipient->id, $recipient->logType, $sender->logType == 'User' ? 'User → Character Transfer' : 'Character → User Transfer', null, $currency->id, $quantity);
+            if (
+                $this->debitCurrency($sender, $recipient, null, null, $currency, $quantity) &&
+                $this->creditCurrency($sender, $recipient, null, null, $currency, $quantity)
+            ) {
+                $this->createLog($sender->id, $sender->logType, $recipient->id, $recipient->logType, $logEvent, null, $currency->id, $quantity);
                 return $this->commitReturn(true);
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -215,38 +228,41 @@ class CurrencyManager extends Service
      * @param  int                                                    $quantity
      * @return  bool
      */
-    public function creditCurrency($sender, $recipient, $type, $data, $currency, $quantity)
-    {
+    public function creditCurrency($sender, $recipient, $type, $data, $currency, $quantity) {
         DB::beginTransaction();
 
         try {
-            if(is_numeric($currency)) $currency = Currency::find($currency);
-            if($recipient->logType == 'User') {
+            if (is_numeric($currency)) $currency = Currency::find($currency);
+            if ($recipient->logType == 'User') {
                 $record = UserCurrency::where('user_id', $recipient->id)->where('currency_id', $currency->id)->first();
-                if($record) {
+                if ($record) {
                     // Laravel doesn't support composite primary keys, so directly updating the DB row here
                     DB::table('user_currencies')->where('user_id', $recipient->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity + $quantity]);
-                }
-                else {
+                } else {
                     $record = UserCurrency::create(['user_id' => $recipient->id, 'currency_id' => $currency->id, 'quantity' => $quantity]);
                 }
-            }
-            else {
+            } else {
                 $record = CharacterCurrency::where('character_id', $recipient->id)->where('currency_id', $currency->id)->first();
-                if($record) {
+                if ($record) {
                     // Laravel doesn't support composite primary keys, so directly updating the DB row here
                     DB::table('character_currencies')->where('character_id', $recipient->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity + $quantity]);
-                }
-                else {
+                } else {
                     $record = CharacterCurrency::create(['character_id' => $recipient->id, 'currency_id' => $currency->id, 'quantity' => $quantity]);
                 }
             }
-            if($type && !$this->createLog($sender ? $sender->id : null, $sender ? $sender->logType : null,
-            $recipient ? $recipient->id : null, $recipient ? $recipient->logType : null,
-            $type, $data, $currency->id, $quantity)) throw new \Exception("Failed to create log.");
+            if ($type && !$this->createLog(
+                $sender ? $sender->id : null,
+                $sender ? $sender->logType : null,
+                $recipient ? $recipient->id : null,
+                $recipient ? $recipient->logType : null,
+                $type,
+                $data,
+                $currency->id,
+                $quantity
+            )) throw new \Exception("Failed to create log.");
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -263,32 +279,37 @@ class CurrencyManager extends Service
      * @param  int                                                    $quantity
      * @return  bool
      */
-    public function debitCurrency($sender, $recipient, $type, $data, $currency, $quantity)
-    {
+    public function debitCurrency($sender, $recipient, $type, $data, $currency, $quantity) {
         DB::beginTransaction();
 
         try {
-            if($sender->logType == 'User') {
+            if ($sender->logType == 'User') {
                 $record = UserCurrency::where('user_id', $sender->id)->where('currency_id', $currency->id)->first();
-                if(!$record || $record->quantity < $quantity) throw new \Exception("Not enough ".$currency->name." to carry out this action.");
+                if (!$record || $record->quantity < $quantity) throw new \Exception("Not enough " . $currency->name . " to carry out this action.");
 
                 // Laravel doesn't support composite primary keys, so directly updating the DB row here
                 DB::table('user_currencies')->where('user_id', $sender->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity - $quantity]);
-            }
-            else {
+            } else {
                 $record = CharacterCurrency::where('character_id', $sender->id)->where('currency_id', $currency->id)->first();
-                if(!$record || $record->quantity < $quantity) throw new \Exception("Not enough ".$currency->name." to carry out this action.");
+                if (!$record || $record->quantity < $quantity) throw new \Exception("Not enough " . $currency->name . " to carry out this action.");
 
                 // Laravel doesn't support composite primary keys, so directly updating the DB row here
                 DB::table('character_currencies')->where('character_id', $sender->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity - $quantity]);
             }
 
-            if($type && !$this->createLog($sender ? $sender->id : null, $sender ? $sender->logType : null,
-            $recipient ? $recipient->id : null, $recipient ? $recipient->logType : null,
-            $type, $data, $currency->id, -$quantity)) throw new \Exception("Failed to create log.");
+            if ($type && !$this->createLog(
+                $sender ? $sender->id : null,
+                $sender ? $sender->logType : null,
+                $recipient ? $recipient->id : null,
+                $recipient ? $recipient->logType : null,
+                $type,
+                $data,
+                $currency->id,
+                -$quantity
+            )) throw new \Exception("Failed to create log.");
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -301,27 +322,26 @@ class CurrencyManager extends Service
      * @param  string  $senderType
      * @param  int     $recipientId
      * @param  string  $recipientType
-     * @param  string  $type
      * @param  string  $data
      * @param  int     $currencyId
      * @param  int     $quantity
      * @return  int
      */
-    public function createLog($senderId, $senderType, $recipientId, $recipientType, $type, $data, $currencyId, $quantity)
-    {
+    public function createLog($senderId, $senderType, $recipientId, $recipientType, $type, $data, $currencyId, $quantity) {
         return DB::table('currencies_log')->insert(
             [
                 'sender_id' => $senderId,
                 'sender_type' => $senderType,
                 'recipient_id' => $recipientId,
                 'recipient_type' => $recipientType,
-                'log' => $type . ($data ? ' (' . $data . ')' : ''),
-                'log_type' => $type,
+                'log' => $type->event_type . ($data ? ' (' . $data . ')' : ''),
+                'log_type' => $type->event_type,
                 'data' => $data, // this should be just a string
                 'currency_id' => $currencyId,
                 'quantity' => $quantity,
                 'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
+                'updated_at' => Carbon::now(),
+                'event_id' => $type->id,
             ]
         );
     }

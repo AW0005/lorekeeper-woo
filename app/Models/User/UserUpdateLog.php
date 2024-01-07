@@ -13,7 +13,7 @@ class UserUpdateLog extends Model
      * @var array
      */
     protected $fillable = [
-        'staff_id', 'user_id', 'data', 'type'
+        'staff_id', 'user_id', 'data', 'type', 'event_id'
     ];
 
     /**
@@ -38,29 +38,37 @@ class UserUpdateLog extends Model
     protected $table = 'user_update_log';
 
     /**********************************************************************************************
-    
+
         RELATIONS
 
     **********************************************************************************************/
-    
+
     /**
      * Get the staff who updated the user.
      */
-    public function staff() 
+    public function staff()
     {
         return $this->belongsTo('App\Models\User\User', 'staff_id');
     }
-    
+
     /**
      * Get the user that was updated.
      */
-    public function user() 
+    public function user()
     {
         return $this->belongsTo('App\Models\User\User', 'user_id');
     }
 
+    /**
+     * Get the log event this is attached to.
+     */
+    public function logEvent()
+    {
+        return $this->morphOne('App\Models\LogEvent', 'event_id');
+    }
+
     /**********************************************************************************************
-    
+
         ACCESSORS
 
     **********************************************************************************************/
@@ -74,4 +82,10 @@ class UserUpdateLog extends Model
     {
         return json_decode($this->attributes['data'], true);
     }
+
+    public function getModelAttribute()
+    {
+        return json_decode($this->attributes['data'], true);
+    }
 }
+
