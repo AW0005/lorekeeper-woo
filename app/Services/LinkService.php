@@ -1,5 +1,6 @@
 <?php namespace App\Services;
 
+use App\Models\LogEvent;
 use DB;
 use Laravel\Socialite\Facades\Socialite;
 use App\Services\Service;
@@ -52,8 +53,12 @@ class LinkService extends Service
             // Save that the user has an alias
             $user->has_alias = 1;
             $user->save();
-            
-            UserUpdateLog::create(['user_id' => $user->id, 'data' => json_encode(['alias' => $result->nickname, 'site' => $provider]), 'type' => 'Alias Added']);
+
+            $logEvent = LogEvent::create([
+                'event_type' => 'Alias Added',
+            ]);
+
+            UserUpdateLog::create(['user_id' => $user->id, 'data' => json_encode(['alias' => $result->nickname, 'site' => $provider]), 'type' => $logEvent->event_type, 'event_id' => $logEvent->id]);
 
             return $this->commitReturn(true);
         } catch(\Exception $e) { 
@@ -83,8 +88,11 @@ class LinkService extends Service
             $alias->is_visible = 1;
             $alias->is_primary_alias = 1;
             $alias->save();
-            
-            UserUpdateLog::create(['user_id' => $user->id, 'data' => json_encode(['alias' => $alias->alias, 'site' => $alias->site]), 'type' => 'Primary Alias Changed']);
+
+            $logEvent = LogEvent::create([
+                'event_type' => 'Primary Alias Changed',
+            ]);
+            UserUpdateLog::create(['user_id' => $user->id, 'data' => json_encode(['alias' => $alias->alias, 'site' => $alias->site]), 'type' => $logEvent->event_type, 'event_id' => $logEvent->id]);
 
             return $this->commitReturn(true);
         } catch(\Exception $e) { 
@@ -109,8 +117,11 @@ class LinkService extends Service
             // Update the alias's visibility
             $alias->is_visible = !$alias->is_visible;
             $alias->save();
-            
-            UserUpdateLog::create(['user_id' => $user->id, 'data' => json_encode(['alias' => $alias->alias, 'site' => $alias->site]), 'type' => 'Alias Visibility Changed']);
+
+            $logEvent = LogEvent::create([
+                'event_type' => 'Alias Visibility Changed',
+            ]);
+            UserUpdateLog::create(['user_id' => $user->id, 'data' => json_encode(['alias' => $alias->alias, 'site' => $alias->site]), 'type' => $logEvent->event_type, 'event_id' => $logEvent->id]);
 
             return $this->commitReturn(true);
         } catch(\Exception $e) { 
@@ -131,8 +142,11 @@ class LinkService extends Service
             $alias = UserAlias::where('id', $aliasId)->where('user_id', $user->id)->where('is_primary_alias', 0)->first();
 
             if(!$alias) throw new \Exception("Invalid alias selected.");
-            
-            UserUpdateLog::create(['user_id' => $user->id, 'data' => json_encode(['alias' => $alias->alias, 'site' => $alias->site]), 'type' => 'Alias Deleted']);
+
+            $logEvent = LogEvent::create([
+                'event_type' => 'Alias Deleted',
+            ]);
+            UserUpdateLog::create(['user_id' => $user->id, 'data' => json_encode(['alias' => $alias->alias, 'site' => $alias->site]), 'type' => $logEvent->event_type, 'event_id' => $logEvent->id]);
 
             // Delete the alias
             $alias->delete();

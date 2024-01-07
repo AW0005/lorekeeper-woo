@@ -226,7 +226,10 @@ class InventoryManager extends Service {
                 if ($stack->count < $quantity) throw new \Exception("Quantity to transfer exceeds item count.");
 
                 $oldUser = $stack->user;
-                if ($this->moveStack($stack->user, $recipient, ($stack->user_id == $sender->id ? 'User Transfer' : 'Staff Transfer'), ['data' => ($stack->user_id != $sender->id ? 'Transferred by ' . $sender->displayName : '')], $stack, $quantity)) {
+                $logEvent = LogEvent::create([
+                    'event_type' => ($stack->user_id == $sender->id ? 'User Transfer' : 'Staff Transfer'),
+                ]);
+                if ($this->moveStack($stack->user, $recipient, $logEvent, ['data' => ($stack->user_id != $sender->id ? 'Transferred by ' . $sender->displayName : '')], $stack, $quantity)) {
                     Notifications::create('ITEM_TRANSFER', $recipient, [
                         'item_name' => $stack->item->name,
                         'item_quantity' => $quantity,
@@ -261,6 +264,10 @@ class InventoryManager extends Service {
         DB::beginTransaction();
 
         try {
+
+            $logEvent = LogEvent::create([
+                'event_type' => ($stack->user_id == $user->id ? 'User Deleted' : 'Staff Deleted'),
+            ]);
             if ($owner->logType == 'User') {
                 foreach ($stacks as $key => $stack) {
                     $user = Auth::user();
@@ -271,8 +278,7 @@ class InventoryManager extends Service {
                     if ($stack->count < $quantity) throw new \Exception("Quantity to delete exceeds item count.");
 
                     $oldUser = $stack->user;
-
-                    if ($this->debitStack($stack->user, ($stack->user_id == $user->id ? 'User Deleted' : 'Staff Deleted'), ['data' => ($stack->user_id != $user->id ? 'Deleted by ' . $user->displayName : '')], $stack, $quantity)) {
+                    if ($this->debitStack($stack->user, $logEvent, ['data' => ($stack->user_id != $user->id ? 'Deleted by ' . $user->displayName : '')], $stack, $quantity)) {
                         if ($stack->user_id != $user->id)
                             Notifications::create('ITEM_REMOVAL', $oldUser, [
                                 'item_name' => $stack->item->name,
@@ -291,7 +297,7 @@ class InventoryManager extends Service {
                     if ($stack->character->user_id != $user->id && !$user->hasPower('edit_inventories')) throw new \Exception("You do not own one of the selected items.");
                     if ($stack->count < $quantity) throw new \Exception("Quantity to delete exceeds item count.");
 
-                    if ($this->debitStack($stack->character, ($stack->character->user_id == $user->id ? 'User Deleted' : 'Staff Deleted'), ['data' => ($stack->character->user_id != $user->id ? 'Deleted by ' . $user->displayName : '')], $stack, $quantity)) {
+                    if ($this->debitStack($stack->character, $logEvent, ['data' => ($stack->character->user_id != $user->id ? 'Deleted by ' . $user->displayName : '')], $stack, $quantity)) {
                         if ($stack->character->user_id != $user->id && $stack->character->is_visible && $stack->character->user_id)
                             Notifications::create('CHARACTER_ITEM_REMOVAL', $stack->character->user, [
                                 'item_name' => $stack->item->name,

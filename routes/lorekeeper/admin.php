@@ -11,6 +11,10 @@
 
 Route::get('/', 'HomeController@getIndex');
 
+Route::group(['middleware' => 'admin'], function () {
+    Route::get('/logoflogs', 'HomeController@getLogofLogs');
+});
+
 Route::group(['prefix' => 'users', 'namespace' => 'Users'], function() {
 
     # USER LIST

@@ -253,7 +253,10 @@ class UserService extends Service
                 foreach($trades as $trade)
                     $tradeManager->rejectTrade(['trade' => $trade, 'reason' => 'User has been banned from site activity.'], $staff);
 
-                UserUpdateLog::create(['staff_id' => $staff->id, 'user_id' => $user->id, 'data' => json_encode(['is_banned' => 'Yes', 'ban_reason' => isset($data['ban_reason']) ? $data['ban_reason'] : null]), 'type' => 'Ban']);
+                $logEvent = LogEvent::create([
+                    'event_type' => 'Ban',
+                ]);
+                UserUpdateLog::create(['staff_id' => $staff->id, 'user_id' => $user->id, 'data' => json_encode(['is_banned' => 'Yes', 'ban_reason' => isset($data['ban_reason']) ? $data['ban_reason'] : null]), 'type' => $logEvent->event_type, 'event_id' => $logEvent->id]);
 
                 $user->settings->banned_at = Carbon::now();
 
@@ -262,7 +265,10 @@ class UserService extends Service
                 $user->save();
             }
             else {
-                UserUpdateLog::create(['staff_id' => $staff->id, 'user_id' => $user->id, 'data' => json_encode(['ban_reason' => isset($data['ban_reason']) ? $data['ban_reason'] : null]), 'type' => 'Ban Update']);
+                $logEvent = LogEvent::create([
+                    'event_type' => 'Ban Update',
+                ]);
+                UserUpdateLog::create(['staff_id' => $staff->id, 'user_id' => $user->id, 'data' => json_encode(['ban_reason' => isset($data['ban_reason']) ? $data['ban_reason'] : null]), 'type' => $logEvent->event_type, 'event_id' => $logEvent->id]);
             }
 
             $user->settings->ban_reason = isset($data['ban_reason']) && $data['ban_reason'] ? $data['ban_reason'] : null;
@@ -294,7 +300,11 @@ class UserService extends Service
                 $user->settings->ban_reason = null;
                 $user->settings->banned_at = null;
                 $user->settings->save();
-                UserUpdateLog::create(['staff_id' => $staff->id, 'user_id' => $user->id, 'data' => json_encode(['is_banned' => 'No']), 'type' => 'Unban']);
+
+                $logEvent = LogEvent::create([
+                    'event_type' => 'Unban',
+                ]);
+                UserUpdateLog::create(['staff_id' => $staff->id, 'user_id' => $user->id, 'data' => json_encode(['is_banned' => 'No']), 'type' => $logEvent->event_type, 'event_id' => $logEvent->id]);
             }
 
             return $this->commitReturn(true);

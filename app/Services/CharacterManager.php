@@ -81,7 +81,7 @@ class CharacterManager extends Service {
      * @param  bool                   $isMyo
      * @return \App\Models\Character\Character|bool
      */
-    public function createCharacter($data, $user, $isMyo = false) {
+    public function createCharacter($data, $user, $isMyo = false, $logEvent = null) {
         DB::beginTransaction();
 
         try {
@@ -125,13 +125,19 @@ class CharacterManager extends Service {
             $character->character_image_id = $image->id;
             $character->save();
 
+
+            if (!$logEvent) {
+                $logEvent = LogEvent::create([
+                    'event_type' => $isMyo ? 'MYO Slot Created' : 'Character Created',
+                ]);
+            }
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, $recipientId, $url, $character->id, $isMyo ? 'MYO Slot Created' : 'Character Created', 'Initial upload', 'character');
+            $this->createLog($user->id, null, $recipientId, $url, $character->id, $logEvent, 'Initial upload', 'character');
 
             // Add a log for the user
             // This logs ownership of the character
-            $this->createLog($user->id, null, $recipientId, $url, $character->id, $isMyo ? 'MYO Slot Created' : 'Character Created', 'Initial upload', 'user');
+            $this->createLog($user->id, null, $recipientId, $url, $character->id, $logEvent, 'Initial upload', 'user');
 
             // Update the user's FTO status and character count
             if (is_object($recipient)) {
@@ -602,9 +608,13 @@ class CharacterManager extends Service {
             $character->character_image_id = $image->id;
             $character->save();
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Character Image Uploaded',
+            ]);
+
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, $character->user_id, ($character->user_id ? null : $character->owner_url), $character->id, 'Character Image Uploaded', '[#' . $image->id . ']', 'character');
+            $this->createLog($user->id, null, $character->user_id, ($character->user_id ? null : $character->owner_url), $character->id, $logEvent, '[#' . $image->id . ']', 'character');
 
             // If the recipient has an account, send them a notification
             if ($character->user && $user->id != $character->user_id && $character->is_visible) {
@@ -679,9 +689,13 @@ class CharacterManager extends Service {
             $image->character->rarity_id = $image->rarity_id;
             $image->character->save();
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Traits Updated',
+            ]);
+
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, null, null, $image->character_id, 'Traits Updated', '#' . $image->id, 'character', true, $old, $new);
+            $this->createLog($user->id, null, null, null, $image->character_id, $logEvent, '#' . $image->id, 'character', true, $old, $new);
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -722,9 +736,12 @@ class CharacterManager extends Service {
             $image->parsed_description = parse($data['description']);
             $image->save();
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Image Notes Updated',
+            ]);
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, null, null, $image->character_id, 'Image Notes Updated', '[#' . $image->id . ']', 'character', true, $old, $image->parsed_description);
+            $this->createLog($user->id, null, null, null, $image->character_id, $logEvent, '[#' . $image->id . ']', 'character', true, $old, $image->parsed_description);
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -800,9 +817,12 @@ class CharacterManager extends Service {
                     ]);
             }
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Image Credits Updated',
+            ]);
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, null, null, $image->character_id, 'Image Credits Updated', '[#' . $image->id . ']', 'character', true, $old, $this->generateCredits($image));
+            $this->createLog($user->id, null, null, null, $image->character_id, $logEvent, '[#' . $image->id . ']', 'character', true, $old, $this->generateCredits($image));
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -864,9 +884,12 @@ class CharacterManager extends Service {
             // Process and save the image itself
             if (!$isMyo) $this->processImage($image);
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Image Reuploaded',
+            ]);
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, null, null, $image->character_id, 'Image Reuploaded', '[#' . $image->id . ']', 'character');
+            $this->createLog($user->id, null, null, null, $image->character_id, $logEvent, '[#' . $image->id . ']', 'character');
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -897,9 +920,12 @@ class CharacterManager extends Service {
             if (isset($image->fullsize_hash) ? file_exists(public_path($image->imageDirectory . '/' . $image->fullsizeFileName)) : FALSE) unlink($image->imagePath . '/' . $image->fullsizeFileName);
             unlink($image->imagePath . '/' . $image->thumbnailFileName);
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Image Deleted',
+            ]);
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, null, null, $image->character_id, 'Image Deleted', '[#' . $image->id . ']', 'character');
+            $this->createLog($user->id, null, null, null, $image->character_id, $logEvent, '[#' . $image->id . ']', 'character');
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -926,9 +952,12 @@ class CharacterManager extends Service {
             $image->is_visible = isset($data['is_visible']);
             $image->save();
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Image Visibility/Validity Updated',
+            ]);
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, null, null, $image->character_id, 'Image Visibility/Validity Updated', '[#' . $image->id . ']', 'character');
+            $this->createLog($user->id, null, null, null, $image->character_id, $logEvent, '[#' . $image->id . ']', 'character');
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -954,9 +983,12 @@ class CharacterManager extends Service {
             $image->character->character_image_id = $image->id;
             $image->character->save();
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Active Image Updated',
+            ]);
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, null, null, $image->character_id, 'Active Image Updated', '[#' . $image->id . ']', 'character');
+            $this->createLog($user->id, null, null, null, $image->character_id, $logEvent, '[#' . $image->id . ']', 'character');
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -996,9 +1028,12 @@ class CharacterManager extends Service {
                 $count++;
             }
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Image Order Updated',
+            ]);
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, null, null, $image->character_id, 'Image Order Updated', '', 'character');
+            $this->createLog($user->id, null, null, null, $image->character_id, $logEvent, '', 'character');
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -1118,9 +1153,12 @@ class CharacterManager extends Service {
             if (count($result)) {
                 $character->update($characterData);
 
+                $logEvent = LogEvent::create([
+                    'event_type' => 'Character Updated',
+                ]);
                 // Add a log for the character
                 // This logs all the updates made to the character
-                $this->createLog($user->id, null, null, null, $character->id, 'Character Updated', ucfirst(implode(', ', $result)) . ' edited', 'character', true, $old, $new);
+                $this->createLog($user->id, null, null, null, $character->id, $logEvent, ucfirst(implode(', ', $result)) . ' edited', 'character', true, $old, $new);
             }
 
             return $this->commitReturn(true);
@@ -1149,9 +1187,12 @@ class CharacterManager extends Service {
             $character->parsed_description = parse($data['description']);
             $character->save();
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Character Description Updated',
+            ]);
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, null, null, $character->id, 'Character Description Updated', '', 'character', true, $old, $character->parsed_description);
+            $this->createLog($user->id, null, null, null, $character->id, $logEvent, '', 'character', true, $old, $character->parsed_description);
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -1177,9 +1218,12 @@ class CharacterManager extends Service {
             $character->is_visible = isset($data['is_visible']);
             $character->save();
 
+            $logEvent = LogEvent::create([
+                'event_type' => 'Character Visibility Updated',
+            ]);
             // Add a log for the character
             // This logs all the updates made to the character
-            $this->createLog($user->id, null, null, null, $character->id, 'Character Visibility Updated', '', 'character', true, $old, ['is_visible' => $character->is_visible]);
+            $this->createLog($user->id, null, null, null, $character->id, $logEvent, '', 'character', true, $old, ['is_visible' => $character->is_visible]);
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -1388,7 +1432,10 @@ class CharacterManager extends Service {
 
             $sender = $character->user;
 
-            $this->moveCharacter($character, $recipient, 'Transferred by ' . $user->displayName . (isset($data['reason']) ? ': ' . $data['reason'] : ''), isset($data['cooldown']) ? $data['cooldown'] : -1);
+            $logEvent = LogEvent::create([
+                'event_type' => 'Admin Transfer',
+            ]);
+            $this->moveCharacter($character, $recipient, 'Transferred by ' . $user->displayName . (isset($data['reason']) ? ': ' . $data['reason'] : ''), isset($data['cooldown']) ? $data['cooldown'] : -1, $logEvent);
 
             // Add notifications for the old and new owners
             if ($sender) {
@@ -1436,11 +1483,14 @@ class CharacterManager extends Service {
 
                 $transfer->status = 'Accepted';
 
+                $logEvent = LogEvent::create([
+                    'event_type' => 'User Transfer',
+                ]);
                 // Process the character move if the transfer has already been approved
                 if ($transfer->is_approved) {
                     //check the cooldown saved
                     if (isset($transfer->data['cooldown'])) $cooldown = $transfer->data['cooldown'];
-                    $this->moveCharacter($transfer->character, $transfer->recipient, 'User Transfer', $cooldown);
+                    $this->moveCharacter($transfer->character, $transfer->recipient, 'User Transfer', $cooldown, $logEvent);
                     if (!Settings::get('open_transfers_queue'))
                         $transfer->data = json_encode([
                             'cooldown' => $cooldown,
@@ -1532,9 +1582,13 @@ class CharacterManager extends Service {
                     'cooldown' => isset($data['cooldown']) ? $data['cooldown'] : Settings::get('transfer_cooldown')
                 ]);
 
+
+                $logEvent = LogEvent::create([
+                    'event_type' => 'User Transfer',
+                ]);
                 // Process the character move if the recipient has already accepted the transfer
                 if ($transfer->status == 'Accepted') {
-                    $this->moveCharacter($transfer->character, $transfer->recipient, 'User Transfer', isset($data['cooldown']) ? $data['cooldown'] : -1);
+                    $this->moveCharacter($transfer->character, $transfer->recipient, 'User Transfer', isset($data['cooldown']) ? $data['cooldown'] : -1, $logEvent);
 
                     // Notify both parties of the successful transfer
                     Notifications::create('CHARACTER_TRANSFER_APPROVED', $transfer->sender, [
@@ -2039,6 +2093,9 @@ class CharacterManager extends Service {
             if (!isset($data['number'])) throw new \Exception("Please enter a character number.");
             if (!isset($data['slug']) || Character::where('slug', $data['slug'])->where('id', '!=', $request->character_id)->exists()) throw new \Exception("Please enter a unique character code.");
 
+            $logEvent = LogEvent::create([
+                'event_type' => $request->character->is_myo_slot ? 'MYO Design Approved' : 'Character Design Updated',
+            ]);
             // Remove any added items/currency
             // Currency has already been removed, so no action required
             // However logs need to be added for each of these
@@ -2058,7 +2115,7 @@ class CharacterManager extends Service {
                 foreach ($stacks as $stackId => $quantity) {
                     $stack = UserItem::find($stackId);
                     $user = User::find($request->user_id);
-                    if (!$inventoryManager->debitStack($user, $request->character->is_myo_slot ? 'MYO Design Approved' : 'Character Design Updated', ['data' => 'Item used in ' . ($request->character->is_myo_slot ? 'MYO design approval' : 'Character design update') . ' (<a href="' . $request->url . '">#' . $request->id . '</a>)'], $stack, $quantity)) throw new \Exception("Failed to create log for item stack.");
+                    if (!$inventoryManager->debitStack($user, $logEvent, ['data' => 'Item used in ' . ($request->character->is_myo_slot ? 'MYO design approval' : 'Character design update') . ' (<a href="' . $request->url . '">#' . $request->id . '</a>)'], $stack, $quantity)) throw new \Exception("Failed to create log for item stack.");
                 }
                 $user = $staff;
             }
@@ -2071,7 +2128,7 @@ class CharacterManager extends Service {
                         'User',
                         null,
                         null,
-                        $request->character->is_myo_slot ? 'MYO Design Approved' : 'Character Design Updated',
+                        $logEvent,
                         'Used in ' . ($request->character->is_myo_slot ? 'MYO design approval' : 'character design update') . ' (<a href="' . $request->url . '">#' . $request->id . '</a>)',
                         $currencyId,
                         $quantity
@@ -2087,7 +2144,7 @@ class CharacterManager extends Service {
                         'Character',
                         null,
                         null,
-                        $request->character->is_myo_slot ? 'MYO Design Approved' : 'Character Design Updated',
+                        $logEvent,
                         'Used in ' . ($request->character->is_myo_slot ? 'MYO design approval' : 'character design update') . ' (<a href="' . $request->url . '">#' . $request->id . '</a>)',
                         $currencyId,
                         $quantity
@@ -2182,8 +2239,8 @@ class CharacterManager extends Service {
             $request->save();
 
             // Add a log for the character and user
-            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, $request->update_type == 'MYO' ? 'MYO Design Approved' : 'Character Design Updated', '[#' . $image->id . ']', 'character');
-            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, $request->update_type == 'MYO' ? 'MYO Design Approved' : 'Character Design Updated', '[#' . $image->id . ']', 'user');
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, $logEvent, '[#' . $image->id . ']', 'character');
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->url, $request->character->id, $logEvent, '[#' . $image->id . ']', 'user');
 
             // If this is for a MYO, set user's FTO status and the MYO status of the slot
             // and clear the character's name

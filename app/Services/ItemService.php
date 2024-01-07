@@ -354,10 +354,6 @@ class ItemService extends Service {
         DB::beginTransaction();
 
         try {
-            $logEvent = LogEvent::create([
-                'event_type' => 'Added Item Tag',
-            ]);
-
             if (!$item) throw new \Exception("Invalid item selected.");
             if ($item->tags()->where('tag', $tag)->exists()) throw new \Exception("This item already has this tag attached to it.");
             if (!$tag) throw new \Exception("No tag selected.");
@@ -386,11 +382,6 @@ class ItemService extends Service {
         DB::beginTransaction();
 
         try {
-
-            $logEvent = LogEvent::create([
-                'event_type' => 'Edited Item Tag',
-            ]);
-
             if (!$item) throw new \Exception("Invalid item selected.");
             if (!$item->tags()->where('tag', $tag)->exists()) throw new \Exception("This item does not have this tag attached to it.");
 

@@ -242,8 +242,6 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data)
         unset($assets['loot_tables']);
     }
 
-    // START:
-    // 3. update all the other places these functions are being called like this to create log events
     foreach($assets as $key => $contents)
     {
         if($key == 'items' && count($contents))
@@ -268,7 +266,7 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data)
         {
             $service = new \App\Services\InventoryManager;
             foreach($contents as $asset)
-                if(!$service->moveStack($sender, $recipient, $logType, $data, $asset['asset'])) return false;
+                if (!$service->moveStack($sender, $recipient, $logType, $data, $asset['asset'], $asset['quantity'])) return false;
         }
         elseif($key == 'characters' && count($contents))
         {

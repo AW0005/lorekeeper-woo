@@ -54,4 +54,8 @@ return [
         'default_recipient' => 0, // 0 to default to the character's owner (if a user), 1 to default to the submission user.
     ],
 
+    // Log of Logs - moif
+    // Sets the number of days to display of logs in the Log of Logs page - sites with a lot of activity may want to decrease this
+    'logDaysSince' => 30,
+
 ];

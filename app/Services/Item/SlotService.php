@@ -12,6 +12,7 @@ use App\Models\Item\Item;
 use App\Models\User\User;
 use App\Models\User\UserItem;
 use App\Models\Character\Character;
+use App\Models\LogEvent;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
 use App\Models\Rarity;
@@ -121,8 +122,12 @@ class SlotService extends Service
                 // so do some validation...
                 if($stack->user_id != $user->id) throw new \Exception("This item does not belong to you.");
 
+
+                $logEvent = LogEvent::create([
+                    'event_type' => 'Slot Used',
+                ]);
                 // Next, try to delete the tag item. If successful, we can start distributing rewards.
-                if((new InventoryManager)->debitStack($stack->user, 'Slot Used', ['data' => ''], $stack, $data['quantities'][$key])) {
+                if ((new InventoryManager)->debitStack($stack->user, $logEvent, ['data' => ''], $stack, $data['quantities'][$key])) {
 
                     for($q=0; $q<$data['quantities'][$key]; $q++) {
                         //fill an array with the DB contents
@@ -157,7 +162,7 @@ class SlotService extends Service
 
                         // Distribute user rewards
                         $charService = new CharacterManager;
-                        if ($character = $charService->createCharacter($characterData, $user, true)) {
+                        if ($character = $charService->createCharacter($characterData, $user, true, $logEvent)) {
                             flash('<a href="' . $character->url . '">MYO slot</a> created successfully.')->success();
                         }
                         else {
