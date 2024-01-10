@@ -95,7 +95,7 @@ class SubmissionController extends Controller
             'isClaim' => false,
         ] + ($closed ? [] : [
             'submission' => new Submission,
-            'prompts' => Prompt::active()->sortAlphabetical()->pluck('name', 'id')->toArray(),
+            'prompts' => Prompt::staff(Auth::user()->isStaff)->active()->sortAlphabetical()->pluck('name', 'id')->toArray(),
             'characterCurrencies' => Currency::where('is_character_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id'),
             'categories' => ItemCategory::orderBy('sort', 'DESC')->get(),
             'item_filter' => Item::orderBy('name')->released()->get()->keyBy('id'),
@@ -131,7 +131,7 @@ class SubmissionController extends Controller
      */
     public function getPromptInfo($id)
     {
-        $prompt = Prompt::active()->where('id', $id)->first();
+        $prompt = Prompt::staff(Auth::user()->isStaff)->active()->where('id', $id)->first();
         if(!$prompt) return response(404);
 
         return view('home._prompt', [

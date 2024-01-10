@@ -19,6 +19,7 @@ use App\Models\Prompt\Prompt;
 use App\Models\Shop\Shop;
 use App\Models\Shop\ShopStock;
 use App\Models\User\User;
+use Auth;
 
 class WorldController extends Controller
 {
@@ -344,7 +345,7 @@ class WorldController extends Controller
      */
     public function getPrompts(Request $request)
     {
-        $query = Prompt::active()->with('category');
+        $query = Prompt::staff(Auth::user()->isStaff)->active()->with('category');
         $data = $request->only(['prompt_category_id', 'name', 'sort']);
         if(isset($data['prompt_category_id']) && $data['prompt_category_id'] != 'none')
             $query->where('prompt_category_id', $data['prompt_category_id']);

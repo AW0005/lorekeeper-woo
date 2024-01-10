@@ -210,7 +210,7 @@ class GalleryController extends Controller
         ] + ($closed ? [] : [
             'gallery' => $gallery,
             'submission' => new GallerySubmission,
-            'prompts' => Prompt::active()->sortAlphabetical()->pluck('name', 'id')->toArray(),
+            'prompts' => Prompt::staff(0)->active()->sortAlphabetical()->pluck('name', 'id')->toArray(),
             'users' => User::visible()->orderBy('name')->pluck('name', 'id')->toArray(),
             'currency' => Currency::find(Settings::get('group_currency')),
             'galleryPage' => true,
@@ -234,7 +234,7 @@ class GalleryController extends Controller
         if(!$isMod && !$isOwner) abort(404);
 
         // Show inactive prompts in the event of being edited by an admin after acceptance
-        $prompts = Auth::user()->hasPower('manage_submissions') && $submission->status == 'Pending' ? Prompt::query() : Prompt::active();
+        $prompts = Auth::user()->hasPower('manage_submissions') && $submission->status == 'Pending' ? Prompt::query() : Prompt::staff(0)->active();
 
         return view('galleries.create_edit_submission', [
             'closed' => false,

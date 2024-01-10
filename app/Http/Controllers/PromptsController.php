@@ -9,6 +9,7 @@ use App\Models\Item\ItemCategory;
 use App\Models\Item\Item;
 use App\Models\Prompt\PromptCategory;
 use App\Models\Prompt\Prompt;
+use Auth;
 
 class PromptsController extends Controller
 {
@@ -56,7 +57,7 @@ class PromptsController extends Controller
      */
     public function getPrompts(Request $request)
     {
-        $query = Prompt::active()->with('category');
+        $query = Prompt::staff(Auth::user()->isStaff)->active()->with('category');
         $data = $request->only(['prompt_category_id', 'name', 'sort']);
         if(isset($data['prompt_category_id']) && $data['prompt_category_id'] != 'none') 
             $query->where('prompt_category_id', $data['prompt_category_id']);

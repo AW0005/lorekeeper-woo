@@ -206,7 +206,7 @@ class PromptService extends Service
 
             if(!isset($data['hide_submissions']) && !$data['hide_submissions']) $data['hide_submissions'] = 0;
 
-            $prompt = Prompt::create(Arr::only($data, ['prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix', 'hide_submissions']));
+            $prompt = Prompt::create(Arr::only($data, ['prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix', 'hide_submissions', 'is_staff']));
 
             if ($image) $this->handleImage($image, $prompt->imagePath, $prompt->imageFileName);
 
@@ -250,7 +250,7 @@ class PromptService extends Service
 
             if(!isset($data['hide_submissions']) && !$data['hide_submissions']) $data['hide_submissions'] = 0;
 
-            $prompt->update(Arr::only($data, ['prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix', 'hide_submissions']));
+            $prompt->update(Arr::only($data, ['prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix', 'hide_submissions', 'is_staff']));
 
             if ($prompt) $this->handleImage($image, $prompt->imagePath, $prompt->imageFileName);
 
@@ -277,6 +277,7 @@ class PromptService extends Service
         if(!isset($data['hide_before_start'])) $data['hide_before_start'] = 0;
         if(!isset($data['hide_after_end'])) $data['hide_after_end'] = 0;
         if(!isset($data['is_active'])) $data['is_active'] = 0;
+        if (!isset($data['is_staff'])) $data['is_staff'] = 0;
 
         if(isset($data['remove_image']))
         {

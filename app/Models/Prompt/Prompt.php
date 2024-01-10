@@ -18,7 +18,7 @@ class Prompt extends Model
     protected $fillable = [
         'prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active',
         'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix',
-        'hide_submissions'
+        'hide_submissions', 'is_staff'
     ];
 
     /**
@@ -91,6 +91,10 @@ class Prompt extends Model
 
     **********************************************************************************************/
 
+    public function scopeStaff($query, $includeStaff) {
+        return $query->whereIn('is_staff', $includeStaff ? [0, 1] : [0]);
+    }
+    
     /**
      * Scope a query to only include active prompts.
      *
