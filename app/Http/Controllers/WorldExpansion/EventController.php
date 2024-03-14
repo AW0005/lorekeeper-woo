@@ -76,7 +76,7 @@ class EventController extends Controller
      */
     public function getEvents(Request $request)
     {
-        $query = Event::with('category');
+        $query = Event::with('category')->orderBy('sort', 'DESC');
         $data = $request->only(['category_id', 'name', 'sort']);
         if(isset($data['category_id']) && $data['category_id'] != 'none')
             $query->where('category_id', $data['category_id']);

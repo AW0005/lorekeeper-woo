@@ -19,7 +19,7 @@ class GlossaryController extends Controller
      */
     public function getGlossaryIndex()
     {
-           
+
         return view('admin.world_expansion.glossary', [
             'glossaries' => Glossary::sortAlphabetical()->get()
         ]);
@@ -99,6 +99,25 @@ class GlossaryController extends Controller
             foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
         }
         return redirect()->to('admin/world/glossary');
+    }
+
+    /**
+     * Toggles the glossary visible or nonvisible for users
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Services\WorldExpansion\EventService  $service
+     * @param  int                       $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postToggleSetting(GlossaryService $service)
+    {
+        if($service->toggleSetting()) {
+            flash('Glossary toggled successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
     }
 
 }

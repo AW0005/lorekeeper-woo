@@ -75,7 +75,7 @@ class NatureController extends Controller
      */
     public function getFaunas(Request $request)
     {
-        $query = Fauna::with('category');
+        $query = Fauna::with('category')->orderBy('sort', 'DESC');
         $data = $request->only(['category_id', 'name', 'sort']);
         if(isset($data['category_id']) && $data['category_id'] != 'none')
             $query->where('category_id', $data['category_id']);
@@ -175,7 +175,7 @@ class NatureController extends Controller
      */
     public function getFloras(Request $request)
     {
-        $query = Flora::with('category');
+        $query = Flora::with('category')->orderBy('sort', 'DESC');
         $data = $request->only(['category_id', 'name', 'sort']);
         if(isset($data['category_id']) && $data['category_id'] != 'none')
             $query->where('category_id', $data['category_id']);

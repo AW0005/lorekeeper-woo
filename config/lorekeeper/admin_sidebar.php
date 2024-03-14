@@ -178,7 +178,7 @@ return [
             ],
         ]
     ],
-    'World.Expanded' => [
+    'World_Expanded' => [
         'power' => 'manage_world',
         'links' => [
             [

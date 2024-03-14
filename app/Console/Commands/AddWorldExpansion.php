@@ -121,9 +121,9 @@ class AddWorldExpansion extends Command
                 ]
 
             ]);
-            $this->info("Added:   WE_user_locations / Default: 0");
+            $this->info("Added:   WE_glossary / Default: 0");
         }
-        else $this->line("Skipped: WE_user_locations");
+        else $this->line("Skipped: WE_glossary");
 
         $this->line("\nWorld Expansion settings up to date!");
 

@@ -50,33 +50,37 @@
                     {!! $location->type ? ucfirst($location->type->displayName) : '' !!} {!! $location->parent ? 'inside '.$location->parent->displayName : '' !!}
                 </strong></p>
             </div>
-            <div class="card-body">
+            <div class="card-body py-0">
                 @if(($user_enabled && $location->is_user_home) || ($ch_enabled && $location->is_character_home))
-                    <p class="text-center mb-0"><strong>
-                    Can be home to
-                    {!! $location->is_character_home && $location->is_user_home ? 'both' : '' !!}
-                    {!! $user_enabled && $location->is_user_home ? 'users' : '' !!}{!! $location->is_character_home && $location->is_user_home ? ' and' : '' !!}{!! !$location->is_character_home && $location->is_user_home ? '.' : '' !!}
-                    {!! $ch_enabled && $location->is_character_home ? 'characters.' : '' !!}
-                    </strong></p>
+                    <div class="pt-3">
+                        <p class="text-center mb-0"><strong>
+                        Can be home to
+                        {!! $location->is_character_home && $location->is_user_home ? 'both' : '' !!}
+                        {!! $user_enabled && $location->is_user_home ? 'users' : '' !!}{!! $location->is_character_home && $location->is_user_home ? ' and' : '' !!}{!! !$location->is_character_home && $location->is_user_home ? '.' : '' !!}
+                        {!! $ch_enabled && $location->is_character_home ? 'characters.' : '' !!}
+                        </strong></p>
+                    </div>
                 @endif
 
                 @if(count($location->children))
-                    <strong class="mt-3 mb-0">Contains the following:</strong>
-                    @foreach($location->children->groupBy('type_id') as $group => $children)
-                    <p class="mb-0">
-                        <strong>
-                            @if(count($children) == 1) {{ $loctypes->find($group)->name }}@else{{ $loctypes->find($group)->names }}@endif:
-                        </strong>
+                    <div class="pt-3">
+                        <strong class="mt-3 mb-0">Contains the following:</strong>
+                        @foreach($location->children->groupBy('type_id') as $group => $children)
+                        <p class="mb-0">
+                            <strong>
+                                @if(count($children) == 1) {{ $loctypes->find($group)->name }}@else{{ $loctypes->find($group)->names }}@endif:
+                            </strong>
 
-                        @foreach($children as $key => $child) {!! $child->fullDisplayName !!}@if($key != count($children)-1), @endif @endforeach
-                    @endforeach
-                    </p>
+                            @foreach($children as $key => $child) {!! $child->fullDisplayName !!}@if($key != count($children)-1), @endif @endforeach
+                        @endforeach
+                        </p>
+                    </div>
                 @endif
             </div>
 
-            @isset($figure->summary)
-                <div class="card-body">
-                    <p class="mb-0"> {!! $figure->summary !!}</p>
+            @isset($location->summary)
+                <div class="card-body pt-3">
+                    <p class="mb-0"> {!! $location->summary !!}</p>
                 </div>
             @endisset
 

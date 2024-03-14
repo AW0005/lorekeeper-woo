@@ -70,7 +70,7 @@ class LocationController extends Controller
      */
     public function getLocations(Request $request)
     {
-        $query = Location::with('type');
+        $query = Location::with('type')->orderBy('sort', 'DESC');
         $data = $request->only(['type_id', 'name', 'sort']);
         if(isset($data['type_id']) && $data['type_id'] != 'none')
             $query->where('type_id', $data['type_id']);

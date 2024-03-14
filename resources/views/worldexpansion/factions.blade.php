@@ -50,33 +50,37 @@
                     {!! $faction->type ? ucfirst($faction->type->displayName) : '' !!} {!! $faction->parent ? 'inside '.$faction->parent->displayName : '' !!}
                 </strong></p>
             </div>
-            <div class="card-body">
+            <div class="card-body py-0">
                 @if(($user_enabled && $faction->is_user_faction) || ($ch_enabled && $faction->is_character_faction))
-                    <p class="text-center mb-0"><strong>
-                    Can be joined by
-                    {!! $faction->is_character_faction && $faction->is_user_faction ? 'both' : '' !!}
-                    {!! $user_enabled && $faction->is_user_faction ? 'users' : '' !!}{!! $faction->is_character_faction && $faction->is_user_faction ? ' and' : '' !!}{!! !$faction->is_character_faction && $faction->is_user_faction ? '.' : '' !!}
-                    {!! $ch_enabled && $faction->is_character_faction ? 'characters.' : '' !!}
-                    </strong></p>
+                    <div class="pt-3">
+                        <p class="text-center mb-0"><strong>
+                        Can be joined by
+                        {!! $faction->is_character_faction && $faction->is_user_faction ? 'both' : '' !!}
+                        {!! $user_enabled && $faction->is_user_faction ? 'users' : '' !!}{!! $faction->is_character_faction && $faction->is_user_faction ? ' and' : '' !!}{!! !$faction->is_character_faction && $faction->is_user_faction ? '.' : '' !!}
+                        {!! $ch_enabled && $faction->is_character_faction ? 'characters.' : '' !!}
+                        </strong></p>
+                    </div>
                 @endif
 
                 @if(count($faction->children))
-                    <strong class="mt-3 mb-0">Contains the following:</strong>
-                    @foreach($faction->children->groupBy('type_id') as $group => $children)
-                    <p class="mb-0">
-                        <strong>
-                            @if(count($children) == 1) {{ $loctypes->find($group)->name }}@else{{ $loctypes->find($group)->names }}@endif:
-                        </strong>
+                    <div class="pt-3">
+                        <strong class="mt-3 mb-0">Contains the following:</strong>
+                        @foreach($faction->children->groupBy('type_id') as $group => $children)
+                        <p class="mb-0">
+                            <strong>
+                                @if(count($children) == 1) {{ $loctypes->find($group)->name }}@else{{ $loctypes->find($group)->names }}@endif:
+                            </strong>
 
-                        @foreach($children as $key => $child) {!! $child->fullDisplayName !!}@if($key != count($children)-1), @endif @endforeach
-                    @endforeach
-                    </p>
+                            @foreach($children as $key => $child) {!! $child->fullDisplayName !!}@if($key != count($children)-1), @endif @endforeach
+                        @endforeach
+                        </p>
+                    </div>
                 @endif
             </div>
 
-            @isset($figure->summary)
-                <div class="card-body">
-                    <p class="mb-0"> {!! $figure->summary !!}</p>
+            @isset($faction->summary)
+                <div class="card-body pt-3">
+                    <p class="mb-0"> {!! $faction->summary !!}</p>
                 </div>
             @endisset
 

@@ -92,13 +92,13 @@ class WorldAttachment extends Model
             case 'Location':
                 return $this->belongsTo('App\Models\WorldExpansion\Location', 'attacher_id');
             case 'Event':
-                return $this->belongsTo('App\Models\WorldExpansion\Event', 'attachment_id');
+                return $this->belongsTo('App\Models\WorldExpansion\Event', 'attacher_id');
             case 'Item':
                 return $this->belongsTo('App\Models\Item\Item', 'attacher_id');
             case 'Prompt':
                 return $this->belongsTo('App\Models\Prompt\Prompt', 'attacher_id');
             case 'News':
-                return $this->belongsTo('App\Models\News', 'attachment_id');
+                return $this->belongsTo('App\Models\News', 'attacher_id');
             case 'None':
                 // Laravel requires a relationship instance to be returned (cannot return null), so returning one that doesn't exist here.
                 return $this->belongsTo('App\Models\Loot\Loot', 'attacher_id', 'loot_table_id')->whereNull('loot_table_id');

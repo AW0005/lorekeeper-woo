@@ -74,7 +74,7 @@ class FigureController extends Controller
      */
     public function getFigures(Request $request)
     {
-        $query = Figure::with('category');
+        $query = Figure::with('category')->orderBy('sort', 'DESC');
         $data = $request->only(['category_id', 'name', 'sort']);
         if(isset($data['category_id']) && $data['category_id'] != 'none')
             $query->where('category_id', $data['category_id']);
