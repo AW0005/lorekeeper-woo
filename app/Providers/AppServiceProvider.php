@@ -9,6 +9,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
+use Auth;
+use View;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -29,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
 
         view()->composer('*', function () {
-            $theme = Auth::user()->theme ?? $defaultTheme ?? null;
+            $theme = Auth::user()->theme ?? Theme::where('is_default', true)->first() ?? null;
             $conditionalTheme = null;
             if (class_exists('\App\Models\Weather\WeatherSeason')) {
                 $conditionalTheme = \App\Models\Theme::where('link_type', 'season')->where('link_id', Settings::get('site_season'))->first() ??

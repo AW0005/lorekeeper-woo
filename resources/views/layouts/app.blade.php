@@ -76,7 +76,6 @@
         <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     @endif
 
-    @php $theme = Auth::user()->theme ?? $defaultTheme ?? null; @endphp
     @if($theme?->prioritize_css) @include('layouts.editable_theme') @endif
     @if($theme?->has_css)
         <style type="text/css" media="screen">
@@ -87,14 +86,6 @@
     @if(!$theme?->prioritize_css) @include('layouts.editable_theme') @endif
     
     {{-- Conditional Themes are dependent on other site features --}}
-    @php 
-        $conditionalTheme = null;
-        if(class_exists('\App\Models\Weather\WeatherSeason')) {
-            $conditionalTheme = \App\Models\Theme::where('link_type', 'season')->where('link_id', Settings::get('site_season'))->first() ??
-                \App\Models\Theme::where('link_type', 'weather')->where('link_id', Settings::get('site_weather'))->first() ??
-                $theme;
-        }
-    @endphp
     @if($conditionalTheme?->prioritize_css) @include('layouts.editable_theme', ['theme' => $conditionalTheme]) @endif
     @if($conditionalTheme?->has_css)
         <style type="text/css" media="screen">
@@ -104,7 +95,6 @@
     @endif
     @if(!$conditionalTheme?->prioritize_css) @include('layouts.editable_theme', ['theme' => $conditionalTheme]) @endif
     
-    @php $decoratorTheme = Auth::user()->decoratorTheme ?? null; @endphp
     @if($decoratorTheme?->prioritize_css) @include('layouts.editable_theme', ['theme' => $decoratorTheme]) @endif
     @if($decoratorTheme?->has_css)
         <style type="text/css" media="screen">
