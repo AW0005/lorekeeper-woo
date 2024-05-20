@@ -21,6 +21,7 @@
                     content_css: [
                         '{{ asset('css/app.css') }}',
                         '{{ asset('css/lorekeeper.css') }}',
+                        '{{ asset('css/custom.css') }}',
                         '{{ asset($theme?->cssUrl) }}',
                         '{{ asset($conditionalTheme?->cssUrl) }}',
                         '{{ asset($decoratorTheme?->cssUrl) }}',
@@ -78,6 +79,7 @@
                     content_css: [
                         '{{ asset('css/app.css') }}',
                         '{{ asset('css/lorekeeper.css') }}',
+                        '{{ asset('css/custom.css') }}',
                         '{{ asset($theme?->cssUrl) }}',
                         '{{ asset($conditionalTheme?->cssUrl) }}',
                         '{{ asset($decoratorTheme?->cssUrl) }}',

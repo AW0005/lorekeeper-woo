@@ -12,6 +12,7 @@ content_css: [
 '//www.tiny.cloud/css/codepen.min.css',
 '{{ asset('css/app.css') }}',
 '{{ asset('css/lorekeeper.css') }}',
+'{{ asset('css/custom.css') }}',
 '{{ asset($theme?->cssUrl) }}',
 '{{ asset($conditionalTheme?->cssUrl) }}',
 '{{ asset($decoratorTheme?->cssUrl) }}',
