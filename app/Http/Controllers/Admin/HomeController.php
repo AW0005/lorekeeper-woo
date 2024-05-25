@@ -16,6 +16,7 @@ use App\Models\Report\Report;
 
 use App\Http\Controllers\Controller;
 use App\Models\LogEvent;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -53,10 +54,12 @@ class HomeController extends Controller
      */
     public function getLogofLogs() {
 
-        $logs = LogEvent::get();
-
+        $logs = LogEvent::query();
+        $oneMonth = Carbon::today()->subDays(config('lorekeeper.extensions.logDaysSince') ?? 30)->toDateString();
+        // TODO: Add this back for the final extension, here because for testing purposes a lot of the logs are older than a month oops
+        //->whereDate('created_at', '>', $oneMonth) 
         return view('admin.logoflogs', [
-            'logs' => $logs->sortByDesc('created_at')->paginate(20)
+            'logs' => $logs->get()->sortByDesc('created_at')->paginate(20)
         ]);
     }
 }
