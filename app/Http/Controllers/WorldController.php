@@ -14,6 +14,7 @@ use App\Models\Item\Item;
 use App\Models\Feature\FeatureCategory;
 use App\Models\Feature\Feature;
 use App\Models\Character\CharacterCategory;
+use App\Models\Character\CharacterFeature;
 use App\Models\Prompt\PromptCategory;
 use App\Models\Prompt\Prompt;
 use App\Models\Shop\Shop;
@@ -232,6 +233,26 @@ class WorldController extends Controller
             'categories' => $categories->keyBy('id'),
             'rarities' => $rarities->keyBy('id'),
             'features' => $features,
+        ]);
+    }
+
+
+    /** 
+     * Shows a list of all feature extra info
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getFeatureExtras(Request $request, $feature_id) {
+        $query = CharacterFeature::whereNotNull('data')->where('feature_id', $feature_id)->select('data')->distinct();
+        $data = $request->only(['name']);
+        if (isset($data['name'])) {
+            $query->where('data', 'LIKE', '%' . $data['name'] . '%');
+        }
+
+        return view('world.feature_extras', [
+            'feature' => Feature::find($feature_id),
+            'extras' => $query->orderBy('data', 'desc')->paginate(20)->appends($request->query())
         ]);
     }
 

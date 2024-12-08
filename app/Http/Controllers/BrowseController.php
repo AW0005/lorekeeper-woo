@@ -172,6 +172,13 @@ class BrowseController extends Controller
                 });
             }
         }
+
+        if ($request->get('feature_extra')) {
+            $imageQuery->whereHas('features', function ($query) use ($request) {
+                $query->where('data', $request->get('feature_extra'));
+            });
+        }
+        
         if($request->get('artist')) {
             $artist = User::find($request->get('artist'));
             $imageQuery->whereHas('artists', function($query) use ($artist) {

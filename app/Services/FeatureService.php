@@ -282,6 +282,9 @@ class FeatureService extends Service
         if(isset($data['description']) && $data['description']) $data['parsed_description'] = parse($data['description']);
         if(isset($data['species_id']) && $data['species_id'] == 'none') $data['species_id'] = null;
         if(isset($data['feature_category_id']) && $data['feature_category_id'] == 'none') $data['feature_category_id'] = null;
+        $data['extras_autocomplete'] = isset($data['extras_autocomplete']);
+        $data['extras_list'] = isset($data['extras_list']);
+        
         if(isset($data['remove_image']))
         {
             if($feature && $feature->has_image && $data['remove_image']) 
