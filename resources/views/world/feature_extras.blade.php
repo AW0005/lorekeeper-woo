@@ -26,7 +26,7 @@
             <div class="col-xl-4 col-6">
                 <div class="card mb-3">
                     <div class="card-body d-flex" style="gap: 3px;">
-                        {{ $extra->data }} <a class="text-muted" href="{{ url('masterlist?feature_extra=' . urlencode($extra->data)) }}"><i class="fas fa-search mr-2"></i></a>
+                        {{ $extra->data }} <a class="text-muted" href="{{ url('masterlist?feature_id[]=' . $feature->id . '&feature_extra=' . urlencode($extra->data)) }}"><i class="fas fa-search mr-2"></i></a>
                     </div>
                 </div>
             </div>
