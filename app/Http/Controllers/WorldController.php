@@ -244,7 +244,7 @@ class WorldController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getFeatureExtras(Request $request, $feature_id) {
-        $query = CharacterFeature::whereNotNull('data')->where('feature_id', $feature_id)->select('data')->distinct();
+        $query = CharacterFeature::whereNotNull('data')->where('feature_id', $feature_id)->select('data')->distinct('data');
         $data = $request->only(['name']);
         if (isset($data['name'])) {
             $query->where('data', 'LIKE', '%' . $data['name'] . '%');
