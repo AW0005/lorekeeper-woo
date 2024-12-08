@@ -252,7 +252,7 @@ class WorldController extends Controller
 
         return view('world.feature_extras', [
             'feature' => Feature::find($feature_id),
-            'extras' => $query->orderBy('data', 'desc')->paginate(20)->appends($request->query())
+            'extras' => $query->orderBy('data', 'desc')->paginate(30)->appends($request->query())
         ]);
     }
 
