@@ -250,6 +250,8 @@ class WorldController extends Controller
     public function getFeatureExtras(Request $request, $feature_id) {
         $query = CharacterFeature::whereNotNull('data')->where('character_type', 'Character')->where('feature_id', $feature_id)->whereHas('image', function ($query) {
             return $query->where('is_valid', 1);
+        })->whereHas('image.character', function ($query) {
+            return $query->where('is_visible', 1);
         })->select('data')->distinct('data');
         $data = $request->only(['name']);
         if (isset($data['name'])) {
